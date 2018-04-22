@@ -84,7 +84,6 @@ bool Board::MovePiece(const Board::BoardPosition& posFrom, const Board::BoardPos
 	if (boardSquareDestination.IsEmpty())
 	{
 		boardSquareDestination.ChangeSquarePiece(pieceSource);
-		boardSquareSource.ClearSquare();
 	}
 	else
 	{
@@ -98,8 +97,8 @@ bool Board::MovePiece(const Board::BoardPosition& posFrom, const Board::BoardPos
 		}
 
 		boardSquareDestination.ChangeSquarePiece(pieceDestination->Fight(pieceSource));
-		boardSquareSource.ClearSquare();
 	}
+	boardSquareSource.ClearSquare();
 
 	return true;
 }
