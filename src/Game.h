@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include "Player.h"
-#include "Board.h"
+#include "ConcreteBoard.h"
 
 #define PLAYER_POSITION_FILE "player%d.rps_board"
 #define PLAYER_MOVE_FILE "player%d.rps_moves"
@@ -29,7 +29,7 @@ class Game
 private:
 	enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
-    Board mGameBoard;
+    ConcreteBoard mGameBoard;
 	Player mPlayers[NUM_OF_PLAYERS];
 	std::string mGameOverMessage = "";
 	Winner mWinner = Winner::None;

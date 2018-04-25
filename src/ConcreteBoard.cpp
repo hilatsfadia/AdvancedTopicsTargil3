@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "Board.h"
+#include "ConcreteBoard.h"
 #include <cctype>
 #include <iostream>
 
-Board::~Board(){
+ConcreteBoard::~ConcreteBoard(){
     // free pieces on heap
 	for (int row = 0; row < mRows; row++)
 	{
@@ -15,7 +15,7 @@ Board::~Board(){
 }
 
 
-bool Board::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { // TODO: error handling, handle out of range + already position taken
+bool ConcreteBoard::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { // TODO: error handling, handle out of range + already position taken
 	if ((piece == nullptr) || !CheckIfValidPosition(pos))
 	{
 		// TODO: ask
@@ -24,7 +24,7 @@ bool Board::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { // TODO: e
 		return false;
 	}
 
-	Board::BoardSquare& boardSquare = GetBoardInPosition(pos);
+	ConcreteBoard::BoardSquare& boardSquare = GetBoardInPosition(pos);
 
 	// if board square is empty
 	if (boardSquare.IsEmpty())
@@ -46,7 +46,7 @@ bool Board::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { // TODO: e
 	return true;
 }
 
-bool Board::IsMovePieceLegal(const Board::BoardPosition& posFrom, const Board::BoardPosition& posTo) const
+bool ConcreteBoard::IsMovePieceLegal(const ConcreteBoard::BoardPosition& posFrom, const ConcreteBoard::BoardPosition& posTo) const
 {
 	if (!CheckIfValidPosition(posFrom) || !CheckIfValidPosition(posTo))
 	{
@@ -63,7 +63,7 @@ bool Board::IsMovePieceLegal(const Board::BoardPosition& posFrom, const Board::B
 	return isMoveAtMostOneSquareInAxis && (!isMoveInDiagonal);
 }
 
-bool Board::MovePiece(const Board::BoardPosition& posFrom, const Board::BoardPosition& posTo)
+bool ConcreteBoard::MovePiece(const ConcreteBoard::BoardPosition& posFrom, const ConcreteBoard::BoardPosition& posTo)
 {
 	if (!IsMovePieceLegal(posFrom, posTo))
 	{
@@ -71,8 +71,8 @@ bool Board::MovePiece(const Board::BoardPosition& posFrom, const Board::BoardPos
 		return false;
 	}
 
-	Board::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
-	Board::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
+	ConcreteBoard::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
+	ConcreteBoard::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
 	Piece* pieceSource = boardSquareSource.GetPiece();
 
 	if (!pieceSource->isMovingPiece())
@@ -103,21 +103,21 @@ bool Board::MovePiece(const Board::BoardPosition& posFrom, const Board::BoardPos
 	return true;
 }
 
-Board::BoardSquare& Board::GetBoardInPosition(int y, int x){
+ConcreteBoard::BoardSquare& ConcreteBoard::GetBoardInPosition(int y, int x){
     return board[y-1][x-1];
 }
 	
-Board::BoardSquare& Board::GetBoardInPosition(const BoardPosition& position){
+ConcreteBoard::BoardSquare& ConcreteBoard::GetBoardInPosition(const BoardPosition& position){
     return GetBoardInPosition(position.y, position.x);
 }
 
-bool Board::CheckIfValidPosition(const BoardPosition& position) const
+bool ConcreteBoard::CheckIfValidPosition(const BoardPosition& position) const
 {
 	return ((position.x <= mColumns) && (position.x >= 1) && 
 		(position.y <= mRows) && (position.y >= 1));
 }
 
-void Board::Print(std::ostream& outFile)
+void ConcreteBoard::Print(std::ostream& outFile)
 {
 	for (int row = 1; row <= GetRowsNum(); row++)
 	{
@@ -138,12 +138,12 @@ void Board::Print(std::ostream& outFile)
 	}
 }
 
-int Board::GetRowsNum() const
+int ConcreteBoard::GetRowsNum() const
 {
 	return this->mRows;
 }
 
-int Board::GetColsNum() const
+int ConcreteBoard::GetColsNum() const
 {
 	return this->mColumns;
 }

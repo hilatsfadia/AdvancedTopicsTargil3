@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Board.h" />
+    <ClInclude Include="ConcreteBoard.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="Game.h" />
@@ -165,7 +165,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="ConcreteBoard.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="Game.cpp" />

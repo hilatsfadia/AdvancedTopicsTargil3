@@ -15,7 +15,7 @@ ParserInitFile::~ParserInitFile()
 {
 }
 
-bool ParserInitFile::processJokerLine(Player & player, const std::vector<std::string>& tokens, Board::BoardPosition& pos)
+bool ParserInitFile::processJokerLine(Player & player, const std::vector<std::string>& tokens, ConcreteBoard::BoardPosition& pos)
 {
 	Piece* piece = nullptr;
 
@@ -67,7 +67,7 @@ bool ParserInitFile::processJokerLine(Player & player, const std::vector<std::st
 	return mGame->mGameBoard.PutPieceOnBoard(piece, pos);
 }
 
-bool ParserInitFile::processNonJokerLine(Player & player, const std::vector<std::string>& tokens, Board::BoardPosition & pos)
+bool ParserInitFile::processNonJokerLine(Player & player, const std::vector<std::string>& tokens, ConcreteBoard::BoardPosition & pos)
 {
 	Piece* piece = PieceFactory::GetPieceFromChar(tokens[0][0]);
 	if (piece == nullptr)
@@ -98,7 +98,7 @@ bool ParserInitFile::processLineTokens(Player& player, const std::vector<std::st
 		return false;
 	}
 
-	Board::BoardPosition pos;
+	ConcreteBoard::BoardPosition pos;
 	if (!GetPositionFromChars(tokens[Y_TOKEN_NUM], tokens[X_TOKEN_NUM], pos, playerNum, lineNum))
 	{
 		// Already printed error.

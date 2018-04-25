@@ -17,7 +17,8 @@
 #define M 10
 #define N 10
 
-class Board {
+// TODO: name
+class ConcreteBoard {
 private:
 	// The board consists of M * N objects of this type.
 	class BoardSquare {
@@ -59,7 +60,7 @@ public:
 		BoardPosition(int y, int x) : y(y), x(x) {}
 	};
 
-	~Board();
+	~ConcreteBoard();
 
 	// Tries to the piece in the given position. 
 	// Returns true if the piece can be put in the position.
