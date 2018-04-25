@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{82CCA781-8663-4DD1-9CD1-34D289765071}</ProjectGuid>
+    <ProjectGuid>{752518AA-CC70-4492-A010-BE6F8C7974EE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Targil1</RootNamespace>
+    <RootNamespace>ExtendedRPSGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -147,26 +147,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ConcreteBoard.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Bomb.h" />
+    <ClInclude Include="ConcreteBoard.h" />
+    <ClInclude Include="FightInfo.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Joker.h" />
+    <ClInclude Include="JokerChange.h" />
+    <ClInclude Include="Move.h" />
     <ClInclude Include="Paper.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="ParserInitFile.h" />
     <ClInclude Include="ParserMoveFile.h" />
     <ClInclude Include="Piece.h" />
     <ClInclude Include="PieceFactory.h" />
+    <ClInclude Include="PiecePosition.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerAlgorithm.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="Rock.h" />
     <ClInclude Include="Scissors.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConcreteBoard.cpp" />
     <ClCompile Include="Bomb.cpp" />
+    <ClCompile Include="ConcreteBoard.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Joker.cpp" />
@@ -185,7 +193,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
