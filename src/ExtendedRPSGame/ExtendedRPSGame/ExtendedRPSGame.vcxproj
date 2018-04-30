@@ -148,14 +148,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
+    <ClInclude Include="BoardImpl.h" />
     <ClInclude Include="Bomb.h" />
-    <ClInclude Include="ConcreteBoard.h" />
     <ClInclude Include="FightInfo.h" />
+    <ClInclude Include="FightInfoImpl.h" />
+    <ClInclude Include="FilePlayerAlgorithm.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Joker.h" />
     <ClInclude Include="JokerChange.h" />
+    <ClInclude Include="JokerChangeImpl.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="MoveImpl.h" />
     <ClInclude Include="Paper.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="ParserInitFile.h" />
@@ -163,28 +167,36 @@
     <ClInclude Include="Piece.h" />
     <ClInclude Include="PieceFactory.h" />
     <ClInclude Include="PiecePosition.h" />
+    <ClInclude Include="PiecePositionImpl.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAlgorithm.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="PointImpl.h" />
     <ClInclude Include="Rock.h" />
     <ClInclude Include="Scissors.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoardImpl.cpp" />
     <ClCompile Include="Bomb.cpp" />
-    <ClCompile Include="ConcreteBoard.cpp" />
+    <ClCompile Include="FightInfoImpl.cpp" />
+    <ClCompile Include="FilePlayerAlgorithm.cpp" />
+    <ClCompile Include="JokerChangeImpl.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Joker.cpp" />
+    <ClCompile Include="MoveImpl.cpp" />
     <ClCompile Include="Paper.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ParserInitFile.cpp" />
     <ClCompile Include="ParserMoveFile.cpp" />
     <ClCompile Include="Piece.cpp" />
     <ClCompile Include="PieceFactory.cpp" />
+    <ClCompile Include="PiecePositionImpl.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PointImpl.cpp" />
     <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Scissors.cpp" />
     <ClCompile Include="stdafx.cpp">

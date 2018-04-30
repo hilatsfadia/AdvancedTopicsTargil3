@@ -149,11 +149,11 @@ bool Parser::CheckReadOK(Player& player, std::ifstream& inFile, const std::strin
 	return true;
 }
 
-bool Parser::GetPositionFromChars(const std::string & posy, const std::string & posx, ConcreteBoard::BoardPosition& outPos, int playerNum, int lineNum)
+bool Parser::GetPositionFromChars(const std::string & posx, const std::string & posy, PointImpl& outPos, int playerNum, int lineNum)
 {
 	try
 	{
-		outPos = { stoi(posy), stoi(posx) };
+		outPos = { stoi(posx), stoi(posy) };
 	}
 	catch (std::exception& e)
 	{

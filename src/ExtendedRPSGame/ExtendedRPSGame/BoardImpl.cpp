@@ -1,9 +1,10 @@
 #include "stdafx.h"
-#include "ConcreteBoard.h"
+#include "BoardImpl.h"
 #include <cctype>
 #include <iostream>
+#include "Player.h"
 
-ConcreteBoard::~ConcreteBoard(){
+BoardImpl::~BoardImpl(){
     // free pieces on heap
 	for (int row = 0; row < mRows; row++)
 	{
@@ -15,7 +16,7 @@ ConcreteBoard::~ConcreteBoard(){
 }
 
 
-bool ConcreteBoard::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { // TODO: error handling, handle out of range + already position taken
+bool BoardImpl::PutPieceOnBoard(Piece* piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
 	if ((piece == nullptr) || !CheckIfValidPosition(pos))
 	{
 		// TODO: ask
@@ -24,7 +25,7 @@ bool ConcreteBoard::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { //
 		return false;
 	}
 
-	ConcreteBoard::BoardSquare& boardSquare = GetBoardInPosition(pos);
+	BoardImpl::BoardSquare& boardSquare = GetBoardInPosition(pos);
 
 	// if board square is empty
 	if (boardSquare.IsEmpty())
@@ -46,7 +47,7 @@ bool ConcreteBoard::PutPieceOnBoard(Piece* piece, const BoardPosition& pos) { //
 	return true;
 }
 
-bool ConcreteBoard::IsMovePieceLegal(const ConcreteBoard::BoardPosition& posFrom, const ConcreteBoard::BoardPosition& posTo) const
+bool BoardImpl::IsMovePieceLegal(const Point& posFrom, const Point& posTo) const
 {
 	if (!CheckIfValidPosition(posFrom) || !CheckIfValidPosition(posTo))
 	{
@@ -54,16 +55,16 @@ bool ConcreteBoard::IsMovePieceLegal(const ConcreteBoard::BoardPosition& posFrom
 		return false;
 	}
 
-	int horizontalDiff = abs(posFrom.x - posTo.x);
-	int verticalDiff = abs(posFrom.y - posTo.y);
+	int verticalDiff = abs(posFrom.getY() - posTo.getY());
+	int horizontalDiff = abs(posFrom.getX() - posTo.getX());
 	
-	bool isMoveAtMostOneSquareInAxis = (horizontalDiff <= 1) && (verticalDiff <= 1);
-	bool isMoveInDiagonal = (horizontalDiff == 1) && (verticalDiff == 1);
+	bool isMoveAtMostOneSquareInAxis = (verticalDiff <= 1) && (horizontalDiff <= 1);
+	bool isMoveInDiagonal = (verticalDiff == 1) && (horizontalDiff == 1);
 
 	return isMoveAtMostOneSquareInAxis && (!isMoveInDiagonal);
 }
 
-bool ConcreteBoard::MovePiece(const ConcreteBoard::BoardPosition& posFrom, const ConcreteBoard::BoardPosition& posTo)
+bool BoardImpl::MovePiece(const Point& posFrom, const Point& posTo)
 {
 	if (!IsMovePieceLegal(posFrom, posTo))
 	{
@@ -71,8 +72,8 @@ bool ConcreteBoard::MovePiece(const ConcreteBoard::BoardPosition& posFrom, const
 		return false;
 	}
 
-	ConcreteBoard::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
-	ConcreteBoard::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
+	BoardImpl::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
+	BoardImpl::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
 	Piece* pieceSource = boardSquareSource.GetPiece();
 
 	if (!pieceSource->isMovingPiece())
@@ -103,34 +104,44 @@ bool ConcreteBoard::MovePiece(const ConcreteBoard::BoardPosition& posFrom, const
 	return true;
 }
 
-ConcreteBoard::BoardSquare& ConcreteBoard::GetBoardInPosition(int y, int x){
+BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(int x, int y){
     return board[y-1][x-1];
 }
-	
-ConcreteBoard::BoardSquare& ConcreteBoard::GetBoardInPosition(const BoardPosition& position){
-    return GetBoardInPosition(position.y, position.x);
-}
 
-bool ConcreteBoard::CheckIfValidPosition(const BoardPosition& position) const
+const BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(int x, int y) const
 {
-	return ((position.x <= mColumns) && (position.x >= 1) && 
-		(position.y <= mRows) && (position.y >= 1));
+	return board[y-1][x-1];
+}
+	
+BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(const Point& position){
+    return GetBoardInPosition(position.getX(), position.getY());
 }
 
-void ConcreteBoard::Print(std::ostream& outFile)
+const BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(const Point& position) const
+{
+	return GetBoardInPosition(position.getX(), position.getY());
+}
+
+bool BoardImpl::CheckIfValidPosition(const Point& position) const
+{
+	return ((position.getX() <= mColumns) && (position.getX() >= 1) &&
+			(position.getY() <= mRows) && (position.getY() >= 1));
+}
+
+void BoardImpl::Print(std::ostream& outFile)
 {
 	for (int row = 1; row <= GetRowsNum(); row++)
 	{
 		for (int col = 1; col <= GetColsNum(); col++)
 		{
-			Piece* currPiece = GetBoardInPosition(row, col).GetPiece();
+			Piece* currPiece = GetBoardInPosition(col, row).GetPiece();
 			if (currPiece == nullptr)
 			{
 				outFile << " ";
 			}
 			else
 			{
-				outFile << *GetBoardInPosition(row, col).GetPiece();
+				outFile << *GetBoardInPosition(col, row).GetPiece();
 			}
 		}
 
@@ -138,12 +149,23 @@ void ConcreteBoard::Print(std::ostream& outFile)
 	}
 }
 
-int ConcreteBoard::GetRowsNum() const
+int BoardImpl::GetRowsNum() const
 {
 	return this->mRows;
 }
 
-int ConcreteBoard::GetColsNum() const
+int BoardImpl::GetColsNum() const
 {
 	return this->mColumns;
+}
+
+int BoardImpl::getPlayer(const Point& pos) const
+{
+	BoardSquare square = GetBoardInPosition(pos);
+	if (square.IsEmpty())
+	{
+		return 0;
+	}
+
+	return square.GetPiece()->GetOwner()->GetPlayerNum();
 }

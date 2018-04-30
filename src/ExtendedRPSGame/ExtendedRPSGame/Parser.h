@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 #include "Player.h"
-#include "ConcreteBoard.h"
+#include "BoardImpl.h"
+#include "PointImpl.h"
+
 class Game;
 class Joker;
 
@@ -57,7 +59,7 @@ protected:
 	// relevant message and updates the problematic line number.
 	bool CheckReadOK(Player& player, std::ifstream& inFile, const std::string& playerfileName, int lineNum);
 
-	bool GetPositionFromChars(const std::string& posy, const std::string& posx, ConcreteBoard::BoardPosition& outPos, int playerNum, int lineNum);
+	bool GetPositionFromChars(const std::string& posy, const std::string& posx, PointImpl& outPos, int playerNum, int lineNum);
 public:
 	Parser(Game* game) : mGame(game) {}
 	~Parser();

@@ -34,8 +34,8 @@ bool ParserMoveFile::processLineJokerTokens(Player & player, const std::vector<s
 		return false;
 	}
 
-	ConcreteBoard::BoardPosition posJoker;
-	if (!GetPositionFromChars(tokens[JOKER_Y_TOKEN_NUM], tokens[JOKER_X_TOKEN_NUM], posJoker, playerNum, lineNum))
+	PointImpl posJoker;
+	if (!GetPositionFromChars(tokens[JOKER_X_TOKEN_NUM], tokens[JOKER_Y_TOKEN_NUM], posJoker, playerNum, lineNum))
 	{
 		// Already printed error.
 		mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
@@ -81,10 +81,10 @@ bool ParserMoveFile::processLineTokens(Player& player, const std::vector<std::st
 		return false;
 	}
 
-	ConcreteBoard::BoardPosition posFrom;
-	ConcreteBoard::BoardPosition posTo;
-	if ((!GetPositionFromChars(tokens[FROM_Y_TOKEN_NUM], tokens[FROM_X_TOKEN_NUM], posFrom, playerNum, lineNum)) ||
-		(!GetPositionFromChars(tokens[TO_Y_TOKEN_NUM], tokens[TO_X_TOKEN_NUM], posTo, playerNum, lineNum)))
+	PointImpl posFrom;
+	PointImpl posTo;
+	if ((!GetPositionFromChars(tokens[FROM_X_TOKEN_NUM], tokens[FROM_Y_TOKEN_NUM], posFrom, playerNum, lineNum)) ||
+		(!GetPositionFromChars(tokens[TO_X_TOKEN_NUM], tokens[TO_Y_TOKEN_NUM], posTo, playerNum, lineNum)))
 	{
 		// Already printed error.
 		mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
