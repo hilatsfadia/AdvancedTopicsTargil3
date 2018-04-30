@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include "PiecePositionImpl.h"
 
 using std::string;
 using std::vector;
@@ -15,9 +16,9 @@ ParserInitFile::~ParserInitFile()
 {
 }
 
-bool ParserInitFile::processJokerLine(Player & player, const std::vector<std::string>& tokens, PointImpl& pos)
+bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
-	Piece* piece = nullptr;
+	//Piece* piece = nullptr;
 
 	if (tokens[J_TOKEN_NUM][0] != JOKER_CHAR_PLAYER_1)
 	{
@@ -31,66 +32,18 @@ bool ParserInitFile::processJokerLine(Player & player, const std::vector<std::st
 		return false;
 	}
 
-	// actualPiece shouldn't have an owner! because we don't want to 
-	// count it as one of the player's pieces.
-	if (player.GetPlayerNum() == 1)
+	if (player == 1)
 	{
-		piece = PieceFactory::GetJokerPieceFromChar(JOKER_CHAR_PLAYER_1);
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PiecePositionImpl(&pos, JOKER_CHAR_PLAYER_1, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0])));
 	}
 	else
 	{
-		piece = PieceFactory::GetJokerPieceFromChar(JOKER_CHAR_PLAYER_2);
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PiecePositionImpl(&pos, JOKER_CHAR_PLAYER_2, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0])));
 	}
-
-	if (piece == nullptr)
-	{
-		// Shouldn't happen
-		return false;
-	}
-
-	Joker* joker = dynamic_cast<Joker*>(piece);
-	//if (!joker)
-	if (joker == nullptr)
-	{
-		// Shouldn't happen
-		return false;
-	}
-
-	if (!InitJokerOwnerAndActualType(joker, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0], &player))
-	{
-		// Already printed error.
-		return false;
-	}
-
-	// checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
-	// Already printed error if any.
-	return mGame->mGameBoard.PutPieceOnBoard(piece, pos);
 }
 
-bool ParserInitFile::processNonJokerLine(Player & player, const std::vector<std::string>& tokens, PointImpl & pos)
+bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
-	Piece* piece = PieceFactory::GetPieceFromChar(tokens[0][0]);
-	if (piece == nullptr)
-	{
-		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
-		return false;
-	}
-
-	if (!piece->InitializeOwner(&player))
-	{
-		cout << "A PIECE type appears in file more than its number" << endl;
-		return false;
-	}
-
-	// checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
-	// Already printed error if any.
-	return mGame->mGameBoard.PutPieceOnBoard(piece, pos);
-}
-
-bool ParserInitFile::processLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum)
-{
-	int playerNum = player.GetPlayerNum();
-
 	if ((tokens.size() != INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != INIT_LINE_TOKENS_COUNT_WITH_JOKER))
 	{
 		cout << "number of tokens has to be " << INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER 
@@ -114,15 +67,47 @@ bool ParserInitFile::processLineTokens(Player& player, const std::vector<std::st
 
 	if (tokens.size() == INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER)
 	{
-		return processNonJokerLine(player, tokens, pos);
+		//return processNonJokerLine(player, tokens, pos, vectorToFill);
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PiecePositionImpl(&pos, tokens[0][0])));
+	}
+	else
+	{
+		// It's a joker line
+		// (tokens.size() == INIT_LINE_TOKENS_COUNT_WITH_JOKER)
+		return processJokerLine(playerNum, tokens, pos, vectorToFill);
 	}
 
-	// It's a joker line
-	// (tokens.size() == INIT_LINE_TOKENS_COUNT_WITH_JOKER)
-	return processJokerLine(player, tokens, pos);
+	return true;
 }
 
-bool ParserInitFile::ParsePlayerInitFile(Player& player, const std::string & playerInputfileName)
+bool ParserInitFile::ProcessLine(int player, const std::string& line, int lineNum, const char* templateBadFormatMessage, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+{
+	try
+	{
+		vector<string> tokens;
+		GetTokensFromLine(line, tokens);
+
+		// Skip empty lines
+		if (tokens.size() != 0)
+		{
+			return ProcessLineTokens(player, tokens, lineNum, vectorToFill);// Maybe Bad Format
+																			// Already printed error if any.
+		}
+	}
+	//catch (const std::exception&)
+	// Souldn't get here!
+	catch (...)
+	{
+		// Print errors if any?
+		//int playerNum = player.GetPlayerNum();
+		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, templateBadFormatMessage);
+		return false; // Bad Format
+	}
+
+	return true;
+}
+
+bool ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerInputfileName, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	//read file
 	std::ifstream inFile(playerInputfileName);
@@ -131,7 +116,7 @@ bool ParserInitFile::ParsePlayerInitFile(Player& player, const std::string & pla
 	if (!CheckOpenInputFile(inFile, playerInputfileName))
 	{
 		// Already printed error if any.
-		mGame->mProblematicLineOfPlayer[player.GetPlayerNum() - 1] = 0;
+		// TODO: mGame->mProblematicLineOfPlayer[player.GetPlayerNum() - 1] = 0;
 		return false;
 	}
 
@@ -140,9 +125,9 @@ bool ParserInitFile::ParsePlayerInitFile(Player& player, const std::string & pla
 	int lineNum = 1;
 	while ((std::getline(inFile, line)) && isFileOK)
 	{
-		if (!processLine(player, line, lineNum, BAD_POS_PLAYER))
+		if (!ProcessLine(player, line, lineNum, BAD_POS_PLAYER, vectorToFill))
 		{
-			mGame->mProblematicLineOfPlayer[player.GetPlayerNum()-1] = lineNum;
+			// TODO: mGame->mProblematicLineOfPlayer[player.GetPlayerNum() - 1] = lineNum;
 
 			// Already printed error if any.
 			isFileOK = false;

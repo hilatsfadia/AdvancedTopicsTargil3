@@ -3,14 +3,23 @@
 #include "ParserInitFile.h"
 #include "MoveImpl.h"
 #include "JokerChangeImpl.h"
+#include <cstdio>
+
+using std::string;
+
+// TODO: sprintf
+string FilePlayerAlgorithm::GetPositionsFileName(int playerNum)
+{
+	char fileName[INPUT_FILE_NAME_MAX_LEN];
+	sprintf_s(fileName, PLAYER_POSITION_FILE, playerNum);
+	return fileName;
+}
 
 void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
-    //ParserInitFile initFileParser(this);
-    //TODO: complete parsing
+    ParserInitFile initFileParser;
+	initFileParser.ParsePlayerInitFile(player, GetPositionsFileName(player), vectorToFill);
 }
-
-
 
 unique_ptr<Move> FilePlayerAlgorithm::getMove()
 {

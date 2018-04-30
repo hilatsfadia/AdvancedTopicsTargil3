@@ -7,6 +7,9 @@
 #include <string>
 #include "Player.h"
 #include "BoardImpl.h"
+#include "PlayerAlgorithm.h"
+//class PlayerAlgorithm;
+class Joker;
 
 #define PLAYER_POSITION_FILE "player%d.rps_board"
 #define PLAYER_MOVE_FILE "player%d.rps_moves"
@@ -27,37 +30,41 @@
 class Game
 {
 private:
-	enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
+	PlayerAlgorithm& mPlayer1Algorithm;
+	PlayerAlgorithm& mPlayer2Algorithm;
+	BoardImpl mGameBoard;
 
-    BoardImpl mGameBoard;
-	Player mPlayers[NUM_OF_PLAYERS];
-	std::string mGameOverMessage = "";
-	Winner mWinner = Winner::None;
-	int mProblematicLineOfPlayer[NUM_OF_PLAYERS] = { -1, -1 };
-	bool isInputFileCannotBeOpened = false;
+	//enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
-	friend class Parser;
-	friend class ParserInitFile;
-	friend class ParserMoveFile;
+	//Player mPlayers[NUM_OF_PLAYERS];
+	//PlayerAlgorithm* mAlgorithms[NUM_OF_PLAYERS];
+	//std::string mGameOverMessage = "";
+	//Winner mWinner = Winner::None;
+	//int mProblematicLineOfPlayer[NUM_OF_PLAYERS] = { -1, -1 };
+	//bool isInputFileCannotBeOpened = false;
 
-	// Handles the parsing and execution of the positioning files,
-	// while setting the winner (and relevant message) if any.
-	// Returns false in case input file is missing or cannot be opened 
-	bool ParseInitFiles();
+	//friend class Parser;
+	//friend class ParserInitFile;
+	//friend class ParserMoveFile;
 
-	// If input file(s) doesn't exist - print usage
-	static void PrintUsageMessage();
+	//// Handles the parsing and execution of the positioning files,
+	//// while setting the winner (and relevant message) if any.
+	//// Returns false in case input file is missing or cannot be opened 
+	//bool ParseInitFiles();
 
-	// When one of the input files (position file or move file) has bad format,
-	// update message and winner.
-	bool SetBadInputFileMessageWithWinner(int loserNum, Winner winner, int lineNum, const char* templateBadFormatMessage);
+	//// If input file(s) doesn't exist - print usage
+	//static void PrintUsageMessage();
 
-	// When both of the position files has bad format,
-	// update message and winner.
-	bool HandleBadPositionFilesMessageWithWinner(int lineNum1, int lineNum2);
+	//// When one of the input files (position file or move file) has bad format,
+	//// update message and winner.
+	//bool SetBadInputFileMessageWithWinner(int loserNum, Winner winner, int lineNum, const char* templateBadFormatMessage);
 
-	// When game is over, prints the relevant output file.
-	void MakeOutputFile();
+	//// When both of the position files has bad format,
+	//// update message and winner.
+	//bool HandleBadPositionFilesMessageWithWinner(int lineNum1, int lineNum2);
+
+	//// When game is over, prints the relevant output file.
+	//void MakeOutputFile();
 
 public:
 	//enum Reason {PLAYER1_FLAGS_CAPTURED, PLAYER2_FLAGS_CAPTURED, 
@@ -66,31 +73,51 @@ public:
 	//	BAD_POS_INPUT_FILE_PLAYER1, BAD_POS_INPUT_FILE_PLAYER2,
 	//	BAD_POS_INPUT_FILES, BAD_MOVE_INPUT_FILE_PLAYER1, BAD_MOVE_INPUT_FILE_PLAYER2, NO_WINNER};
 
-	Game();
+	Game(PlayerAlgorithm& player1Algorithm, PlayerAlgorithm& player2Algorithm) : 
+		mPlayer1Algorithm(player1Algorithm), mPlayer2Algorithm(player2Algorithm) {}
 
 	virtual ~Game() {}
 
-	// Init the Game by positioning the pieces on it's board, 
-	// according to the init files.
-	bool InitGame();
+	// Put a non joker piece in given position.  
+	// Get detailed about positioning from the given tokens, and checks for tokens validity.
+	bool PutNonJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos);
 
-	// Returns the initialization file name of the given player
-	static std::string GetInitializationFileName(int playerNum);
+	// Changes the joker actual type to the one represented by the given character.
+	bool ChangeJokerActualType(Joker* joker, char cJokerRepresantation);
 
-	// Returns the moves file name of the given player
-	static std::string GetMovesFileName(int playerNum);
+	// Initializes the joker with it's owner and actual type represented by the given character.
+	bool InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, Player* owner);
 
-	// Read The move files and play the game by making the moves, each player at a time. 
-	void Play();
+	// Put a joker piece in given position. 
+	// Get detailed about positioning from the given tokens, and checks for tokens validity.
+	bool PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos);
 
-	// Checks whether one of the players wins the game, i.e
-	// captured all the flags of the opponent (one flag in Ex1)
-	Winner CheckGameOverAfterMove();
+	bool PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions);
 
-	// Get the winner object according to loser player's number.
-	Winner GetWinner(int loserNum) const;
+	void RunGame();
 
-	// Get the winner object according to loser player's number.
-	Winner GetWinnerAfterInitBoard();
+	//// Init the Game by positioning the pieces on it's board, 
+	//// according to the init files.
+	//bool InitGame();
+
+	//// TODO: delete
+	//// Returns the initialization file name of the given player
+	//static std::string GetInitializationFileName(int playerNum);
+
+	//// Returns the moves file name of the given player
+	//static std::string GetMovesFileName(int playerNum);
+
+	//// Read The move files and play the game by making the moves, each player at a time. 
+	//void Play();
+
+	//// Checks whether one of the players wins the game, i.e
+	//// captured all the flags of the opponent (one flag in Ex1)
+	//Winner CheckGameOverAfterMove();
+
+	//// Get the winner object according to loser player's number.
+	//Winner GetWinner(int loserNum) const;
+
+	//// Get the winner object according to loser player's number.
+	//Winner GetWinnerAfterInitBoard();
 };
 #endif //ADTO_TARGIL1_GAME_H
