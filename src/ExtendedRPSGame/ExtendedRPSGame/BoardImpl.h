@@ -6,6 +6,9 @@
 #include "Piece.h"
 #include "Board.h"
 #include "PointImpl.h"
+#include <memory>
+
+class Move;
 
 #define BAD_INPUT_MSG "ERROR: The file has bad input. The problem: %s"
 #define MISSING_FILE_MSG "ERROR: The input file is missing. Please input a file to continue"
@@ -67,6 +70,9 @@ public:
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
 	bool MovePiece(const Point& posFrom, const Point& posTo);
+	// Checks if the move is legal. If so, move the piece to the new position.
+	// Maybe requires fight.
+	bool MovePiece(const std::unique_ptr<Move>& move);
 
 	// Get Board in the given position, when axis values start from 1.
 	BoardSquare& GetBoardInPosition(const Point& position);

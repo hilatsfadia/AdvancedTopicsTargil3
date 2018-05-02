@@ -3,13 +3,7 @@
 
 #include "Parser.h"
 
-#define INIT_LINE_TOKENS_COUNT_WITH_JOKER 4
-#define INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER 3
-//#define PIECE_CHAR_TOKEN_WITHOUT_JOKER_NUM 0
-#define X_TOKEN_NUM 1
-#define Y_TOKEN_NUM 2
-#define J_TOKEN_NUM 0
-#define PIECE_CHAR_TOKEN_WITH_JOKER_NUM 3
+// TODO:
 #define JOKER_CHAR_PLAYER_1 'J'
 #define JOKER_CHAR_PLAYER_2 'j'
 
@@ -19,7 +13,7 @@ class ParserInitFile :
 protected:
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	bool processJokerLine(int player, const std::vector<std::string>& tokens, Point* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 	
 	// Process a line tokens. 
 	// Checks for tokens validity.

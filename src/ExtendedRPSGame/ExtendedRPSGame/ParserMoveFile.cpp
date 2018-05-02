@@ -6,15 +6,27 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include "MoveImpl.h"
+
+#define MOVE_LINE_TOKENS_COUNT_WITH_JOKER 8
+#define MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER 4
+#define FROM_X_TOKEN_NUM 0
+#define FROM_Y_TOKEN_NUM 1
+#define TO_X_TOKEN_NUM 2
+#define TO_Y_TOKEN_NUM 3
+#define J_TOKEN_NUM 4
+#define JOKER_X_TOKEN_NUM 5
+#define JOKER_Y_TOKEN_NUM 6
+#define NEW_REP_TOKEN_NUM 7
 
 using std::string;
 using std::vector;
 using std::cout;
 using std::endl;
-//
-//ParserMoveFile::~ParserMoveFile()
-//{
-//}
+
+ParserMoveFile::~ParserMoveFile()
+{
+}
 //
 //bool ParserMoveFile::processLineJokerTokens(Player & player, const std::vector<std::string>& tokens, int lineNum)
 //{
@@ -68,64 +80,65 @@ using std::endl;
 //
 //	return true;
 //}
-//
-//bool ParserMoveFile::ProcessLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum)
-//{
-//	int playerNum = player.GetPlayerNum();
-//
-//	if ((tokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
-//	{
-//		cout << "number of tokens has to be " << MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER
-//			<< " or " << MOVE_LINE_TOKENS_COUNT_WITH_JOKER << endl;
-//		mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-//		return false;
-//	}
-//
-//	PointImpl posFrom;
-//	PointImpl posTo;
-//	if ((!GetPositionFromChars(tokens[FROM_X_TOKEN_NUM], tokens[FROM_Y_TOKEN_NUM], posFrom, playerNum, lineNum)) ||
-//		(!GetPositionFromChars(tokens[TO_X_TOKEN_NUM], tokens[TO_Y_TOKEN_NUM], posTo, playerNum, lineNum)))
-//	{
-//		// Already printed error.
-//		mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-//		return false;
-//	}
-//
-//	if (!mGame->mGameBoard.MovePiece(posFrom, posTo))
-//	{
-//		// Already printed error.
-//		mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-//		return false;
-//	}
-//
-//	if (mGame->CheckGameOverAfterMove() != Game::Winner::None)
-//	{
-//		// The input is ok, no need to print anything.
-//		return false;
-//	}
-//
-//	// If it's a joker line
-//	if (tokens.size() == MOVE_LINE_TOKENS_COUNT_WITH_JOKER)
-//	{
-//		return processLineJokerTokens(player, tokens, lineNum);
-//	}
-//
-//	return true;
-//}
-//
-//bool ParserMoveFile::HandlePlayerMove(Player& player, std::ifstream& playerMoveFileStream, int lineNum)
-//{
-//	std::string line;
-//	std::getline(playerMoveFileStream, line);
-//
-//	if (!ProcessLine(player, line, lineNum, BAD_MOVE_PLAYER))
-//	{
-//		// Already printed error if any.
-//		return false;
-//	}
-//
-//	return true;
-//}
+
+unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum)
+{
+	int playerNum = player.GetPlayerNum();
+
+	if ((tokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
+	{
+		cout << "number of tokens has to be " << MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER
+			<< " or " << MOVE_LINE_TOKENS_COUNT_WITH_JOKER << endl;
+		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
+		// TODO: return false;
+	}
+
+	Point* posFrom = GetPositionFromChars(tokens[FROM_X_TOKEN_NUM], tokens[FROM_Y_TOKEN_NUM], playerNum, lineNum);
+	Point* posTo = GetPositionFromChars(tokens[TO_X_TOKEN_NUM], tokens[TO_Y_TOKEN_NUM], playerNum, lineNum);
+	if (!posFrom || !posTo)
+	{
+		// Already printed error.
+		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
+		// TODO: return false;
+	}
+
+	//// If it's a joker line
+	//if (tokens.size() == MOVE_LINE_TOKENS_COUNT_WITH_JOKER)
+	//{
+	//	return processLineJokerTokens(player, tokens, lineNum);
+	//}
+
+	return std::make_unique<MoveImpl>(posFrom, posTo);
+}
+
+unique_ptr<Move> ParserMoveFile::ParsePlayerMove(Player& player, std::ifstream& playerMoveFileStream, int lineNum)
+{
+	std::string line;
+	std::getline(playerMoveFileStream, line);
+
+	try
+	{
+		vector<string> tokens;
+		GetTokensFromLine(line, tokens);
+
+		// Skip empty lines
+		if (tokens.size() != 0)
+		{
+			return ProcessMoveLineTokens(player, tokens, lineNum);
+		}
+	}
+	//catch (const std::exception&)
+	// Souldn't get here!
+	catch (...)
+	{
+		// Print errors if any?
+		int playerNum = player.GetPlayerNum();
+		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
+		// TODO: return false; // Bad Format
+	}
+
+	return nullptr;
+}
 //
 //void ParserMoveFile::ParseRemainingPlayerMoves(Player & player, std::ifstream & playerMoveFileStream, int lineNum)
 //{
@@ -139,34 +152,6 @@ using std::endl;
 //	}
 //}
 //
-//
-//bool ParserMoveFile::ProcessLine(Player& player, const std::string& line, int lineNum, const char* templateBadFormatMessage)
-//{
-//	try
-//	{
-//		vector<string> tokens;
-//		GetTokensFromLine(line, tokens);
-//
-//		// Skip empty lines
-//		if (tokens.size() != 0)
-//		{
-//			return ProcessLineTokens(player, tokens, lineNum);// Maybe Bad Format
-//																			// Already printed error if any.
-//		}
-//	}
-//	//catch (const std::exception&)
-//	// Souldn't get here!
-//	catch (...)
-//	{
-//		// Print errors if any?
-//		int playerNum = player.GetPlayerNum();
-//		mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, templateBadFormatMessage);
-//		return false; // Bad Format
-//	}
-//
-//	return true;
-//}
-//
 //void ParserMoveFile::ParsePlayersMoveFiles(Player players[], int numOfPlayers, std::vector<std::string>& playerFileNames)
 //{
 //	std::vector<std::ifstream> inFilePlayer;
@@ -178,7 +163,7 @@ using std::endl;
 //		if (!CheckOpenInputFile(inFilePlayer[i], playerFileNames[i]))
 //		{
 //			// Already printed error if any.
-//			mGame->SetBadInputFileMessageWithWinner(i+1, mGame->GetWinner(i+1), 0, BAD_MOVE_PLAYER);
+//			// TODO: mGame->SetBadInputFileMessageWithWinner(i+1, mGame->GetWinner(i+1), 0, BAD_MOVE_PLAYER);
 //			return;
 //		}
 //	}
@@ -194,27 +179,27 @@ using std::endl;
 //		// Checks if players[0] i.e player1, can move. If not, he loses the game.
 //		if (players[0].GetCountOfMovingPieces() == 0)
 //		{
-//			mGame->mGameOverMessage = PIECES_EATEN;
-//			mGame->mWinner = Game::Winner::Player2;
+//			// TODO: mGame->mGameOverMessage = PIECES_EATEN;
+//			// TODO: mGame->mWinner = Game::Winner::Player2;
 //			return;
 //		}
 //
 //		// We can assume that there are 2 players
 //		// Execute player1 move
-//		ifContinuePlay = HandlePlayerMove(players[0], inFilePlayer[0], lineNum);
+//		ifContinuePlay = ParsePlayerMove(players[0], inFilePlayer[0], lineNum);
 //
 //		if (ifContinuePlay)
 //		{
 //			// Checks if players[1] i.e player2, can move. If not, he loses the game.
 //			if (players[1].GetCountOfMovingPieces() == 0)
 //			{
-//				mGame->mGameOverMessage = PIECES_EATEN;
-//				mGame->mWinner = Game::Winner::Player1;
+//				// TODO: mGame->mGameOverMessage = PIECES_EATEN;
+//				// TODO: mGame->mWinner = Game::Winner::Player1;
 //				return;
 //			}
 //
 //			// Execute player2 move
-//			ifContinuePlay = HandlePlayerMove(players[1], inFilePlayer[1], lineNum);
+//			ifContinuePlay = ParsePlayerMove(players[1], inFilePlayer[1], lineNum);
 //		}
 //
 //		if (ifContinuePlay)
@@ -239,7 +224,7 @@ using std::endl;
 //		if (!CheckReadOK(players[i].GetPlayerNum(), inFilePlayer[i], playerFileNames[i], lineNum))
 //		{
 //			// Already printed error if any.
-//			mGame->SetBadInputFileMessageWithWinner(i + 1, mGame->GetWinner(i + 1), lineNum, BAD_MOVE_PLAYER);
+//			// TODO: mGame->SetBadInputFileMessageWithWinner(i + 1, mGame->GetWinner(i + 1), lineNum, BAD_MOVE_PLAYER);
 //			return;
 //		}
 //

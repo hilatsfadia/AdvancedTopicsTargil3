@@ -8,10 +8,11 @@ Player::~Player()
 {
 }
 
-Player::Player()
+Player::Player(PlayerAlgorithm* playerAlgorithm)
 {
 	mPlayerNum = mPlayerCounter;
 	mPlayerCounter++;
+	mPlayerAlgorithm = playerAlgorithm;
 	mCountPieces[PieceFactory::PieceType::Rock] = 0;
 	mCountPieces[PieceFactory::PieceType::Paper] = 0;
 	mCountPieces[PieceFactory::PieceType::Scissors] = 0;

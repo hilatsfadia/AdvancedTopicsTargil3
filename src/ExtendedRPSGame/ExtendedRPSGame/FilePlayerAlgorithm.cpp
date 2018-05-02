@@ -4,8 +4,16 @@
 #include "MoveImpl.h"
 #include "JokerChangeImpl.h"
 #include <cstdio>
+//#include <vector>
+//#include <fstream>
+//#include <iostream>
+//#include "MoveImpl.h"
+#include "ParserMoveFile.h"
 
 using std::string;
+//using std::vector;
+//using std::cout;
+//using std::endl;
 
 // TODO: sprintf
 string FilePlayerAlgorithm::GetPositionsFileName(int playerNum)
@@ -23,7 +31,8 @@ void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 
 unique_ptr<Move> FilePlayerAlgorithm::getMove()
 {
-	// TODO: parse line from move_file
+	ParserMoveFile moveFileParser;
+	//moveFileParser.ParsePlayerMove()
 	return nullptr;
 }
 

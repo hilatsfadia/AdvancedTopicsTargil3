@@ -53,7 +53,7 @@ protected:
 	// relevant message and updates the problematic line number.
 	bool CheckReadOK(int player, std::ifstream& inFile, const std::string& playerfileName, int lineNum);
 
-	bool GetPositionFromChars(const std::string& posy, const std::string& posx, PointImpl& outPos, int playerNum, int lineNum);
+	static Point* GetPositionFromChars(const std::string& posy, const std::string& posx, int playerNum, int lineNum);
 public:
 	Parser(Game* game) : mGame(game) {}
 	Parser() {}

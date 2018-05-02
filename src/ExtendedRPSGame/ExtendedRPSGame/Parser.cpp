@@ -84,18 +84,16 @@ bool Parser::CheckReadOK(int player, std::ifstream& inFile, const std::string& p
 	return true;
 }
 
-bool Parser::GetPositionFromChars(const std::string & posx, const std::string & posy, PointImpl& outPos, int playerNum, int lineNum)
+Point* Parser::GetPositionFromChars(const std::string & posx, const std::string & posy, int playerNum, int lineNum)
 {
 	try
 	{
-		outPos = { stoi(posx), stoi(posy) };
+		return new PointImpl{ stoi(posx), stoi(posy) };
 	}
 	catch (std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		return false;
+		return nullptr;
 	}
-
-	return true;
 }

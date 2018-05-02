@@ -104,6 +104,11 @@ bool BoardImpl::MovePiece(const Point& posFrom, const Point& posTo)
 	return true;
 }
 
+bool BoardImpl::MovePiece(const unique_ptr<Move>& move)
+{
+	return MovePiece(move->getFrom(), move->getTo());
+}
+
 BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(int x, int y){
     return board[y-1][x-1];
 }
@@ -112,7 +117,7 @@ const BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(int x, int y) const
 {
 	return board[y-1][x-1];
 }
-	
+
 BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(const Point& position){
     return GetBoardInPosition(position.getX(), position.getY());
 }

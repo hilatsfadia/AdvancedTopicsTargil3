@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "PieceFactory.h"
+#include "PlayerAlgorithm.h"
 
 #define R 2
 #define P 5
@@ -21,13 +22,16 @@ class Player
 
 	// Max number of pieces of each type that the player can hold.
 	static std::map<PieceFactory::PieceType, int> mMaxCountPieces;
+
 	int mPlayerNum;
 	int mCountMovingPieces = 0;
 	int mCountPoints = 0;
 	int mPositionedAllFlags = false;
 
+	PlayerAlgorithm* mPlayerAlgorithm = nullptr;
+
 public:
-	Player();
+	Player(PlayerAlgorithm* playerAlgorithm);
 	~Player();
 
 	int GetPlayerNum() const { return mPlayerNum; }
@@ -58,6 +62,7 @@ public:
 	void AddToCountMovingPieces(PieceFactory::PieceType pieceType);
 	void RemoveFromCountMovingPieces(PieceFactory::PieceType pieceType);
 
+	PlayerAlgorithm* GetPlayerAlgorithm() { return mPlayerAlgorithm; }
 	//friend bool operator==(const Player& lhs, const Player& rhs);
 	//friend bool operator!=(const Player& lhs, const Player& rhs) { return !(lhs == rhs); }
 };

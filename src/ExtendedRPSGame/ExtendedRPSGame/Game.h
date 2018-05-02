@@ -30,13 +30,13 @@ class Joker;
 class Game
 {
 private:
-	PlayerAlgorithm& mPlayer1Algorithm;
-	PlayerAlgorithm& mPlayer2Algorithm;
+	//PlayerAlgorithm& mPlayer1Algorithm;
+	//PlayerAlgorithm& mPlayer2Algorithm;
 	BoardImpl mGameBoard;
 
 	//enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
-	//Player mPlayers[NUM_OF_PLAYERS];
+	Player* mPlayers[NUM_OF_PLAYERS];
 	//PlayerAlgorithm* mAlgorithms[NUM_OF_PLAYERS];
 	//std::string mGameOverMessage = "";
 	//Winner mWinner = Winner::None;
@@ -73,10 +73,9 @@ public:
 	//	BAD_POS_INPUT_FILE_PLAYER1, BAD_POS_INPUT_FILE_PLAYER2,
 	//	BAD_POS_INPUT_FILES, BAD_MOVE_INPUT_FILE_PLAYER1, BAD_MOVE_INPUT_FILE_PLAYER2, NO_WINNER};
 
-	Game(PlayerAlgorithm& player1Algorithm, PlayerAlgorithm& player2Algorithm) : 
-		mPlayer1Algorithm(player1Algorithm), mPlayer2Algorithm(player2Algorithm) {}
+	Game(PlayerAlgorithm* player1Algorithm, PlayerAlgorithm* player2Algorithm);
 
-	virtual ~Game() {}
+	virtual ~Game();
 
 	// Put a non joker piece in given position.  
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
@@ -93,6 +92,8 @@ public:
 	bool PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos);
 
 	bool PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions);
+
+	bool MakeMove(unique_ptr<Move>& move);
 
 	void RunGame();
 

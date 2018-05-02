@@ -234,6 +234,7 @@ using namespace std;
 ////	cout << stringStream.str() << endl;
 ////}
 //
+// // TODO: fileUsage message
 //void Game::PrintUsageMessage()
 //{
 //	//std::string usageMsg;
@@ -254,6 +255,20 @@ using namespace std;
 //
 //    outFile.close();
 //}
+
+Game::Game(PlayerAlgorithm* player1Algorithm, PlayerAlgorithm* player2Algorithm)
+{
+	mPlayers[0] = new Player(player1Algorithm);
+	mPlayers[1] = new Player(player2Algorithm);
+}
+
+Game::~Game()
+{
+	for (int i = 0; i < NUM_OF_PLAYERS; i++)
+	{
+		delete mPlayers[i];
+	}
+}
 
 bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& piecePos)
 {
@@ -371,24 +386,41 @@ bool Game::PutPlayerPiecesOnBoard(Player & player, std::vector<unique_ptr<PieceP
 	return false;
 }
 
+bool Game::MakeMove(unique_ptr<Move>& move)
+{
+	if (!mGameBoard.MovePiece(move))
+	{
+		// Already printed error.
+		// TODO: SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
+		// TODO: return false;
+	}
+	// TODO: 
+	//if (CheckGameOverAfterMove() != Game::Winner::None)
+	//{
+	//	// The input is ok, no need to print anything.
+	//	// TODO: return false;
+	//}
+
+	return true;
+}
+
 void Game::RunGame()
 {
-	std::vector<unique_ptr<PiecePosition>> player1PiecePositions;
-	mPlayer1Algorithm.getInitialPositions(1, player1PiecePositions);
+	std::vector<unique_ptr<PiecePosition>> playersPiecePositions[NUM_OF_PLAYERS];
 
-	std::vector<unique_ptr<PiecePosition>> player2PiecePositions;
-	mPlayer2Algorithm.getInitialPositions(2, player2PiecePositions);
-
-	Player player1, player2;
-
-	if (!PutPlayerPiecesOnBoard(player1, player1PiecePositions))
+	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		// TODO:
+		mPlayers[i]->GetPlayerAlgorithm()->getInitialPositions(i + 1, playersPiecePositions[i]);
+
+		// TODO: check if player didn't put piece in the same location
 	}
 
-	if (!PutPlayerPiecesOnBoard(player2, player2PiecePositions))
+	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		// TODO:
+		if (!PutPlayerPiecesOnBoard(*mPlayers[i], playersPiecePositions[i]))
+		{
+			// TODO:
+		}
 	}
 
 }
