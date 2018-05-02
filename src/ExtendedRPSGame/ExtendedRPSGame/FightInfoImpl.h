@@ -10,13 +10,14 @@
 class FightInfoImpl : FightInfo{
 private:
     Point* mPos;
-    char mOpponentPiece;
+	// TODO: use NUM_OF_PLAYERS
+    char mPlayersPieces[2];
     int mWinner;
 
 public:
-    FightInfoImpl(Point* position, char opponentPiece, int winner): mPos(position), mOpponentPiece(opponentPiece), mWinner(winner){}
+	FightInfoImpl(Point* position, char player1Piece, char player2Piece, int winner) : mPos(position), mPlayersPieces{ player1Piece, player2Piece }, mWinner(winner) {}
     virtual const Point& getPosition() const override {return *mPos;}
-    virtual char getOpponentPiece() const override {return mOpponentPiece;}// R, P, S, B or F (but NOT J)
+	virtual char getPiece(int player) const { return mPlayersPieces[player - 1]; } // R, P, S, B or F (but NOT J)
     virtual int getWinner() const override {return mWinner;}// 0 - both lost / tie, 1 - player 1 won, 2 - player 2 won
 };
 
