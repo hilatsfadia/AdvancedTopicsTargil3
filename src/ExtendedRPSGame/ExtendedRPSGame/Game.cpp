@@ -270,7 +270,7 @@ Game::~Game()
 	}
 }
 
-bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& piecePos)
+bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
 {
 	Piece* piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
@@ -287,7 +287,7 @@ bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& p
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return mGameBoard.PutPieceOnBoard(piece, piecePos->getPosition());
+	return board.PutPieceOnTempPlayerBoard(piece, piecePos->getPosition());
 }
 
 bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
@@ -328,7 +328,7 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 	return true;
 }
 
-bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos)
+bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
 {
 	Piece* piece = nullptr;
 
@@ -365,21 +365,21 @@ bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piece
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return mGameBoard.PutPieceOnBoard(piece, piecePos->getPosition());
+	return board.PutPieceOnTempPlayerBoard(piece, piecePos->getPosition());
 }
 
-bool Game::PutPlayerPiecesOnBoard(Player & player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions)
+bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)
 {
 	for (std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
 	{
 		// TODO: define
 		if (piecePos->getJokerRep() == '#')
 		{
-			return PutNonJokerOnBoard(player, piecePos);
+			return PutNonJokerOnBoard(player, piecePos, board);
 		}
 		else
 		{
-			return PutJokerOnBoard(player, piecePos);
+			return PutJokerOnBoard(player, piecePos, board);
 		}
 	}
 
@@ -415,12 +415,20 @@ void Game::RunGame()
 		// TODO: check if player didn't put piece in the same location
 	}
 
+	// Puts the pieces on two temp boards, as suggested in class,
+	// in order to avoid missing an illegal case where one player places two weak pieces in
+	// a location of the other player's strong piece.
+	BoardImpl tempPlayersBoards[NUM_OF_PLAYERS];
+
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		if (!PutPlayerPiecesOnBoard(*mPlayers[i], playersPiecePositions[i]))
+		if (!PutPlayerPiecesOnBoard(*mPlayers[i], playersPiecePositions[i], tempPlayersBoards[i]))
 		{
 			// TODO:
 		}
 	}
+
+	// Perform all fights on the initial positions
+	mGameBoard.InitByTempBoards(tempPlayersBoards[0], tempPlayersBoards[1]);
 
 }

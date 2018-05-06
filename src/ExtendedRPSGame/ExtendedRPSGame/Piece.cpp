@@ -10,8 +10,9 @@ Piece* Piece::LoseToPiece(Piece* enemy)
 	{
 	}
 
+	// TODO: delete for move files
 	// As long as you're careful, its okay (not evil) for an object to commit suicide (delete this).
-	delete this;
+	//delete this;
 	return enemy;
 }
 
@@ -41,9 +42,10 @@ Piece* Piece::BothPiecesLosers(Piece* enemy)
 	{
 	}
 
-	delete enemy;
+	// TODO: delete for move files
+	//delete enemy;
 	// As long as you're careful, its okay (not evil) for an object to commit suicide (delete this).
-	delete this;
+	//delete this;
 	return nullptr;
 }
 

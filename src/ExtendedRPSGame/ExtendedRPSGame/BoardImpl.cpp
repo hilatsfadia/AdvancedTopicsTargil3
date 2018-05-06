@@ -11,12 +11,12 @@ BoardImpl::~BoardImpl(){
 		for (int col = 0; col < mColumns; col++)
 		{
 			delete GetBoardInPosition(row, col).GetPiece();
+			//GetBoardInPosition(row, col).ChangeSquarePiece(nullptr);
 		}
 	}
 }
 
-
-bool BoardImpl::PutPieceOnBoard(Piece* piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
+bool BoardImpl::PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
 	if ((piece == nullptr) || !CheckIfValidPosition(pos))
 	{
 		// TODO: ask
@@ -35,16 +35,39 @@ bool BoardImpl::PutPieceOnBoard(Piece* piece, const Point& pos) { // TODO: error
 	else
 	{
 		// Two or more PIECEs (of same player) are positioned on same location
-		if (boardSquare.GetPiece()->GetOwner() == piece->GetOwner())
-		{
-			std::cout << "Two PIECEs of same player are positioned on same location" << std::endl;
-			return false;
-		}
 
-		boardSquare.ChangeSquarePiece(boardSquare.GetPiece()->Fight(piece));
+		//if (boardSquare.GetPiece()->GetOwner() == piece->GetOwner())
+		//{
+		std::cout << "Two PIECEs of same player are positioned on same location" << std::endl;
+		return false;
+		//}
+
+		//boardSquare.ChangeSquarePiece(piece);
 	}
 
 	return true;
+}
+
+void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Board)
+{
+	for (int row = 1; row <= GetRowsNum(); row++)
+	{
+		for (int col = 1; col <= GetColsNum(); col++)
+		{
+			Piece* player1Piece = player1Board.GetBoardInPosition(col, row).GetPiece();
+			Piece* player2Piece = player2Board.GetBoardInPosition(col, row).GetPiece();
+			BoardSquare& boardSquare = this->GetBoardInPosition(col, row);
+
+			if (player1Piece != nullptr)
+			{
+				boardSquare.ChangeSquarePiece(player1Piece->Fight(player2Piece));
+			}
+			else if (player2Piece != nullptr)
+			{
+				boardSquare.ChangeSquarePiece(player2Piece->Fight(player1Piece));
+			}
+		}
+	}
 }
 
 bool BoardImpl::IsMovePieceLegal(const Point& posFrom, const Point& posTo) const

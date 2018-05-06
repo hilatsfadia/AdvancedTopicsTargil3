@@ -79,7 +79,7 @@ public:
 
 	// Put a non joker piece in given position.  
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool PutNonJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos);
+	bool PutNonJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
 
 	// Changes the joker actual type to the one represented by the given character.
 	bool ChangeJokerActualType(Joker* joker, char cJokerRepresantation);
@@ -89,9 +89,9 @@ public:
 
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos);
+	bool PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
 
-	bool PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions);
+	bool PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board);
 
 	bool MakeMove(unique_ptr<Move>& move);
 

@@ -60,8 +60,12 @@ public:
 
 	// Tries to the piece in the given position. 
 	// Returns true if the piece can be put in the position.
-	// Maybe requires fight.
-	bool PutPieceOnBoard(Piece* piece, const Point& pos);
+	// TODO: maybe static
+	bool PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos);
+
+	// Combine the two players' boards to one.
+	// Maybe require fights.
+	void InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Board);
 
 	// Return true if positions are valid, and that the move is only
 	// to adjacent position vertically or horizontally.
