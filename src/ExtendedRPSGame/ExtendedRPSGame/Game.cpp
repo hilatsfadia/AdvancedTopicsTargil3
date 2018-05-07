@@ -367,9 +367,8 @@ bool Game::MakeMove(const Player& player, unique_ptr<Move>& move, FightInfo* toF
 	return true;
 }
 
-void Game::RunGame()
+bool Game::HandlePositioning()
 {
-	// ********************************Positioning********************************
 	std::vector<unique_ptr<PiecePosition>> playersPiecePositions[NUM_OF_PLAYERS];
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
@@ -389,6 +388,7 @@ void Game::RunGame()
 		if (!PutPlayerPiecesOnBoard(*mPlayers[i], playersPiecePositions[i], tempPlayersBoards[i]))
 		{
 			// TODO:
+			return false;
 		}
 	}
 
@@ -402,7 +402,11 @@ void Game::RunGame()
 		mPlayers[i]->GetPlayerAlgorithm()->notifyOnInitialBoard(mGameBoard, fights);
 	}
 
-	// ********************************Moves********************************
+	return true;
+}
+
+bool Game::HandleMoves()
+{
 	int countTurnes = 0;
 
 	while (countTurnes < MAX_TURNS)
@@ -419,7 +423,7 @@ void Game::RunGame()
 			{
 				// TODO: mGame->mGameOverMessage = PIECES_EATEN;
 				// TODO: mGame->mWinner = Game::Winner::Player2;
-				return;
+				return false;
 			}
 
 			if (!MakeMove(*mPlayers[i], currMove, toFill))
@@ -452,6 +456,14 @@ void Game::RunGame()
 		countTurnes++;
 	}
 
-	// TODO: tie
+	return true;
+}
 
+void Game::RunGame()
+{
+	HandlePositioning();
+
+	HandleMoves();
+
+	// TODO: tie
 }

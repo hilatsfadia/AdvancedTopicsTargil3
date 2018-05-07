@@ -93,6 +93,10 @@ public:
 
 	bool MakeMove(const Player& player, unique_ptr<Move>& move, FightInfo* toFill);
 
+	bool HandlePositioning();
+
+	bool HandleMoves();
+
 	void RunGame();
 
 	//// Init the Game by positioning the pieces on it's board, 
