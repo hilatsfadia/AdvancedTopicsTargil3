@@ -34,10 +34,6 @@ protected:
 	// ignoring extra white spaces.
 	void GetTokensFromLine(const std::string& line, std::vector<std::string>& outTokens);
 
-	// Returns true if and only if the file was opened successfully. Otherwise, prints
-	// usage message and updates the problematic line number.
-	bool CheckOpenInputFile(const std::ifstream& inFile, const std::string& inFileName);
-
 	// Process the line tokens according to the information of what kind of file it is.
 	// Checks for tokens validity.
 	// Execute the line.
@@ -61,6 +57,10 @@ public:
 
 	//splits string s to a vector
 	static void Split(const std::string& s, char delim, std::vector<std::string>& outElems);
+
+	// Returns true if and only if the file was opened successfully. Otherwise, prints
+	// usage message and updates the problematic line number.
+	static bool CheckOpenInputFile(const std::ifstream& inFile, const std::string& inFileName);
 };
 
 #endif //ADTO_TARGIL1_PARSER_H

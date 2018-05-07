@@ -27,6 +27,7 @@ using std::endl;
 ParserMoveFile::~ParserMoveFile()
 {
 }
+
 //
 //bool ParserMoveFile::processLineJokerTokens(Player & player, const std::vector<std::string>& tokens, int lineNum)
 //{
@@ -81,10 +82,8 @@ ParserMoveFile::~ParserMoveFile()
 //	return true;
 //}
 
-unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum)
+unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum)
 {
-	int playerNum = player.GetPlayerNum();
-
 	if ((tokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
 	{
 		cout << "number of tokens has to be " << MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER
@@ -111,7 +110,7 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(Player& player, const std
 	return std::make_unique<MoveImpl>(posFrom, posTo);
 }
 
-unique_ptr<Move> ParserMoveFile::ParsePlayerMove(Player& player, std::ifstream& playerMoveFileStream, int lineNum)
+unique_ptr<Move> ParserMoveFile::ParsePlayerMove(int playerNum, std::ifstream& playerMoveFileStream, int lineNum)
 {
 	std::string line;
 	std::getline(playerMoveFileStream, line);
@@ -124,7 +123,7 @@ unique_ptr<Move> ParserMoveFile::ParsePlayerMove(Player& player, std::ifstream& 
 		// Skip empty lines
 		if (tokens.size() != 0)
 		{
-			return ProcessMoveLineTokens(player, tokens, lineNum);
+			return ProcessMoveLineTokens(playerNum, tokens, lineNum);
 		}
 	}
 	//catch (const std::exception&)
@@ -132,13 +131,13 @@ unique_ptr<Move> ParserMoveFile::ParsePlayerMove(Player& player, std::ifstream& 
 	catch (...)
 	{
 		// Print errors if any?
-		int playerNum = player.GetPlayerNum();
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
 		// TODO: return false; // Bad Format
 	}
 
 	return nullptr;
 }
+
 //
 //void ParserMoveFile::ParseRemainingPlayerMoves(Player & player, std::ifstream & playerMoveFileStream, int lineNum)
 //{
@@ -154,20 +153,6 @@ unique_ptr<Move> ParserMoveFile::ParsePlayerMove(Player& player, std::ifstream& 
 //
 //void ParserMoveFile::ParsePlayersMoveFiles(Player players[], int numOfPlayers, std::vector<std::string>& playerFileNames)
 //{
-//	std::vector<std::ifstream> inFilePlayer;
-//	//read file
-//	for (int i = 0; i < numOfPlayers; i++)
-//	{
-//		inFilePlayer.push_back(std::ifstream(playerFileNames[i]));
-//
-//		if (!CheckOpenInputFile(inFilePlayer[i], playerFileNames[i]))
-//		{
-//			// Already printed error if any.
-//			// TODO: mGame->SetBadInputFileMessageWithWinner(i+1, mGame->GetWinner(i+1), 0, BAD_MOVE_PLAYER);
-//			return;
-//		}
-//	}
-//
 //	//otherwise, files exist
 //	bool ifContinuePlay = true;
 //	int lineNum = 1;

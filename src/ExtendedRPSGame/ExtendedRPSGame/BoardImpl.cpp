@@ -80,7 +80,7 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 	}
 }
 
-bool BoardImpl::IsMovePieceLegal(const Point& posFrom, const Point& posTo) const
+bool BoardImpl::IsMovePositionsLegal(const Point& posFrom, const Point& posTo) const
 {
 	if (!CheckIfValidPosition(posFrom) || !CheckIfValidPosition(posTo))
 	{
@@ -97,23 +97,37 @@ bool BoardImpl::IsMovePieceLegal(const Point& posFrom, const Point& posTo) const
 	return isMoveAtMostOneSquareInAxis && (!isMoveInDiagonal);
 }
 
-bool BoardImpl::MovePiece(const Point& posFrom, const Point& posTo)
+bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfo* toFill)
 {
-	if (!IsMovePieceLegal(posFrom, posTo))
+	if (!IsMovePositionsLegal(posFrom, posTo))
 	{
 		std::cout << "The moving is illegal because given positions are illegal." << std::endl;
 		return false;
 	}
 
 	BoardImpl::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
-	BoardImpl::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
+
+	if (boardSquareSource.IsEmpty())
+	{
+		std::cout << "The moving is illegal because the source position is empty." << std::endl;
+		return false;
+	}
+
 	Piece* pieceSource = boardSquareSource.GetPiece();
+
+	if (pieceSource->GetOwner()->GetPlayerNum() != player.GetPlayerNum())
+	{
+		std::cout << "The moving is illegal because the relevant piece is of the other player." << std::endl;
+		return false;
+	}
 
 	if (!pieceSource->isMovingPiece())
 	{
 		std::cout << "The moving is illegal because the relevant piece cannot move." << std::endl;
 		return false;
 	}
+
+	BoardImpl::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
 
 	if (boardSquareDestination.IsEmpty())
 	{
@@ -123,23 +137,29 @@ bool BoardImpl::MovePiece(const Point& posFrom, const Point& posTo)
 	{
 		Piece* pieceDestination = boardSquareDestination.GetPiece();
 
-		// Two or more PIECEs (of same player) are positioned on same location
 		if (pieceSource->GetOwner() == pieceDestination->GetOwner())
 		{
 			std::cout << "The moving is illegal because the destination has a piece of the same player" << std::endl;
 			return false;
 		}
 
-		boardSquareDestination.ChangeSquarePiece(pieceDestination->Fight(pieceSource));
+		// If we got here than there should be a fight.
+		// TODO: refactor (look positioning)
+		Piece* winningPiece = pieceDestination->Fight(pieceSource);
+		int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
+
+		toFill = new FightInfoImpl(&posTo, pieceSource->GetPieceChar(), pieceDestination->GetPieceChar(), winner);
+		boardSquareDestination.ChangeSquarePiece(winningPiece);
 	}
+
 	boardSquareSource.ClearSquare();
 
 	return true;
 }
 
-bool BoardImpl::MovePiece(const unique_ptr<Move>& move)
+bool BoardImpl::MovePiece(const Player& player, const unique_ptr<Move>& move, FightInfo* toFill)
 {
-	return MovePiece(move->getFrom(), move->getTo());
+	return MovePiece(player, move->getFrom(), move->getTo(), toFill);
 }
 
 BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(int x, int y){

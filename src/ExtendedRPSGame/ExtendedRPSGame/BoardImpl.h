@@ -72,14 +72,15 @@ public:
 
 	// Return true if positions are valid, and that the move is only
 	// to adjacent position vertically or horizontally.
-	bool IsMovePieceLegal(const Point& posFrom, const Point& posTo) const;
+	bool IsMovePositionsLegal(const Point& posFrom, const Point& posTo) const;
 
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
-	bool MovePiece(const Point& posFrom, const Point& posTo);
+	bool MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfo* toFill);
+
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
-	bool MovePiece(const std::unique_ptr<Move>& move);
+	bool MovePiece(const Player& player, const std::unique_ptr<Move>& move, FightInfo* toFill);
 
 	// Get Board in the given position, when axis values start from 1.
 	BoardSquare& GetBoardInPosition(const Point& position);

@@ -6,14 +6,20 @@
 #define ADVANCEDTOPICS_MASTER_FILEPLAYERALGORITHM_H
 
 #include "PlayerAlgorithm.h"
-
-#define INPUT_FILE_NAME_MAX_LEN 100
-#define PLAYER_POSITION_FILE "player%d.rps_board"
+#include <fstream>
 
 class FilePlayerAlgorithm : public PlayerAlgorithm 
 {
 private:
-	std::string GetPositionsFileName(int playerNum);
+	int mMovesFileLineNum = 0;
+	int mPlayerNum;
+	std::ifstream mMovesFileStream;
+
+	// Returns the initialization file name of the given player
+	static std::string GetPositionsFileName(int playerNum);
+
+	// Returns the moves file name of the given player
+	static std::string GetMovesFileName(int playerNum);
 	//bool ParsePlayerInitFile(Player& player, const std::string & playerInputfileName);
 public:
 	// Returns the initialization file name of the given player

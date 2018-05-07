@@ -15,7 +15,7 @@ protected:
 	// Process a line tokens. 
 	// Checks for tokens validity.
 	// Execute the line.
-	unique_ptr<Move> ProcessMoveLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum);
+	unique_ptr<Move> ProcessMoveLineTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum);
 
 	// In case Moves file is done (all lines were used) and the
 	// opponent still have moves : the opponent (given player parameter) will still
@@ -30,7 +30,7 @@ public:
 	~ParserMoveFile();
 
 	// Plays a the current line move of the given player.
-	unique_ptr<Move> ParsePlayerMove(Player& player, std::ifstream& playerMoveFileStream, int lineNum);
+	unique_ptr<Move> ParsePlayerMove(int playerNum, std::ifstream& playerMoveFileStream, int lineNum);
 
 	// Handles the parsing of the moves files of the players. 
 	// Each one executes a move in his turn.

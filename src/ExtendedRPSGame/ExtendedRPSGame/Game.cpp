@@ -11,6 +11,9 @@
 #include "Player.h"
 #include "Joker.h"
 
+//#define MAX_MOVES 100
+#define MAX_TURNS 50
+
 using namespace std;
 //
 //Game::Game()
@@ -204,21 +207,6 @@ using namespace std;
 //	return mWinner;
 //}
 //
-//// TODO: sprintf
-//string Game::GetInitializationFileName(int playerNum)
-//{
-//	char fileName[INPUT_FILE_NAME_MAX_LEN];
-//	sprintf_s(fileName, PLAYER_POSITION_FILE, playerNum);
-//	return fileName;
-//}
-//
-//string Game::GetMovesFileName(int playerNum)
-//{
-//	char fileName[INPUT_FILE_NAME_MAX_LEN];
-//	sprintf_s(fileName, PLAYER_MOVE_FILE, playerNum);
-//	return fileName;
-//}
-//
 ////void Game::PrintUsageMessage()
 ////{
 ////	std::ostringstream stringStream;
@@ -361,13 +349,13 @@ bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePo
 	return false;
 }
 
-bool Game::MakeMove(unique_ptr<Move>& move)
+bool Game::MakeMove(const Player& player, unique_ptr<Move>& move, FightInfo* toFill)
 {
-	if (!mGameBoard.MovePiece(move))
+	if (!mGameBoard.MovePiece(player, move, toFill))
 	{
 		// Already printed error.
 		// TODO: SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		// TODO: return false;
+		return false;
 	}
 	// TODO: 
 	//if (CheckGameOverAfterMove() != Game::Winner::None)
@@ -381,6 +369,7 @@ bool Game::MakeMove(unique_ptr<Move>& move)
 
 void Game::RunGame()
 {
+	// ********************************Positioning********************************
 	std::vector<unique_ptr<PiecePosition>> playersPiecePositions[NUM_OF_PLAYERS];
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
@@ -412,5 +401,57 @@ void Game::RunGame()
 	{
 		mPlayers[i]->GetPlayerAlgorithm()->notifyOnInitialBoard(mGameBoard, fights);
 	}
+
+	// ********************************Moves********************************
+	int countTurnes = 0;
+
+	while (countTurnes < MAX_TURNS)
+	{
+		for (int i = 0; i < NUM_OF_PLAYERS; i++)
+		{
+			// For this player
+			unique_ptr<Move> currMove = mPlayers[i]->GetPlayerAlgorithm()->getMove();
+
+			FightInfo* toFill = nullptr;
+
+			// Checks if mPlayers[i] i.e player(i+1), can move. If not, he loses the game.
+			if (mPlayers[i]->GetCountOfMovingPieces() == 0)
+			{
+				// TODO: mGame->mGameOverMessage = PIECES_EATEN;
+				// TODO: mGame->mWinner = Game::Winner::Player2;
+				return;
+			}
+
+			if (!MakeMove(*mPlayers[i], currMove, toFill))
+			{
+				// TODO:
+			}
+
+			// Notify only of there was a fight
+			if (toFill != nullptr)
+			{
+				mPlayers[i]->GetPlayerAlgorithm()->notifyFightResult(*toFill);
+			}
+
+			unique_ptr<JokerChange> currJokerChange = mPlayers[i]->GetPlayerAlgorithm()->getJokerChange();
+
+			// TODO: change joker
+
+
+			// For the other player.
+			// Note that if this player index is 1 than the other player index is 0 and vice versa.
+			mPlayers[1 - i]->GetPlayerAlgorithm()->notifyOnOpponentMove(*currMove.get());
+
+			// Notify only of there was a fight
+			if (toFill != nullptr)
+			{
+				mPlayers[1 - i]->GetPlayerAlgorithm()->notifyFightResult(*toFill);
+			}
+		}
+
+		countTurnes++;
+	}
+
+	// TODO: tie
 
 }

@@ -11,8 +11,6 @@
 //class PlayerAlgorithm;
 class Joker;
 
-#define PLAYER_POSITION_FILE "player%d.rps_board"
-#define PLAYER_MOVE_FILE "player%d.rps_moves"
 #define OUTPUT_FILE_NAME "rps.output"
 #define NUM_OF_PLAYERS 2
 #define FLAGS_CAPTURED "All flags of the opponent are captured"
@@ -93,20 +91,13 @@ public:
 
 	bool PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board);
 
-	bool MakeMove(unique_ptr<Move>& move);
+	bool MakeMove(const Player& player, unique_ptr<Move>& move, FightInfo* toFill);
 
 	void RunGame();
 
 	//// Init the Game by positioning the pieces on it's board, 
 	//// according to the init files.
 	//bool InitGame();
-
-	//// TODO: delete
-	//// Returns the initialization file name of the given player
-	//static std::string GetInitializationFileName(int playerNum);
-
-	//// Returns the moves file name of the given player
-	//static std::string GetMovesFileName(int playerNum);
 
 	//// Read The move files and play the game by making the moves, each player at a time. 
 	//void Play();
