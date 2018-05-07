@@ -21,6 +21,7 @@ private:
 	// Returns the moves file name of the given player
 	static std::string GetMovesFileName(int playerNum);
 	//bool ParsePlayerInitFile(Player& player, const std::string & playerInputfileName);
+
 public:
 	// Returns the initialization file name of the given player
     virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;

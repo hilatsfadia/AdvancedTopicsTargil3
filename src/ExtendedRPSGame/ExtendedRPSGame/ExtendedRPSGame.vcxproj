@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AutoPlayerAlgorithm.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardImpl.h" />
     <ClInclude Include="Bomb.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AutoPlayerAlgorithm.cpp" />
     <ClCompile Include="BoardImpl.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="FightInfoImpl.cpp" />
