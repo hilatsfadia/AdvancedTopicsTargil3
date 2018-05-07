@@ -2,6 +2,9 @@
 #define ADTO_TARGIL1_PAPER_H
 
 #include "Piece.h"
+
+#define PAPER_CHAR 'P'
+
 class Paper :
 	public Piece
 {
@@ -12,12 +15,14 @@ protected:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
-	Paper(char pieceChar, Player* owner = nullptr) : Piece(pieceChar, owner) {}
+	Paper(Player* owner = nullptr) : Piece(owner) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Paper; }
 
 	bool isMovingPiece() const override { return true; }
+
+	char GetPieceChar() const override { return PAPER_CHAR; }
 };
 
 #endif //ADTO_TARGIL1_PAPER_H

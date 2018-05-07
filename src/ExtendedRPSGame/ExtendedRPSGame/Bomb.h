@@ -3,6 +3,8 @@
 
 #include "Piece.h"
 
+#define BOMB_CHAR 'B'
+
 class Bomb :
 	public Piece
 {
@@ -14,12 +16,14 @@ protected:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
-	Bomb(char pieceChar, Player* owner = nullptr) : Piece(pieceChar, owner) {}
+	Bomb(Player* owner = nullptr) : Piece(owner) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Bomb; }
 
 	bool isMovingPiece() const override { return false; }
+
+	char GetPieceChar() const override { return BOMB_CHAR; }
 };
 
 #endif //ADTO_TARGIL1_BOMB_H

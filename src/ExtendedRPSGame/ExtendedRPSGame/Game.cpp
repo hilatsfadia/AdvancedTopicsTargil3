@@ -292,14 +292,12 @@ bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& p
 
 bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 {
-	Piece* actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation);
+	Piece* actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
 	if (actualPiece == nullptr)
 	{
 		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
 		return false;
 	}
-
-	actualPiece->SetTransparentOwner(joker->GetOwner());
 
 	// If not a valid PIECE for a Joker
 	if (!joker->SetActualPieceType(actualPiece))
@@ -330,32 +328,9 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 
 bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
 {
-	Piece* piece = nullptr;
-
 	// actualPiece shouldn't have an owner! because we don't want to 
 	// count it as one of the player's pieces.
-	if (player.GetPlayerNum() == 1)
-	{
-		piece = PieceFactory::GetJokerPieceFromChar(JOKER_CHAR_PLAYER_1);
-	}
-	else
-	{
-		piece = PieceFactory::GetJokerPieceFromChar(JOKER_CHAR_PLAYER_2);
-	}
-
-	if (piece == nullptr)
-	{
-		// Shouldn't happen
-		return false;
-	}
-
-	Joker* joker = dynamic_cast<Joker*>(piece);
-	//if (!joker)
-	if (joker == nullptr)
-	{
-		// Shouldn't happen
-		return false;
-	}
+	Joker* joker = new Joker();
 
 	if (!InitJokerOwnerAndActualType(joker, piecePos->getJokerRep(), &player))
 	{
@@ -365,7 +340,7 @@ bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piece
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(piece, piecePos->getPosition());
+	return board.PutPieceOnTempPlayerBoard(joker, piecePos->getPosition());
 }
 
 bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)
@@ -428,7 +403,14 @@ void Game::RunGame()
 		}
 	}
 
+	std::vector<unique_ptr<FightInfo>> fights;
+
 	// Perform all fights on the initial positions
-	mGameBoard.InitByTempBoards(tempPlayersBoards[0], tempPlayersBoards[1]);
+	mGameBoard.InitByTempBoards(tempPlayersBoards[0], tempPlayersBoards[1], fights);
+
+	for (int i = 0; i < NUM_OF_PLAYERS; i++)
+	{
+		mPlayers[i]->GetPlayerAlgorithm()->notifyOnInitialBoard(mGameBoard, fights);
+	}
 
 }

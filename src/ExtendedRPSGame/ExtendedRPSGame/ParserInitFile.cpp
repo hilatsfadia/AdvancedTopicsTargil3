@@ -28,7 +28,7 @@ bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>
 {
 	//Piece* piece = nullptr;
 
-	if (tokens[J_TOKEN_NUM][0] != JOKER_CHAR_PLAYER_1)
+	if (tokens[J_TOKEN_NUM][0] != JOKER_CHAR)
 	{
 		cout << "First char of joker must be 'J'. " << endl;
 		return false;
@@ -40,14 +40,7 @@ bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>
 		return false;
 	}
 
-	if (player == 1)
-	{
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PiecePositionImpl(pos, JOKER_CHAR_PLAYER_1, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0])));
-	}
-	else
-	{
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PiecePositionImpl(pos, JOKER_CHAR_PLAYER_2, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0])));
-	}
+	vectorToFill.push_back(std::make_unique<PiecePositionImpl>(pos, JOKER_CHAR, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0]));
 
 	return true;
 }
@@ -78,7 +71,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 	if (tokens.size() == INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER)
 	{
 		//return processNonJokerLine(player, tokens, pos, vectorToFill);
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PiecePositionImpl(pos, tokens[0][0])));
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(pos, tokens[0][0]));
 	}
 	else
 	{

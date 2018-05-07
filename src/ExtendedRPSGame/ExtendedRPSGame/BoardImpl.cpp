@@ -3,6 +3,7 @@
 #include <cctype>
 #include <iostream>
 #include "Player.h"
+#include "FightInfoImpl.h"
 
 BoardImpl::~BoardImpl(){
     // free pieces on heap
@@ -48,7 +49,7 @@ bool BoardImpl::PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos) { // T
 	return true;
 }
 
-void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Board)
+void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Board, std::vector<unique_ptr<FightInfo>>& vectorToFill)
 {
 	for (int row = 1; row <= GetRowsNum(); row++)
 	{
@@ -58,13 +59,22 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 			Piece* player2Piece = player2Board.GetBoardInPosition(col, row).GetPiece();
 			BoardSquare& boardSquare = this->GetBoardInPosition(col, row);
 
-			if (player1Piece != nullptr)
+			if ((player1Piece != nullptr) && (player2Piece != nullptr))
 			{
-				boardSquare.ChangeSquarePiece(player1Piece->Fight(player2Piece));
+				Piece* winningPiece = player1Piece->Fight(player2Piece);
+				PointImpl* pos = new PointImpl(col, row);
+
+				int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
+				vectorToFill.push_back(std::make_unique<FightInfoImpl>(pos, player1Piece->GetPieceChar(), player2Piece->GetPieceChar(), winner));
+				boardSquare.ChangeSquarePiece(winningPiece);
+			}
+			else if (player1Piece != nullptr)
+			{
+				boardSquare.ChangeSquarePiece(player1Piece);
 			}
 			else if (player2Piece != nullptr)
 			{
-				boardSquare.ChangeSquarePiece(player2Piece->Fight(player1Piece));
+				boardSquare.ChangeSquarePiece(player2Piece);
 			}
 		}
 	}

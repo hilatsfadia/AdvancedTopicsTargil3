@@ -3,10 +3,6 @@
 
 #include "Parser.h"
 
-// TODO:
-#define JOKER_CHAR_PLAYER_1 'J'
-#define JOKER_CHAR_PLAYER_2 'j'
-
 class ParserInitFile :
 	public Parser
 {

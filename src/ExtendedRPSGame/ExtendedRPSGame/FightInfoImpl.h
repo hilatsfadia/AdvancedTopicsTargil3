@@ -7,7 +7,7 @@
 
 #include "FightInfo.h"
 
-class FightInfoImpl : FightInfo{
+class FightInfoImpl : public FightInfo{
 private:
     Point* mPos;
 	// TODO: use NUM_OF_PLAYERS

@@ -2,6 +2,9 @@
 #define ADTO_TARGIL1_JOKER_PIECE_H
 
 #include "Piece.h"
+
+#define JOKER_CHAR 'J'
+
 class Joker :
 	public Piece
 {
@@ -20,7 +23,7 @@ protected:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
-	Joker(char pieceChar, Player* owner = nullptr) : Piece(pieceChar, owner) {}
+	Joker(Player* owner = nullptr) : Piece(owner) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Joker; }
@@ -31,6 +34,8 @@ public:
 	bool SetActualPieceType(Piece* newPiece);
 
 	bool isMovingPiece() const override { return mActualPiece->isMovingPiece(); }
+
+	char GetPieceChar() const override { return JOKER_CHAR; }
 };
 
 #endif //ADTO_TARGIL1_JOKER_PIECE_H

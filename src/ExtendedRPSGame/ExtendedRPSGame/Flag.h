@@ -3,6 +3,8 @@
 
 #include "Piece.h"
 
+#define FLAG_CHAR 'F'
+
 class Flag :
 	public Piece
 {
@@ -13,12 +15,14 @@ protected:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
-	Flag(char pieceChar, Player* owner = nullptr) : Piece(pieceChar, owner) {}
+	Flag(Player* owner = nullptr) : Piece(owner) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Flag; }
 
 	bool isMovingPiece() const override { return false; }
+
+	char GetPieceChar() const override { return FLAG_CHAR; }
 };
 
 #endif //ADTO_TARGIL1_FLAG_H

@@ -58,25 +58,9 @@ bool Piece::InitializeOwner(Player* owner)
 		return false;
 	}
 
-	SetTransparentOwner(owner);
-
-	return true;
-}
-
-void Piece::SetTransparentOwner(Player * owner)
-{
 	mOwner = owner;
 
-	//Player 1: all chars as capital letters
-	//Player 2: all chars as lower letters
-	if (owner->GetPlayerNum() == 1)
-	{
-		mPieceChar = toupper(mPieceChar);
-	}
-	else if (owner->GetPlayerNum() == 2)
-	{
-		mPieceChar = tolower(mPieceChar);
-	}
+	return true;
 }
 
 Piece* Piece::FightPieceOfTheSameType(Piece* enemy)

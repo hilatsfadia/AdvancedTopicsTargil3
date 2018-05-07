@@ -6,6 +6,7 @@
 #include "Piece.h"
 #include "Board.h"
 #include "PointImpl.h"
+#include "FightInfo.h"
 #include <memory>
 
 class Move;
@@ -21,6 +22,8 @@ class Move;
 
 #define M 10
 #define N 10
+
+using std::unique_ptr;
 
 class BoardImpl : public Board {
 private:
@@ -65,7 +68,7 @@ public:
 
 	// Combine the two players' boards to one.
 	// Maybe require fights.
-	void InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Board);
+	void InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Board, std::vector<unique_ptr<FightInfo>>& vectorToFill);
 
 	// Return true if positions are valid, and that the move is only
 	// to adjacent position vertically or horizontally.

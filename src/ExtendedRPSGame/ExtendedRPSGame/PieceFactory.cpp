@@ -6,36 +6,36 @@
 #include "Bomb.h"
 #include "Joker.h"
 #include "Flag.h"
+#include "Player.h"
 
-Piece* PieceFactory::GetPieceFromChar(char pieceChar)
+Piece* PieceFactory::GetPieceFromChar(char pieceChar, Player* owner)
 {
-	char charUpper = toupper(pieceChar);
 	Piece* toReturn = nullptr;
 
-	switch (charUpper)
+	switch (pieceChar)
 	{
-		case ROCK_UPPER_CASE_CHAR: {
-			toReturn = new Rock(pieceChar);
+		case ROCK_CHAR: {
+			toReturn = new Rock(owner);
 			break;
 		}
-		case PAPER_UPPER_CASE_CHAR: {
-			toReturn = new Paper(pieceChar);
+		case PAPER_CHAR: {
+			toReturn = new Paper(owner);
 			break;
 		}
-		case SCISSORS_UPPER_CASE_CHAR: {
-			toReturn = new Scissors(pieceChar);
+		case SCISSORS_CHAR: {
+			toReturn = new Scissors(owner);
 			break;
 		}
-		case BOMB_UPPER_CASE_CHAR: {
-			toReturn = new Bomb(pieceChar);
+		case BOMB_CHAR: {
+			toReturn = new Bomb(owner);
 			break;
 		}
 		//case JOKER_UPPER_CASE_CHAR: {
 		//	toReturn = new Joker(pieceChar);
 		//	break;
 		//}
-		case FLAG_UPPER_CASE_CHAR: {
-			toReturn = new Flag(pieceChar);
+		case FLAG_CHAR: {
+			toReturn = new Flag(owner);
 			break;
 		}
 		default:
@@ -48,12 +48,3 @@ Piece* PieceFactory::GetPieceFromChar(char pieceChar)
 	return toReturn;
 }
 
-Piece * PieceFactory::GetJokerPieceFromChar(char jokerPieceChar)
-{
-	if (toupper(jokerPieceChar) != JOKER_UPPER_CASE_CHAR)
-	{
-		return nullptr;
-	}
-
-	return new Joker(jokerPieceChar);
-}

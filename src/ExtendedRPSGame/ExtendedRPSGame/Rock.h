@@ -2,6 +2,9 @@
 #define ADTO_TARGIL1_ROCK_H
 
 #include "Piece.h"
+
+#define ROCK_CHAR 'R'
+
 class Rock :
 	public Piece
 {
@@ -12,13 +15,15 @@ protected:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
-	Rock(char pieceChar, Player* owner = nullptr) : Piece(pieceChar, owner) {}
+	Rock(Player* owner = nullptr) : Piece(owner) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Rock; }
 	~Rock();
 
 	bool isMovingPiece() const override { return true; }
+
+	char GetPieceChar() const override { return ROCK_CHAR; }
 };
 
 #endif //ADTO_TARGIL1_ROCK_H
