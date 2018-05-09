@@ -11,14 +11,10 @@
 #include "Player.h"
 #include "Joker.h"
 
-//#define MAX_MOVES 100
-#define MAX_TURNS 50
+#define MAX_MOVES 100
+#define MAX_TURNS MAX_MOVES/2
 
 using namespace std;
-//
-//Game::Game()
-//{
-//}
 
 //bool Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, int lineNum, const char * templateBadFormatMessage)
 //{
@@ -131,24 +127,28 @@ using namespace std;
 //
 //	return true;
 //}
-//
-//Game::Winner Game::CheckGameOverAfterMove(){
-//
-//	if (mPlayers[0].GetFlagsCount() == 0)
-//	{
-//		this->mGameOverMessage = FLAGS_CAPTURED;
-//		mWinner = Winner::Player2;
-//	}
-//	else if (mPlayers[1].GetFlagsCount() == 0)
-//	{
-//		this->mGameOverMessage = FLAGS_CAPTURED;
-//		mWinner = Winner::Player1;
-//	}
-//
-//	// ask: Don't check moving pieces, because it is checked before move?
-//
-//	return mWinner;
-//}
+
+bool Game::ReportGameOverAfterMove()
+{
+	bool isGameOver = true;
+
+	if (mPlayers[0]->GetFlagsCount() == 0)
+	{
+		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
+	}
+	else if (mPlayers[1]->GetFlagsCount() == 0)
+	{
+		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
+	}
+	else
+	{
+		isGameOver = false;
+	}
+
+	return isGameOver;
+
+	// TODO: ask Don't check moving pieces, because it is checked before move?
+}
 //
 //Game::Winner Game::GetWinner(int loserNum) const
 //{
@@ -163,49 +163,50 @@ using namespace std;
 //
 //	return Game::Winner::None;
 //}
-//
-//Game::Winner Game::GetWinnerAfterInitBoard()
-//{
-//	bool noFlagsPlayer1 = (mPlayers[0].GetFlagsCount() == 0);
-//	bool noFlagsPlayer2 = (mPlayers[1].GetFlagsCount() == 0);
-//	bool noMovingPiecesPlayer1 = (mPlayers[0].GetCountOfMovingPieces() == 0);
-//	bool noMovingPiecesPlayer2 = (mPlayers[1].GetCountOfMovingPieces() == 0);
-//
-//	if (noFlagsPlayer1 && noFlagsPlayer2)
-//	{
-//		this->mGameOverMessage = TIE_FLAGS_EATEN;
-//		mWinner = Winner::Tie;
-//	}
-//	else if (noFlagsPlayer1)
-//	{
-//		this->mGameOverMessage = FLAGS_CAPTURED;
-//		mWinner = Winner::Player2;
-//	}
-//	else if (noFlagsPlayer2)
-//	{
-//		this->mGameOverMessage = FLAGS_CAPTURED;
-//		mWinner = Winner::Player1;
-//	}
-//	else if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
-//	{
-//		// ask
-//		//this->mGameOverMessage = TIE_NO_MOVING_PIECES;
-//		this->mGameOverMessage = PIECES_EATEN;
-//		mWinner = Winner::Tie;
-//	}
-//	else if (noMovingPiecesPlayer1)
-//	{
-//		this->mGameOverMessage = PIECES_EATEN;
-//		mWinner = Winner::Player2;
-//	}
-//	else if (noMovingPiecesPlayer2)
-//	{
-//		this->mGameOverMessage = PIECES_EATEN;
-//		mWinner = Winner::Player1;
-//	}
-//
-//	return mWinner;
-//}
+
+bool Game::ReportGameOverAfterInitBoard()
+{
+	bool isGameOver = true;
+	bool noFlagsPlayer1 = (mPlayers[0]->GetFlagsCount() == 0);
+	bool noFlagsPlayer2 = (mPlayers[1]->GetFlagsCount() == 0);
+	bool noMovingPiecesPlayer1 = (mPlayers[0]->GetCountOfMovingPieces() == 0);
+	bool noMovingPiecesPlayer2 = (mPlayers[1]->GetCountOfMovingPieces() == 0);
+
+	if (noFlagsPlayer1 && noFlagsPlayer2)
+	{
+		ReportGameOver(Winner::Tie, TIE_FLAGS_EATEN);
+	}
+	else if (noFlagsPlayer1)
+	{
+		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
+	}
+	else if (noFlagsPlayer2)
+	{
+		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
+	}
+	else if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
+	{
+		// ask
+		//this->mGameOverMessage = TIE_NO_MOVING_PIECES;
+		ReportGameOver(Winner::Tie, PIECES_EATEN);
+	}
+	// TODO: maybe not needed. (already checked).
+	else if (noMovingPiecesPlayer1)
+	{
+		ReportGameOver(Winner::Player2, PIECES_EATEN);
+	}
+	else if (noMovingPiecesPlayer2)
+	{
+		ReportGameOver(Winner::Player1, PIECES_EATEN);
+	}
+	else
+	{
+		isGameOver = false;
+	}
+
+	return isGameOver;
+}
+
 //
 ////void Game::PrintUsageMessage()
 ////{
@@ -231,18 +232,28 @@ using namespace std;
 //		GetInitializationFileName(1) + ", " + GetInitializationFileName(2) + ", " + 
 //		GetMovesFileName(1) + ", " + GetMovesFileName(2) << endl;
 //}
-//
-//void Game::MakeOutputFile()
-//{
-//    ofstream outFile(OUTPUT_FILE_NAME);
-//    outFile << "Winner: " << to_string((int)mWinner) << endl;
-//    outFile << "Reason: " << this->mGameOverMessage << endl;
-//    outFile << endl;
-//
-//	mGameBoard.Print(outFile);
-//
-//    outFile.close();
-//}
+
+void Game::MakeOutputFile(const std::string& gameOverMessage, bool ifToPrintBoard)
+{
+    ofstream outFile(OUTPUT_FILE_NAME);
+    outFile << "Winner: " << to_string((int)mWinner) << endl;
+    outFile << "Reason: " << gameOverMessage << endl;
+    outFile << endl;
+
+	if (ifToPrintBoard)
+	{
+		mGameBoard.Print(outFile);
+	}
+
+    outFile.close();
+}
+
+void Game::ReportGameOver(Winner winner, const std::string & gameOverMessage, bool ifToPrintBoard)
+{
+	mWinner = winner;
+
+	MakeOutputFile(gameOverMessage, ifToPrintBoard);
+}
 
 Game::Game(PlayerAlgorithm* player1Algorithm, PlayerAlgorithm* player2Algorithm)
 {
@@ -349,25 +360,7 @@ bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePo
 	return false;
 }
 
-bool Game::MakeMove(const Player& player, unique_ptr<Move>& move, FightInfo* toFill)
-{
-	if (!mGameBoard.MovePiece(player, move, toFill))
-	{
-		// Already printed error.
-		// TODO: SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		return false;
-	}
-	// TODO: 
-	//if (CheckGameOverAfterMove() != Game::Winner::None)
-	//{
-	//	// The input is ok, no need to print anything.
-	//	// TODO: return false;
-	//}
-
-	return true;
-}
-
-bool Game::HandlePositioning()
+void Game::HandlePositioning()
 {
 	std::vector<unique_ptr<PiecePosition>> playersPiecePositions[NUM_OF_PLAYERS];
 
@@ -388,7 +381,7 @@ bool Game::HandlePositioning()
 		if (!PutPlayerPiecesOnBoard(*mPlayers[i], playersPiecePositions[i], tempPlayersBoards[i]))
 		{
 			// TODO:
-			return false;
+			return;
 		}
 	}
 
@@ -401,15 +394,14 @@ bool Game::HandlePositioning()
 	{
 		mPlayers[i]->GetPlayerAlgorithm()->notifyOnInitialBoard(mGameBoard, fights);
 	}
-
-	return true;
 }
 
-bool Game::HandleMoves()
+void Game::HandleMoves()
 {
-	int countTurnes = 0;
+	// One turn consists of two moves of the two players.
+	int currTurn = 1;
 
-	while (countTurnes < MAX_TURNS)
+	while (currTurn <= MAX_TURNS)
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
@@ -421,14 +413,21 @@ bool Game::HandleMoves()
 			// Checks if mPlayers[i] i.e player(i+1), can move. If not, he loses the game.
 			if (mPlayers[i]->GetCountOfMovingPieces() == 0)
 			{
-				// TODO: mGame->mGameOverMessage = PIECES_EATEN;
-				// TODO: mGame->mWinner = Game::Winner::Player2;
-				return false;
+				ReportGameOver((Winner)mPlayers[i]->GetPlayerNum(), PIECES_EATEN);
+				return;
 			}
 
-			if (!MakeMove(*mPlayers[i], currMove, toFill))
+			if (!mGameBoard.MovePiece(*mPlayers[i], currMove, toFill))
 			{
 				// TODO:
+				//HandleGameOver();
+
+				return;
+			}
+
+			if (ReportGameOverAfterMove())
+			{
+				return;
 			}
 
 			// Notify only of there was a fight
@@ -441,29 +440,32 @@ bool Game::HandleMoves()
 
 			// TODO: change joker
 
-
 			// For the other player.
-			// Note that if this player index is 1 than the other player index is 0 and vice versa.
-			mPlayers[1 - i]->GetPlayerAlgorithm()->notifyOnOpponentMove(*currMove.get());
+			PlayerAlgorithm* opponentAlgorithm = mPlayers[GetOpponentIndex(i)]->GetPlayerAlgorithm();
+			opponentAlgorithm->notifyOnOpponentMove(*currMove.get());
 
 			// Notify only of there was a fight
 			if (toFill != nullptr)
 			{
-				mPlayers[1 - i]->GetPlayerAlgorithm()->notifyFightResult(*toFill);
+				opponentAlgorithm->notifyFightResult(*toFill);
 			}
 		}
 
-		countTurnes++;
+		currTurn++;
 	}
 
-	return true;
+	// TODO: ask reason
+	ReportGameOver(Winner::Tie, "No fight for more than " + to_string(MAX_MOVES) + " moves");
 }
 
 void Game::RunGame()
 {
 	HandlePositioning();
 
-	HandleMoves();
+	if (ReportGameOverAfterInitBoard())
+	{
+		return;
+	}
 
-	// TODO: tie
+	HandleMoves();
 }

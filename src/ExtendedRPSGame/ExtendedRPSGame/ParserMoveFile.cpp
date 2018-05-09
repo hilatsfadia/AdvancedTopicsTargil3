@@ -94,6 +94,7 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(int playerNum, const std:
 
 	Point* posFrom = GetPositionFromChars(tokens[FROM_X_TOKEN_NUM], tokens[FROM_Y_TOKEN_NUM], playerNum, lineNum);
 	Point* posTo = GetPositionFromChars(tokens[TO_X_TOKEN_NUM], tokens[TO_Y_TOKEN_NUM], playerNum, lineNum);
+
 	if (!posFrom || !posTo)
 	{
 		// Already printed error.
