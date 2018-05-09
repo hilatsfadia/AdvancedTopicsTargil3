@@ -7,9 +7,9 @@
 
 BoardImpl::~BoardImpl(){
     // free pieces on heap
-	for (int row = 0; row < mRows; row++)
+	for (int row = 1; row <= mRows; row++)
 	{
-		for (int col = 0; col < mColumns; col++)
+		for (int col = 1; col <= mColumns; col++)
 		{
 			delete GetBoardInPosition(row, col).GetPiece();
 			//GetBoardInPosition(row, col).ChangeSquarePiece(nullptr);
