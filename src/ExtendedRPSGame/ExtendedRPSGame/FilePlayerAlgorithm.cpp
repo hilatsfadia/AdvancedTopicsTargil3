@@ -59,14 +59,12 @@ unique_ptr<Move> FilePlayerAlgorithm::getMove()
 {
 	mMovesFileLineNum++;
 
-	ParserMoveFile moveFileParser;
-	return moveFileParser.ParsePlayerMove(mPlayerNum, mMovesFileStream, mMovesFileLineNum);
+	return mMoveFileParser.ParsePlayerMove(mPlayerNum, mMovesFileStream, mMovesFileLineNum);
 }
 
 unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange()
 {
-	// TODO: parse continuing line from move_file
-	return nullptr;
+	return mMoveFileParser.GetCurrJokerChange();
 }
 
 

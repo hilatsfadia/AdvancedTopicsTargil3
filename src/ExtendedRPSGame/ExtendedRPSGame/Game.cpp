@@ -103,20 +103,20 @@ bool Game::ReportGameOverAfterMove()
 
 	// TODO: ask Don't check moving pieces, because it is checked before move?
 }
-//
-//Game::Winner Game::GetWinner(int loserNum) const
-//{
-//	if (loserNum == 1)
-//	{
-//		return Game::Winner::Player2;
-//	}
-//	else if (loserNum == 2)
-//	{
-//		return Game::Winner::Player1;
-//	}
-//
-//	return Game::Winner::None;
-//}
+
+Game::Winner Game::GetWinner(int loserNum) const
+{
+	if (loserNum == 1)
+	{
+		return Game::Winner::Player2;
+	}
+	else if (loserNum == 2)
+	{
+		return Game::Winner::Player1;
+	}
+
+	return Game::Winner::None;
+}
 
 bool Game::ReportGameOverAfterInitBoard()
 {
@@ -384,6 +384,34 @@ void Game::HandlePositioning()
 	}
 }
 
+bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum)
+{
+	Piece* jokerPiece = mGameBoard.GetBoardInPosition(jokerChange.getJokerChangePosition()).GetPiece();
+	Joker* joker = dynamic_cast<Joker*>(jokerPiece);
+
+	if (joker == nullptr)
+	{
+		cout << "Joker position doesn't have a joker" << endl;
+		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		return false;
+	}
+	// Joker position that doesn't have a Joker owned by this player
+	else if (joker->GetOwner()->GetPlayerNum() != playerNum)
+	{
+		cout << "Joker position doesn't have a joker owned by this player" << endl;
+		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		return false;
+	}
+	else if (!ChangeJokerActualType(joker, jokerChange.getJokerNewRep()))
+	{
+		// Already printed error.
+		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		return false;
+	}
+
+	return true;
+}
+
 void Game::HandleMoves()
 {
 	// One turn consists of two moves of the two players.
@@ -393,11 +421,6 @@ void Game::HandleMoves()
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
-			// For this player
-			unique_ptr<Move> currMove = mPlayers[i]->GetPlayerAlgorithm()->getMove();
-
-			FightInfo* toFill = nullptr;
-
 			// Checks if mPlayers[i] i.e player(i+1), can move. If not, he loses the game.
 			if (mPlayers[i]->GetCountOfMovingPieces() == 0)
 			{
@@ -405,11 +428,15 @@ void Game::HandleMoves()
 				return;
 			}
 
+			// For this player
+			unique_ptr<Move> currMove = mPlayers[i]->GetPlayerAlgorithm()->getMove();
+
+			FightInfo* toFill = nullptr;
+
 			if (!mGameBoard.MovePiece(*mPlayers[i], currMove, toFill))
 			{
 				// TODO:
 				//HandleGameOver();
-
 				return;
 			}
 
@@ -426,7 +453,10 @@ void Game::HandleMoves()
 
 			unique_ptr<JokerChange> currJokerChange = mPlayers[i]->GetPlayerAlgorithm()->getJokerChange();
 
-			// TODO: change joker
+			if (!ChangeJokerRepresentation(*currJokerChange, i + 1))
+			{
+				return;
+			}
 
 			// For the other player.
 			PlayerAlgorithm* opponentAlgorithm = mPlayers[GetOpponentIndex(i)]->GetPlayerAlgorithm();

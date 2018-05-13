@@ -6,6 +6,7 @@
 #define ADVANCEDTOPICS_MASTER_FILEPLAYERALGORITHM_H
 
 #include "PlayerAlgorithm.h"
+#include "ParserMoveFile.h"
 #include <fstream>
 
 class FilePlayerAlgorithm : public PlayerAlgorithm 
@@ -14,6 +15,7 @@ private:
 	int mMovesFileLineNum = 0;
 	int mPlayerNum;
 	std::ifstream mMovesFileStream;
+	ParserMoveFile mMoveFileParser;
 
 	// Returns the initialization file name of the given player
 	static std::string GetPositionsFileName(int playerNum);

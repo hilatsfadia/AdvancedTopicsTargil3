@@ -6,11 +6,14 @@
 class ParserMoveFile :
 	public Parser
 {
+private:
+	unique_ptr<JokerChange> mCurrJokerChange = nullptr;
+	bool mIsHavingJokerChange = false;
 protected:
 	// Process the joker tokens. 
 	// Checks for tokens validity.
 	// Execute the joker representation change.
-	//bool processLineJokerTokens(Player& player, const std::vector<std::string>& tokens, int lineNum);
+	bool processLineJokerTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum);
 
 	// Process a line tokens. 
 	// Checks for tokens validity.
@@ -26,11 +29,12 @@ protected:
 	// Tries to split the line into tokens. 
 	// Calls processLineTokens while skipping empty lines.
 	//unique_ptr<Move> ProcessLine(Player& player, const std::string& line, int lineNum, const char* templateBadFormatMessage);
-public:
-	~ParserMoveFile();
 
+public:
 	// Plays a the current line move of the given player.
 	unique_ptr<Move> ParsePlayerMove(int playerNum, std::ifstream& playerMoveFileStream, int lineNum);
+
+	unique_ptr<JokerChange> GetCurrJokerChange();
 
 	// Handles the parsing of the moves files of the players. 
 	// Each one executes a move in his turn.

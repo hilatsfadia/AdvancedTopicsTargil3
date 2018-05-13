@@ -101,6 +101,12 @@ private:
 	// Play the game by making the players' moves.
 	void HandleMoves();
 
+	// Get the winner object according to loser player's number.
+	Winner GetWinner(int loserNum) const;
+
+	// Change a joker of the given player according to the information in jokerChange.
+	bool ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum);
+
 public:
 	//enum Reason {PLAYER1_FLAGS_CAPTURED, PLAYER2_FLAGS_CAPTURED, 
 	//	PLAYER1_PIECES_EATEN, PLAYER2_PIECES_EATEN,
@@ -120,8 +126,5 @@ public:
 
 	//// Read The move files and play the game by making the moves, each player at a time. 
 	//void Play();
-
-	//// Get the winner object according to loser player's number.
-	//Winner GetWinner(int loserNum) const;
 };
 #endif //ADTO_TARGIL1_GAME_H
