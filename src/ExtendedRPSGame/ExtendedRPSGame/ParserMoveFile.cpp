@@ -51,7 +51,6 @@ bool ParserMoveFile::processLineJokerTokens(int playerNum, const std::vector<std
 	}
 
 	mCurrJokerChange = make_unique<JokerChangeImpl>(posJoker, tokens[NEW_REP_TOKEN_NUM][0]);
-	mIsHavingJokerChange = true;
 
 	return true;
 }
@@ -83,6 +82,12 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(int playerNum, const std:
 		{
 			// TODO:
 		}
+
+		mIsCurrMoveWithJokerChange = true;
+	}
+	else
+	{
+		mIsCurrMoveWithJokerChange = false;
 	}
 
 	return make_unique<MoveImpl>(posFrom, posTo);
@@ -118,7 +123,7 @@ unique_ptr<Move> ParserMoveFile::ParsePlayerMove(int playerNum, std::ifstream& p
 
 unique_ptr<JokerChange> ParserMoveFile::GetCurrJokerChange()
 {
-	if ((mIsHavingJokerChange) && (mCurrJokerChange != nullptr))
+	if ((mIsCurrMoveWithJokerChange) && (mCurrJokerChange != nullptr))
 	{
 		return std::move(mCurrJokerChange);
 	}

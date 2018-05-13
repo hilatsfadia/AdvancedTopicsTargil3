@@ -8,7 +8,7 @@ class ParserMoveFile :
 {
 private:
 	unique_ptr<JokerChange> mCurrJokerChange = nullptr;
-	bool mIsHavingJokerChange = false;
+	bool mIsCurrMoveWithJokerChange = false;
 protected:
 	// Process the joker tokens. 
 	// Checks for tokens validity.
