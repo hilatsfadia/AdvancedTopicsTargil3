@@ -45,17 +45,18 @@ private:
 	//int mProblematicLineOfPlayer[NUM_OF_PLAYERS] = { -1, -1 };
 	//bool isInputFileCannotBeOpened = false;
 
-	//// Handles the parsing and execution of the positioning files,
-	//// while setting the winner (and relevant message) if any.
-	//// Returns false in case input file is missing or cannot be opened 
-	//bool ParseInitFiles();
+	// Handles the parsing and execution of the positioning files,
+	// while setting the winner (and relevant message) if any.
+	// Returns false in case input file is missing or cannot be opened 
+	bool PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions,
+		std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board);
 
 	//// If input file(s) doesn't exist - print usage
 	//static void PrintUsageMessage();
 
-	//// When one of the input files (position file or move file) has bad format,
-	//// update message and winner.
-	//bool SetBadInputFileMessageWithWinner(int loserNum, Winner winner, int lineNum, const char* templateBadFormatMessage);
+	// When one of the input files (position file or move file) has bad format,
+	// update message and winner.
+	void SetBadInputFileMessageWithWinner(int loserNum, Winner winner, const char* templateBadFormatMessage);
 
 	//// When both of the position files has bad format,
 	//// update message and winner.

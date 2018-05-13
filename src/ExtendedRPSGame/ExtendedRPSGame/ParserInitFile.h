@@ -22,9 +22,9 @@ protected:
 	bool ProcessLine(int player, const std::string& line, int lineNum, const char* templateBadFormatMessage, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 
 public:
+	// TODO: maybe delete ctor
 	ParserInitFile(Game* game) : Parser(game) {}
 	ParserInitFile() {}
-	~ParserInitFile();
 
 	// Handles the parsing of the entire positions file of one player.
 	// Returns false if it has a bad format. 

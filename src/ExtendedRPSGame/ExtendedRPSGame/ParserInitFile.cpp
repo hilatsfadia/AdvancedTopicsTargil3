@@ -20,10 +20,6 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-ParserInitFile::~ParserInitFile()
-{
-}
-
 bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, Point* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	//Piece* piece = nullptr;
@@ -140,7 +136,10 @@ bool ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerI
 	}
 
 	// Already printed error if any.
-	isFileOK = CheckReadOK(player, inFile, playerInputfileName, lineNum);
+	if (!CheckReadOK(player, inFile, playerInputfileName, lineNum))
+	{
+		isFileOK = false;
+	}
 
 	inFile.close();
 

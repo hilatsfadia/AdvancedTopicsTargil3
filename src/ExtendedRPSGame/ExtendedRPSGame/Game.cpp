@@ -16,14 +16,6 @@
 
 using namespace std;
 
-//bool Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, int lineNum, const char * templateBadFormatMessage)
-//{
-//	mWinner = winner;
-//	char tmp_game_over_message[MESSAGE_MAX_LEN];
-//	sprintf_s(tmp_game_over_message, templateBadFormatMessage, loserNum, lineNum);
-//	this->mGameOverMessage = tmp_game_over_message;
-//	return false;
-//}
 //
 //bool Game::HandleBadPositionFilesMessageWithWinner(int lineNum1, int lineNum2)
 //{
@@ -32,44 +24,6 @@ using namespace std;
 //	sprintf_s(tmp_game_over_message, BAD_POS_BOTH_PLAYERS, lineNum1, lineNum2);
 //	this->mGameOverMessage = tmp_game_over_message;
 //	return false;
-//}
-//
-//bool Game::ParseInitFiles() {
-//	ParserInitFile initFileParser(this);
-//	//checks that file is illegal, and if not
-//	//gets file and matrix
-//	bool isErrorInPlayerFile[NUM_OF_PLAYERS] = { false, false };
-//
-//	for (int i = 0; i < NUM_OF_PLAYERS; i++)
-//	{
-//		//set the pieces for player i
-//		// TODO: isErrorInPlayerFile[i] = !initFileParser.ParsePlayerInitFile(mPlayers[i], GetInitializationFileName(i + 1));
-//
-//		if (isInputFileCannotBeOpened)
-//		{
-//			return false;
-//		}
-//
-//		isErrorInPlayerFile[i] = (isErrorInPlayerFile[i] ||
-//			(!mPlayers[i].DoesPosiotionedAllFlags())); // Missing Flags - Flags are not positioned according to their number
-//	}
-//
-//	if (isErrorInPlayerFile[0] && isErrorInPlayerFile[1])
-//	{
-//		// Both Positioning files are analyzed at the same stage - so 
-//		// if both are bad the result is 0 (no winner).
-//		HandleBadPositionFilesMessageWithWinner(mProblematicLineOfPlayer[0], mProblematicLineOfPlayer[1]);
-//	}
-//	else if (isErrorInPlayerFile[0] && !isErrorInPlayerFile[1])
-//	{
-//		SetBadInputFileMessageWithWinner(1, Winner::Player2, mProblematicLineOfPlayer[0], BAD_POS_PLAYER);
-//	}
-//	else if (!isErrorInPlayerFile[0] && isErrorInPlayerFile[1])
-//	{
-//		SetBadInputFileMessageWithWinner(2, Winner::Player1, mProblematicLineOfPlayer[0], BAD_POS_PLAYER);
-//	}
-//
-//	return true;
 //}
 //
 //void Game::Play()
@@ -360,6 +314,44 @@ bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePo
 	return false;
 }
 
+void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage)
+{
+	char tmp_game_over_message[MESSAGE_MAX_LEN];
+	sprintf_s(tmp_game_over_message, templateBadFormatMessage, loserNum);
+	ReportGameOver(winner, tmp_game_over_message, false);
+}
+
+bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
+	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board) {
+
+	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(*mPlayers[0], player1PiecePositions, tempPlayer1Board) ||
+		(!mPlayers[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
+
+	bool isErrorInPlayer2Positioning = !PutPlayerPiecesOnBoard(*mPlayers[1], player2PiecePositions, tempPlayer2Board) ||
+		(!mPlayers[1]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
+
+	// Positions invalid.
+
+	// Position for both players are invalid
+	if (isErrorInPlayer1Positioning && isErrorInPlayer2Positioning)
+	{
+		// Positioning for both players are analyzed at the same stage - so 
+		// if both are bad the result is 0 (no winner).
+		ReportGameOver(Winner::Tie, BAD_POS_BOTH_PLAYERS, false);
+	}
+	// Position for one player is invalid
+	else if (isErrorInPlayer1Positioning)
+	{
+		SetBadInputFileMessageWithWinner(1, Winner::Player2, BAD_POS_PLAYER);
+	}
+	else if (isErrorInPlayer2Positioning)
+	{
+		SetBadInputFileMessageWithWinner(2, Winner::Player1, BAD_POS_PLAYER);
+	}
+
+	return true;
+}
+
 void Game::HandlePositioning()
 {
 	std::vector<unique_ptr<PiecePosition>> playersPiecePositions[NUM_OF_PLAYERS];
@@ -367,23 +359,19 @@ void Game::HandlePositioning()
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
 		mPlayers[i]->GetPlayerAlgorithm()->getInitialPositions(i + 1, playersPiecePositions[i]);
-
-		// TODO: check if player didn't put piece in the same location
 	}
 
 	// Puts the pieces on two temp boards, as suggested in class,
 	// in order to avoid missing an illegal case where one player places two weak pieces in
-	// a location of the other player's strong piece.
+	// the same location where the other player has strong piece.
 	BoardImpl tempPlayersBoards[NUM_OF_PLAYERS];
 
-	for (int i = 0; i < NUM_OF_PLAYERS; i++)
+	if (!PutPiecePositionsOnBoard(playersPiecePositions[0], playersPiecePositions[1], tempPlayersBoards[0], tempPlayersBoards[1]))
 	{
-		if (!PutPlayerPiecesOnBoard(*mPlayers[i], playersPiecePositions[i], tempPlayersBoards[i]))
-		{
-			// TODO:
-			return;
-		}
+		return;
 	}
+
+	// TODO: check tie
 
 	std::vector<unique_ptr<FightInfo>> fights;
 
@@ -456,6 +444,7 @@ void Game::HandleMoves()
 
 	// TODO: ask reason
 	ReportGameOver(Winner::Tie, "No fight for more than " + to_string(MAX_MOVES) + " moves");
+
 }
 
 void Game::RunGame()
