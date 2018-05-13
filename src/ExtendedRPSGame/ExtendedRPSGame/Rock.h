@@ -16,6 +16,7 @@ protected:
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
 	Rock(Player* owner = nullptr) : Piece(owner) {}
+	Rock(int ownerNum) : Piece(ownerNum) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Rock; }

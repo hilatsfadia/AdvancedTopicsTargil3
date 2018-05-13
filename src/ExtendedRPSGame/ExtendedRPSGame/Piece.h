@@ -9,6 +9,7 @@ class Piece
 {
 protected:
 	Player* mOwner;
+	int mOwnerNum;
 	
 	//PieceType mPieceType;
 
@@ -24,7 +25,9 @@ protected:
 public:
 	virtual ~Piece() {};
 
-	Piece(Player* owner = nullptr) : mOwner(owner) {}
+	// TODO: maybe remove the owner itself and keep only it's number
+	Piece(Player* owner = nullptr) : mOwner(owner), mOwnerNum(owner->GetPlayerNum()) {}
+	Piece(int ownerNum) : mOwner(nullptr), mOwnerNum(ownerNum) {}
 
 	// Deletes and removes the loser from its owner.
 	// Returns winner.
@@ -45,6 +48,9 @@ public:
 
 	// Gets the owner of this piece
 	Player* GetOwner() const { return mOwner; }
+
+	// Gets the owner number of this piece
+	int GetOwnerNum() { return mOwnerNum; }
 
 	// When a piece wants to move to an occupied location,
 	// the two pieces fight, and at most one of them stays alive.

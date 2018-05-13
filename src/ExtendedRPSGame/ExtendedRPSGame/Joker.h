@@ -24,6 +24,7 @@ protected:
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
 	Joker(Player* owner = nullptr) : Piece(owner) {}
+	Joker(int ownerNum) : Piece(ownerNum) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Joker; }
