@@ -81,28 +81,28 @@ using namespace std;
 //
 //	return true;
 //}
-
-bool Game::ReportGameOverAfterMove()
-{
-	bool isGameOver = true;
-
-	if (mPlayers[0]->GetFlagsCount() == 0)
-	{
-		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
-	}
-	else if (mPlayers[1]->GetFlagsCount() == 0)
-	{
-		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
-	}
-	else
-	{
-		isGameOver = false;
-	}
-
-	return isGameOver;
-
-	// TODO: ask Don't check moving pieces, because it is checked before move?
-}
+//
+//bool Game::ReportGameOverAfterMove()
+//{
+//	bool isGameOver = true;
+//
+//	if (mPlayers[0]->GetFlagsCount() == 0)
+//	{
+//		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
+//	}
+//	else if (mPlayers[1]->GetFlagsCount() == 0)
+//	{
+//		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
+//	}
+//	else
+//	{
+//		isGameOver = false;
+//	}
+//
+//	return isGameOver;
+//
+//	// TODO: ask Don't check moving pieces, because it is checked before move?
+//}
 
 Game::Winner Game::GetWinner(int loserNum) const
 {
@@ -421,10 +421,10 @@ void Game::HandleMoves()
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
-			// Checks if mPlayers[i] i.e player(i+1), can move. If not, he loses the game.
+			// Checks if mPlayers[i] can move. If not, he loses the game.
 			if (mPlayers[i]->GetCountOfMovingPieces() == 0)
 			{
-				ReportGameOver((Winner)mPlayers[i]->GetPlayerNum(), PIECES_EATEN);
+				ReportGameOver((Winner)mPlayers[GetOpponentIndex(i)]->GetPlayerNum(), PIECES_EATEN);
 				return;
 			}
 
@@ -440,8 +440,12 @@ void Game::HandleMoves()
 				return;
 			}
 
-			if (ReportGameOverAfterMove())
+			// Check if it was a winning move which ate the last flag of the oponnent.
+			// If so, the player who just moved wins the game.
+			// Note that the flags number of the current player haven't changed.
+			if (mPlayers[GetOpponentIndex(i)]->GetFlagsCount() == 0)
 			{
+				ReportGameOver((Winner)mPlayers[i]->GetPlayerNum(), FLAGS_CAPTURED);
 				return;
 			}
 
@@ -474,7 +478,6 @@ void Game::HandleMoves()
 
 	// TODO: ask reason
 	ReportGameOver(Winner::Tie, "No fight for more than " + to_string(MAX_MOVES) + " moves");
-
 }
 
 void Game::RunGame()

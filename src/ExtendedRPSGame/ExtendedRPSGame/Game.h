@@ -71,7 +71,7 @@ private:
 
 	// Checks whether one of the players wins the game, i.e
 	// captured all the flags of the opponent (one flag in Ex1)
-	bool ReportGameOverAfterMove();
+	//bool ReportGameOverAfterMove();
 
 	bool IsGameOver() { return mWinner != Game::Winner::None; }
 
