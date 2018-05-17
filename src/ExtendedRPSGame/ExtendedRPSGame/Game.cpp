@@ -417,6 +417,7 @@ void Game::HandleMoves()
 	// One turn consists of two moves of the two players.
 	int currTurn = 1;
 
+	// TODO: split to functions
 	while (currTurn <= MAX_TURNS)
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
@@ -464,7 +465,7 @@ void Game::HandleMoves()
 
 			// For the other player.
 			PlayerAlgorithm* opponentAlgorithm = mPlayers[GetOpponentIndex(i)]->GetPlayerAlgorithm();
-			opponentAlgorithm->notifyOnOpponentMove(*currMove.get());
+			opponentAlgorithm->notifyOnOpponentMove(*currMove);
 
 			// Notify only of there was a fight
 			if (toFill != nullptr)

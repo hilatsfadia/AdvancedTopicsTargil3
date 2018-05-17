@@ -10,7 +10,7 @@ private:
 	PieceFactory() {}
 	~PieceFactory() {}
 public:
-	enum class PieceType { Rock, Paper, Scissors, Bomb, Joker, Flag };
+	enum class PieceType { Rock, Paper, Scissors, Bomb, Joker, Flag, Unknown };
 
 	// Creates a new piece object according to it's given char representation.
 	// Returns the created piece, or nullptr if pieceChar can't represent a piece.
