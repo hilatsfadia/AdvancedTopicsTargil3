@@ -20,7 +20,7 @@ class Joker;
 //ask
 //#define TIE_NO_MOVING_PIECES "A tie - all moving are eaten by both players in the position files"
 #define BAD_POS_PLAYER "Bad Positioning input file for player %d - line %d"
-#define BAD_POS_BOTH_PLAYERS "Bad Moves input file for both players - player 1: line %d, player 2: line %d"
+#define BAD_POS_BOTH_PLAYERS "Bad Positioning input file for both players - player 1: line %d, player 2: line %d"
 #define BAD_MOVE_PLAYER "Bad Moves input file for player %d - line %d"
 #define MESSAGE_MAX_LEN 150
 #define INPUT_FILE_NAME_MAX_LEN 100
