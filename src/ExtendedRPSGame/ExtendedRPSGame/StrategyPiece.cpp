@@ -15,3 +15,8 @@ char StrategyPiece::GetPieceChar() const
 {
 	return ((mUncoveredPiece == nullptr) ? COVERED_CHAR : mUncoveredPiece->GetPieceChar());
 }
+
+void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
+{
+	mUncoveredPiece = PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum);
+}

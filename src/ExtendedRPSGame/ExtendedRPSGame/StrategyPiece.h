@@ -21,14 +21,19 @@ public:
 	PieceFactory::PieceType GetPieceType() const override;
 
 	bool isMovingPiece() const override;
+
 	char GetPieceChar() const override;
 
 	// Uncovers this piece by giving it the actual piece it represents.
 	void UncoverPiece(Piece* uncoveredPiece) { mUncoveredPiece = uncoveredPiece; }
+	void UncoverPiece(char uncoveredPieceChar);
 
+	// Returns true iff this piece is threatened by an enemy piece (one or more)
 	bool GetIsThreatened() { return mIsThreatened; }
 	void SetIsThreatened(bool isThreatend) { mIsThreatened = isThreatend; }
-	bool getIsThreathening() { return mIsThreathening; }
+
+	// Returns true iff this piece is threatening an enemy piece (one or more)
+	bool GetIsThreathening() { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 };
 

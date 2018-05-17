@@ -53,7 +53,8 @@ protected:
 public:
 	Parser(Game* game) : mGame(game) {}
 	Parser() {}
-	~Parser();
+
+	virtual ~Parser() {}
 
 	//splits string s to a vector
 	static void Split(const std::string& s, char delim, std::vector<std::string>& outElems);

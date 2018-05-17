@@ -10,11 +10,6 @@
 
 using namespace std;
 
-Parser::~Parser()
-{
-}
-
-
 void Parser::Split(const std::string& s, char delim, std::vector<std::string>& outElems)
 {
 	std::stringstream strSt(s);
