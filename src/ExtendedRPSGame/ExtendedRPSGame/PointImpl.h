@@ -16,8 +16,12 @@ public:
 public:
     PointImpl() : x(1), y(1) {}
     PointImpl(int x, int y) : x(x), y(y) {}
+
     virtual int getX() const { return this->x; }
     virtual int getY() const { return this->y; }
+
+	// The L1 distance
+	int DistanceInStepsFrom(PointImpl& other);
 };
 
 

@@ -22,7 +22,7 @@ public:
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Rock; }
 	~Rock();
 
-	bool isMovingPiece() const override { return true; }
+	bool GetIsMovingPiece() const override { return true; }
 
 	char GetPieceChar() const override { return ROCK_CHAR; }
 };

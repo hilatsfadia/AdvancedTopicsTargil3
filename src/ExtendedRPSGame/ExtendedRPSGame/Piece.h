@@ -21,7 +21,10 @@ protected:
 	// When a piece wants to move to an occupied location by a piece of other type,
 	// Deletes and removes the loser from its owner.
 	// Returns the winning piece. If there is no winner, returns nullptr.
-	virtual Piece* FightWithOtherPieceType(Piece* enemy) = 0;
+	//virtual Piece* FightWithOtherPieceType(Piece* enemy) = 0;
+	// TODO: look
+	virtual Piece* FightWithOtherPieceType(Piece* enemy) { return nullptr; }
+
 public:
 	virtual ~Piece() {};
 
@@ -60,9 +63,11 @@ public:
 	// Gets this piece type. (Look at PieceFactory::PieceType enum).
 	virtual PieceFactory::PieceType GetPieceType() const = 0;
 
-	virtual bool isMovingPiece() const = 0;
+	virtual bool GetIsMovingPiece() const = 0;
 
 	virtual char GetPieceChar() const = 0;
+	
+	//virtual bool IsStrongerThan(Piece* other) const { return false; };
 
 	// Operator overloading for printing issues.
 	friend std::ostream& operator<<(std::ostream& out, const Piece& piece) {

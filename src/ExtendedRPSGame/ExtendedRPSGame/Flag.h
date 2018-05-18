@@ -21,7 +21,7 @@ public:
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Flag; }
 
-	bool isMovingPiece() const override { return false; }
+	bool GetIsMovingPiece() const override { return false; }
 
 	char GetPieceChar() const override { return FLAG_CHAR; }
 };

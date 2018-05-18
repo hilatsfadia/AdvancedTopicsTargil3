@@ -22,7 +22,7 @@ public:
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Bomb; }
 
-	bool isMovingPiece() const override { return false; }
+	bool GetIsMovingPiece() const override { return false; }
 
 	char GetPieceChar() const override { return BOMB_CHAR; }
 };

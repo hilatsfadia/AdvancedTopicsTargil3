@@ -21,7 +21,7 @@ public:
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Paper; }
 
-	bool isMovingPiece() const override { return true; }
+	bool GetIsMovingPiece() const override { return true; }
 
 	char GetPieceChar() const override { return PAPER_CHAR; }
 };

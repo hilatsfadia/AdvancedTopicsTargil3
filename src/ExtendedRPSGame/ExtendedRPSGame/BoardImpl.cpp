@@ -121,7 +121,7 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 		return false;
 	}
 
-	if (!pieceSource->isMovingPiece())
+	if (!pieceSource->GetIsMovingPiece())
 	{
 		std::cout << "The moving is illegal because the relevant piece cannot move." << std::endl;
 		return false;

@@ -12,6 +12,7 @@ private:
 	Piece* mUncoveredPiece = nullptr;
 	bool mIsThreatened = false;
 	bool mIsThreathening = false;
+	bool mIsMovingPiece = false;
 
 public:
 	StrategyPiece(int ownerNum, Piece* uncoveredPiece = nullptr) : Piece(ownerNum) { mUncoveredPiece = uncoveredPiece; }
@@ -20,12 +21,14 @@ public:
 	// If this piece is still covered, gets PieceType::Unknown.
 	PieceFactory::PieceType GetPieceType() const override;
 
-	bool isMovingPiece() const override;
+	bool GetIsMovingPiece() const override { return mIsMovingPiece; }
 
 	char GetPieceChar() const override;
 
+	void SetIsMovingPiece(bool isMovingPiece) { mIsMovingPiece = isMovingPiece; }
+
 	// Uncovers this piece by giving it the actual piece it represents.
-	void UncoverPiece(Piece* uncoveredPiece) { mUncoveredPiece = uncoveredPiece; }
+	void UncoverPiece(Piece* uncoveredPiece);
 	void UncoverPiece(char uncoveredPieceChar);
 
 	// Returns true iff this piece is threatened by an enemy piece (one or more)

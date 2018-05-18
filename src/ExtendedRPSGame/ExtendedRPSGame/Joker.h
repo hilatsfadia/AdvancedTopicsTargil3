@@ -34,7 +34,7 @@ public:
 	// If so, delete old actual piece and replace it by the given new piece.
 	bool SetActualPieceType(Piece* newPiece);
 
-	bool isMovingPiece() const override { return mActualPiece->isMovingPiece(); }
+	bool GetIsMovingPiece() const override { return mActualPiece->GetIsMovingPiece(); }
 
 	char GetPieceChar() const override { return JOKER_CHAR; }
 };
