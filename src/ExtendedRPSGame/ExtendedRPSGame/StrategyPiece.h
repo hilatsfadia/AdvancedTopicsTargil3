@@ -38,6 +38,8 @@ public:
 	// Returns true iff this piece is threatening an enemy piece (one or more)
 	bool GetIsThreathening() { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
+
+	virtual bool IsStrongerThan(Piece* other) const;
 };
 
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H

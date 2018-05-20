@@ -37,6 +37,8 @@ public:
 	bool GetIsMovingPiece() const override { return mActualPiece->GetIsMovingPiece(); }
 
 	char GetPieceChar() const override { return JOKER_CHAR; }
+
+	virtual bool IsStrongerThan(Piece* other) const { return mActualPiece->IsStrongerThan(other); };
 };
 
 #endif //ADTO_TARGIL1_JOKER_PIECE_H

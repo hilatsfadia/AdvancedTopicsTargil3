@@ -51,6 +51,7 @@ Piece* Piece::BothPiecesLosers(Piece* enemy)
 
 bool Piece::InitializeOwner(Player* owner)
 { 
+	mOwnerNum = owner->GetPlayerNum();
 	PieceFactory::PieceType pieceType = GetPieceType();
 	// A PIECE type appears in file more than its number
 	if (!owner->IncPieceCountInInitialization(pieceType))
@@ -85,4 +86,17 @@ Piece* Piece::Fight(Piece* enemy)
 	}
 
 	return FightWithOtherPieceType(enemy);
+}
+
+// Operator overloading for printing issues.
+std::ostream& operator<<(std::ostream& out, const Piece& piece) {
+	//Player 1: all chars as capital letters
+	//Player 2: all chars as lower letters
+
+	if (piece.GetOwner()->GetPlayerNum() == 2)
+	{
+		return out << static_cast<char>(std::tolower(static_cast<unsigned char>(piece.GetPieceChar())));
+	}
+
+	return out << piece.GetPieceChar();
 }

@@ -51,6 +51,9 @@ private:
 
 		// Get this square piece
 		Piece* GetPiece() { return piece; }
+
+		// Get this square piece
+		const Piece* GetPiece() const { return piece; }
 	};
 
 	const int mRows = N;
@@ -72,7 +75,13 @@ public:
 
 	// Return true if positions are valid, and that the move is only
 	// to adjacent position vertically or horizontally.
-	bool IsMovePositionsLegal(const Point& posFrom, const Point& posTo) const;
+	bool IsLegalMoveDestination(const Point& posFrom, const Point& posTo) const;
+
+	// Returns the piece of the given player in the given location.
+	// If there is no piece of the given player in the given location, returns nullptr.
+	Piece* GetPieceOfPlayer(const Point& position, int playerNum);
+
+	//bool IsJokerChangeLegal(const JokerChange& jokerChange);
 
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
@@ -98,7 +107,7 @@ public:
 	bool CheckIfValidPosition(const Point& position) const;
 
 	// Prints the board to the console.
-	void Print(std::ostream& outFile);
+	void Print(std::ostream& outFile) const;
 
 	// Gets board's rows count
 	int GetRowsNum() const;

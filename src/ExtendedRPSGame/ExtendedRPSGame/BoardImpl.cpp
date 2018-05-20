@@ -4,17 +4,19 @@
 #include <iostream>
 #include "Player.h"
 #include "FightInfoImpl.h"
+#include "JokerChange.h"
 
 BoardImpl::~BoardImpl(){
-    // free pieces on heap
-	for (int row = 1; row <= mRows; row++)
-	{
-		for (int col = 1; col <= mColumns; col++)
-		{
-			delete GetBoardInPosition(row, col).GetPiece();
-			//GetBoardInPosition(row, col).ChangeSquarePiece(nullptr);
-		}
-	}
+	// TODO: using unique ptr
+ //   // free pieces on heap
+	//for (int row = 1; row <= mRows; row++)
+	//{
+	//	for (int col = 1; col <= mColumns; col++)
+	//	{
+	//		delete GetBoardInPosition(row, col).GetPiece();
+	//		//GetBoardInPosition(row, col).ChangeSquarePiece(nullptr);
+	//	}
+	//}
 }
 
 bool BoardImpl::PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
@@ -80,9 +82,9 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 	}
 }
 
-bool BoardImpl::IsMovePositionsLegal(const Point& posFrom, const Point& posTo) const
+bool BoardImpl::IsLegalMoveDestination(const Point& posFrom, const Point& posTo) const
 {
-	if (!CheckIfValidPosition(posFrom) || !CheckIfValidPosition(posTo))
+	if (!CheckIfValidPosition(posTo))
 	{
 		// TODO: ask
 		return false;
@@ -97,27 +99,56 @@ bool BoardImpl::IsMovePositionsLegal(const Point& posFrom, const Point& posTo) c
 	return isMoveAtMostOneSquareInAxis && (!isMoveInDiagonal);
 }
 
-bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfo* toFill)
+Piece* BoardImpl::GetPieceOfPlayer(const Point& position, int playerNum)
 {
-	if (!IsMovePositionsLegal(posFrom, posTo))
+	if (!CheckIfValidPosition(position))
 	{
-		std::cout << "The moving is illegal because given positions are illegal." << std::endl;
-		return false;
+		return nullptr;
 	}
 
-	BoardImpl::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
+	BoardImpl::BoardSquare& boardSquareSource = GetBoardInPosition(position);
 
 	if (boardSquareSource.IsEmpty())
 	{
 		std::cout << "The moving is illegal because the source position is empty." << std::endl;
-		return false;
+		return nullptr;
 	}
 
 	Piece* pieceSource = boardSquareSource.GetPiece();
 
-	if (pieceSource->GetOwner()->GetPlayerNum() != player.GetPlayerNum())
+	// Piece position that doesn't have a piece owned by this player
+	if (pieceSource->GetOwner()->GetPlayerNum() != playerNum)
 	{
-		std::cout << "The moving is illegal because the relevant piece is of the other player." << std::endl;
+		std::cout << "The relevant piece is of the other player." << std::endl;
+		return nullptr;
+	}
+
+	return pieceSource;
+}
+//
+//bool BoardImpl::IsJokerChangeLegal(const JokerChange& jokerChange)
+//{
+//	if (!CheckIfValidPosition(jokerChange.getJokerChangePosition()))
+//	{
+//		return false;
+//	}
+//
+//	return false;
+//}
+
+bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfo* toFill)
+{
+	Piece* pieceSource = GetPieceOfPlayer(posFrom, player.GetPlayerNum());
+
+	if (pieceSource == nullptr)
+	{
+		std::cout << "The moving is illegal because given source position is illegal." << std::endl;
+		return false;
+	}
+
+	if (!IsLegalMoveDestination(posFrom, posTo))
+	{
+		std::cout << "The moving is illegal because given destination position is illegal." << std::endl;
 		return false;
 	}
 
@@ -152,7 +183,7 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 		boardSquareDestination.ChangeSquarePiece(winningPiece);
 	}
 
-	boardSquareSource.ClearSquare();
+	GetBoardInPosition(posFrom).ClearSquare();
 
 	return true;
 }
@@ -186,19 +217,20 @@ bool BoardImpl::CheckIfValidPosition(const Point& position) const
 			(position.getY() <= mRows) && (position.getY() >= 1));
 }
 
-void BoardImpl::Print(std::ostream& outFile)
+void BoardImpl::Print(std::ostream& outFile) const
 {
 	for (int row = 1; row <= GetRowsNum(); row++)
 	{
 		for (int col = 1; col <= GetColsNum(); col++)
 		{
-			Piece* currPiece = GetBoardInPosition(col, row).GetPiece();
+			const Piece* currPiece = GetBoardInPosition(col, row).GetPiece();
 			if (currPiece == nullptr)
 			{
 				outFile << " ";
 			}
 			else
 			{
+				//Piece* temp = GetBoardInPosition(col, row).GetPiece();
 				outFile << *GetBoardInPosition(col, row).GetPiece();
 			}
 		}

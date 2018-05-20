@@ -20,7 +20,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, Point* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	//Piece* piece = nullptr;
 
@@ -36,7 +36,7 @@ bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>
 		return false;
 	}
 
-	vectorToFill.push_back(std::make_unique<PiecePositionImpl>(pos, JOKER_CHAR, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0]));
+	vectorToFill.push_back(std::make_unique<PiecePositionImpl>(*pos, JOKER_CHAR, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0]));
 
 	return true;
 }
@@ -50,7 +50,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 		return false;
 	}
 
-	Point* pos = GetPositionFromChars(tokens[X_TOKEN_NUM], tokens[Y_TOKEN_NUM], playerNum, lineNum);
+	PointImpl* pos = GetPositionFromChars(tokens[X_TOKEN_NUM], tokens[Y_TOKEN_NUM]);
 	if (!pos)
 	{
 		// Already printed error.
@@ -67,7 +67,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 	if (tokens.size() == INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER)
 	{
 		//return processNonJokerLine(player, tokens, pos, vectorToFill);
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(pos, tokens[0][0]));
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(*pos, tokens[0][0]));
 	}
 	else
 	{
@@ -106,28 +106,30 @@ bool ParserInitFile::ProcessLine(int player, const std::string& line, int lineNu
 	return true;
 }
 
-bool ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerInputfileName, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+// TODO: maybe pass the stream
+void ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerInputfileName, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	//read file
 	std::ifstream inFile(playerInputfileName);
-	bool isFileOK = true;
 
 	if (!CheckOpenInputFile(inFile, playerInputfileName))
 	{
+		PrintUsageMessage(player);
 		// Already printed error if any.
-		// TODO: mGame->mProblematicLineOfPlayer[player.GetPlayerNum() - 1] = 0;
-		return false;
+		vectorToFill.clear();
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(-1, -1), '0'));
 	}
-
 	//otherwise, file exists
+
 	std::string line;
 	int lineNum = 1;
+	bool isFileOK = true;
 	while ((std::getline(inFile, line)) && isFileOK)
 	{
 		if (!ProcessLine(player, line, lineNum, BAD_POS_PLAYER, vectorToFill))
 		{
-			// TODO: mGame->mProblematicLineOfPlayer[player.GetPlayerNum() - 1] = lineNum;
-
+			vectorToFill.clear();
+			vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(-1, -1), '0'));
 			// Already printed error if any.
 			isFileOK = false;
 		}
@@ -138,10 +140,9 @@ bool ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerI
 	// Already printed error if any.
 	if (!CheckReadOK(player, inFile, playerInputfileName, lineNum))
 	{
-		isFileOK = false;
+		vectorToFill.clear();
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(-1, -1), '0'));
 	}
 
 	inFile.close();
-
-	return isFileOK;
 }

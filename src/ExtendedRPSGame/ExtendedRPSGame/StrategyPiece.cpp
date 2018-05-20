@@ -25,3 +25,13 @@ void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
 {
 	UncoverPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
 }
+
+bool StrategyPiece::IsStrongerThan(Piece* other) const
+{
+	if (mUncoveredPiece != nullptr)
+	{
+		return mUncoveredPiece->IsStrongerThan(other);
+	}
+
+	return false;
+}

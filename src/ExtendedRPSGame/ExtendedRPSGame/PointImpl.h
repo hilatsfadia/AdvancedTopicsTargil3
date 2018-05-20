@@ -1,7 +1,3 @@
-//
-// Created by USER on 29/04/2018.
-//
-
 #ifndef ADVANCEDTOPICS_MASTER_POINTIMPL_H
 #define ADVANCEDTOPICS_MASTER_POINTIMPL_H
 
@@ -16,6 +12,7 @@ public:
 public:
     PointImpl() : x(1), y(1) {}
     PointImpl(int x, int y) : x(x), y(y) {}
+	//PointImpl(const Point& point) : x(point.getX()), y(point.getY()) {}
 
     virtual int getX() const { return this->x; }
     virtual int getY() const { return this->y; }

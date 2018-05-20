@@ -9,7 +9,7 @@ class ParserInitFile :
 protected:
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool processJokerLine(int player, const std::vector<std::string>& tokens, Point* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	bool processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 	
 	// Process a line tokens. 
 	// Checks for tokens validity.
@@ -22,14 +22,10 @@ protected:
 	bool ProcessLine(int player, const std::string& line, int lineNum, const char* templateBadFormatMessage, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 
 public:
-	// TODO: maybe delete ctor
-	ParserInitFile(Game* game) : Parser(game) {}
-	ParserInitFile() {}
-
 	// Handles the parsing of the entire positions file of one player.
 	// Returns false if it has a bad format. 
 	// (In this case, updates the line number of the error).
-	virtual bool ParsePlayerInitFile(int player, const std::string& input_file_name, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	void ParsePlayerInitFile(int player, const std::string& input_file_name, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 };
 
 #endif //ADTO_TARGIL1_PARSER_INIT_FILE_H

@@ -26,110 +26,83 @@ using std::cout;
 using std::endl;
 using std::make_unique;
 
-bool ParserMoveFile::processLineJokerTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum)
+unique_ptr<JokerChange> ParserMoveFile::ParseCurrJokerChange()
 {
-	if (tokens[J_TOKEN_NUM] != "J:")
+	// If no change is requested
+	if (currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER)
+	{
+		return nullptr;
+	}
+
+	if (currMoveLineTokens[J_TOKEN_NUM] != "J:")
 	{
 		cout << "The token for joker should be J:" << endl;
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		return false;
+		return INVALID_JOKER_CHANGE;
 	}
 
-	if (tokens[NEW_REP_TOKEN_NUM].length() != 1)
+	if (currMoveLineTokens[NEW_REP_TOKEN_NUM].length() != 1)
 	{
 		cout << "<NEW_REP> has to be a character" << endl;
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		return false;
+		return INVALID_JOKER_CHANGE;
 	}
 
-	Point* posJoker = GetPositionFromChars(tokens[JOKER_X_TOKEN_NUM], tokens[JOKER_Y_TOKEN_NUM], playerNum, lineNum);
+	PointImpl* posJoker = GetPositionFromChars(currMoveLineTokens[JOKER_X_TOKEN_NUM], currMoveLineTokens[JOKER_Y_TOKEN_NUM]);
 	if (!posJoker)
 	{
 		// Already printed error.
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		return false;
+		return INVALID_JOKER_CHANGE;
 	}
 
-	mCurrJokerChange = make_unique<JokerChangeImpl>(posJoker, tokens[NEW_REP_TOKEN_NUM][0]);
-
-	return true;
+	// TODO: maybe JokerChangeImpl has to have pointer by value
+	return make_unique<JokerChangeImpl>(*posJoker, currMoveLineTokens[NEW_REP_TOKEN_NUM][0]);
 }
 
-unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum)
+unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens()
 {
-	if ((tokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
+	if ((currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
 	{
 		cout << "number of tokens has to be " << MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER
 			<< " or " << MOVE_LINE_TOKENS_COUNT_WITH_JOKER << endl;
-		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		// TODO: return false;
+		return nullptr;
 	}
 
-	Point* posFrom = GetPositionFromChars(tokens[FROM_X_TOKEN_NUM], tokens[FROM_Y_TOKEN_NUM], playerNum, lineNum);
-	Point* posTo = GetPositionFromChars(tokens[TO_X_TOKEN_NUM], tokens[TO_Y_TOKEN_NUM], playerNum, lineNum);
+	Point* posFrom = GetPositionFromChars(currMoveLineTokens[FROM_X_TOKEN_NUM], currMoveLineTokens[FROM_Y_TOKEN_NUM]);
+	Point* posTo = GetPositionFromChars(currMoveLineTokens[TO_X_TOKEN_NUM], currMoveLineTokens[TO_Y_TOKEN_NUM]);
 
 	if (!posFrom || !posTo)
 	{
 		// Already printed error.
-		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		// TODO: return false;
-	}
-
-	// If it's a joker line
-	if (tokens.size() == MOVE_LINE_TOKENS_COUNT_WITH_JOKER)
-	{
-		if (!processLineJokerTokens(playerNum, tokens, lineNum))
-		{
-			// TODO:
-
-		}
-
-		mIsCurrMoveWithJokerChange = true;
-	}
-	else
-	{
-		mIsCurrMoveWithJokerChange = false;
+		return nullptr;
 	}
 
 	return make_unique<MoveImpl>(posFrom, posTo);
 }
 
-unique_ptr<Move> ParserMoveFile::ParsePlayerMove(int playerNum, std::ifstream& playerMoveFileStream, int lineNum)
+unique_ptr<Move> ParserMoveFile::ParseCurrMove(std::ifstream& playerMoveFileStream)
 {
 	std::string line;
 	std::getline(playerMoveFileStream, line);
 
 	try
 	{
-		vector<string> tokens;
-		GetTokensFromLine(line, tokens);
+		currMoveLineTokens.clear();
+		GetTokensFromLine(line, currMoveLineTokens);
 
 		// Skip empty lines
-		if (tokens.size() != 0)
+		if (currMoveLineTokens.size() != 0)
 		{
-			return ProcessMoveLineTokens(playerNum, tokens, lineNum);
+			return ProcessMoveLineTokens();
 		}
 	}
-	//catch (const std::exception&)
 	// Souldn't get here!
 	catch (...)
 	{
 		// Print errors if any?
-		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
-		// TODO: return false; // Bad Format
+		return nullptr; // Bad Format
 	}
-
-	return nullptr;
-}
-
-unique_ptr<JokerChange> ParserMoveFile::GetCurrJokerChange()
-{
-	if ((mIsCurrMoveWithJokerChange) && (mCurrJokerChange != nullptr))
-	{
-		return std::move(mCurrJokerChange);
-	}
-
-	//TODO: look return unique_ptr<JokerChange>();
 
 	return nullptr;
 }

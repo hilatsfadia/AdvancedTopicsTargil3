@@ -49,7 +49,9 @@ protected:
 	// relevant message and updates the problematic line number.
 	bool CheckReadOK(int player, std::ifstream& inFile, const std::string& playerfileName, int lineNum);
 
-	static Point* GetPositionFromChars(const std::string& posy, const std::string& posx, int playerNum, int lineNum);
+	// Gets the Point of the position from coordinates strings
+	static PointImpl* GetPositionFromChars(const std::string& posy, const std::string& posx);
+
 public:
 	Parser(Game* game) : mGame(game) {}
 	Parser() {}
@@ -62,6 +64,15 @@ public:
 	// Returns true if and only if the file was opened successfully. Otherwise, prints
 	// usage message and updates the problematic line number.
 	static bool CheckOpenInputFile(const std::ifstream& inFile, const std::string& inFileName);
+
+	// If input file(s) doesn't exist - print usage
+	static void PrintUsageMessage(int playerNum);
+
+	// Returns the initialization file name of the given player
+	static std::string GetPositionsFileName(int playerNum);
+
+	// Returns the moves file name of the given player
+	static std::string GetMovesFileName(int playerNum);
 };
 
 #endif //ADTO_TARGIL1_PARSER_H

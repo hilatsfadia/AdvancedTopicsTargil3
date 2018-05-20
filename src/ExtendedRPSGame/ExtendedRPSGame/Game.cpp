@@ -12,7 +12,6 @@
 #include "Joker.h"
 
 #define MAX_MOVES 100
-#define MAX_TURNS MAX_MOVES/2
 
 using namespace std;
 
@@ -176,16 +175,6 @@ bool Game::ReportGameOverAfterInitBoard()
 ////
 ////	cout << stringStream.str() << endl;
 ////}
-//
-// // TODO: fileUsage message
-//void Game::PrintUsageMessage()
-//{
-//	//std::string usageMsg;
-//	//usageMsg.reserve(1000);
-//	cout << "Usage of the program must include in the running directory, those file: " +
-//		GetInitializationFileName(1) + ", " + GetInitializationFileName(2) + ", " + 
-//		GetMovesFileName(1) + ", " + GetMovesFileName(2) << endl;
-//}
 
 void Game::MakeOutputFile(const std::string& gameOverMessage, bool ifToPrintBoard)
 {
@@ -211,6 +200,7 @@ void Game::ReportGameOver(Winner winner, const std::string & gameOverMessage, bo
 
 Game::Game(PlayerAlgorithm* player1Algorithm, PlayerAlgorithm* player2Algorithm)
 {
+	// TODO: maybe save as array of algorithms (forum).
 	mPlayers[0] = new Player(player1Algorithm);
 	mPlayers[1] = new Player(player2Algorithm);
 }
@@ -303,15 +293,21 @@ bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePo
 		// TODO: define
 		if (piecePos->getJokerRep() == '#')
 		{
-			return PutNonJokerOnBoard(player, piecePos, board);
+			if (!PutNonJokerOnBoard(player, piecePos, board))
+			{
+				return false;
+			}
 		}
 		else
 		{
-			return PutJokerOnBoard(player, piecePos, board);
+			if (!PutJokerOnBoard(player, piecePos, board))
+			{
+				return false;
+			}
 		}
 	}
 
-	return false;
+	return true;
 }
 
 void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage)
@@ -331,28 +327,30 @@ bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& play
 		(!mPlayers[1]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
 
 	// Positions invalid.
-
 	// Position for both players are invalid
 	if (isErrorInPlayer1Positioning && isErrorInPlayer2Positioning)
 	{
 		// Positioning for both players are analyzed at the same stage - so 
 		// if both are bad the result is 0 (no winner).
 		ReportGameOver(Winner::Tie, BAD_POS_BOTH_PLAYERS, false);
+		return false;
 	}
 	// Position for one player is invalid
 	else if (isErrorInPlayer1Positioning)
 	{
 		SetBadInputFileMessageWithWinner(1, Winner::Player2, BAD_POS_PLAYER);
+		return false;
 	}
 	else if (isErrorInPlayer2Positioning)
 	{
 		SetBadInputFileMessageWithWinner(2, Winner::Player1, BAD_POS_PLAYER);
+		return false;
 	}
 
 	return true;
 }
 
-void Game::HandlePositioning()
+bool Game::HandlePositioning()
 {
 	std::vector<unique_ptr<PiecePosition>> playersPiecePositions[NUM_OF_PLAYERS];
 
@@ -368,7 +366,7 @@ void Game::HandlePositioning()
 
 	if (!PutPiecePositionsOnBoard(playersPiecePositions[0], playersPiecePositions[1], tempPlayersBoards[0], tempPlayersBoards[1]))
 	{
-		return;
+		return false;
 	}
 
 	// TODO: check tie
@@ -382,26 +380,37 @@ void Game::HandlePositioning()
 	{
 		mPlayers[i]->GetPlayerAlgorithm()->notifyOnInitialBoard(mGameBoard, fights);
 	}
+
+	return true;
 }
 
 bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum)
 {
-	Piece* jokerPiece = mGameBoard.GetBoardInPosition(jokerChange.getJokerChangePosition()).GetPiece();
+	Piece* jokerPiece = mGameBoard.GetPieceOfPlayer(jokerChange.getJokerChangePosition(), playerNum);
+
+	// TODO: check if need to cout
+	if (jokerPiece == nullptr)
+	{
+		std::cout << "The joker change is illegal because given position is illegal." << std::endl;
+		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		return false;
+	}
+
 	Joker* joker = dynamic_cast<Joker*>(jokerPiece);
 
 	if (joker == nullptr)
 	{
-		cout << "Joker position doesn't have a joker" << endl;
+		cout << "Joker position doesn't have a piece other than a joker" << endl;
 		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 	// Joker position that doesn't have a Joker owned by this player
-	else if (joker->GetOwner()->GetPlayerNum() != playerNum)
-	{
-		cout << "Joker position doesn't have a joker owned by this player" << endl;
-		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
-		return false;
-	}
+	//else if (joker->GetOwner()->GetPlayerNum() != playerNum)
+	//{
+	//	cout << "Joker position doesn't have a joker owned by this player" << endl;
+	//	SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+	//	return false;
+	//}
 	else if (!ChangeJokerActualType(joker, jokerChange.getJokerNewRep()))
 	{
 		// Already printed error.
@@ -412,78 +421,113 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	return true;
 }
 
+unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfo* fightToFill)
+{
+	// Checks if mPlayers[i] can move. If not, he loses the game.
+	if (mPlayers[playerIndex]->GetCountOfMovingPieces() == 0)
+	{
+		ReportGameOver((Winner)mPlayers[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN);
+		return nullptr;
+	}
+
+	// For this player
+	unique_ptr<Move> theMove = mPlayers[playerIndex]->GetPlayerAlgorithm()->getMove();
+
+	// TODO: ask
+	if (theMove == nullptr)
+	{
+		int playerNum = mPlayers[playerIndex]->GetPlayerNum();
+		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		return nullptr;
+	}
+
+	FightInfo* toFill = nullptr;
+
+	if (!mGameBoard.MovePiece(*mPlayers[playerIndex], theMove, toFill))
+	{
+		int playerNum = mPlayers[playerIndex]->GetPlayerNum();
+		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		return nullptr;
+	}
+
+	// Check if it was a winning move which ate the last flag of the oponnent.
+	// If so, the player who just moved wins the game.
+	// Note that the flags number of the current player haven't changed.
+	if (mPlayers[GetOpponentIndex(playerIndex)]->GetFlagsCount() == 0)
+	{
+		ReportGameOver((Winner)mPlayers[playerIndex]->GetPlayerNum(), FLAGS_CAPTURED);
+		return nullptr;
+	}
+
+	return theMove;
+}
+
+void Game::NotifyOtherPlayer(int otherPlayerIndex, FightInfo* fightToFill, Move& move)
+{
+	// For the other player.
+	PlayerAlgorithm* opponentAlgorithm = mPlayers[otherPlayerIndex]->GetPlayerAlgorithm();
+	opponentAlgorithm->notifyOnOpponentMove(move);
+
+	// Notify only of there was a fight
+	if (fightToFill != nullptr)
+	{
+		opponentAlgorithm->notifyFightResult(*fightToFill);
+	}
+}
+
 void Game::HandleMoves()
 {
 	// One turn consists of two moves of the two players.
-	int currTurn = 1;
+	int countNoFightMoves = 0;
 
 	// TODO: split to functions
-	while (currTurn <= MAX_TURNS)
+	while (countNoFightMoves <= MAX_MOVES)
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
-			// Checks if mPlayers[i] can move. If not, he loses the game.
-			if (mPlayers[i]->GetCountOfMovingPieces() == 0)
+			FightInfo* fightToFill = nullptr;
+
+			unique_ptr<Move> currMove = CheckGetMove(i, fightToFill);
+
+			if (currMove == nullptr) // if Game is over
 			{
-				ReportGameOver((Winner)mPlayers[GetOpponentIndex(i)]->GetPlayerNum(), PIECES_EATEN);
-				return;
-			}
-
-			// For this player
-			unique_ptr<Move> currMove = mPlayers[i]->GetPlayerAlgorithm()->getMove();
-
-			FightInfo* toFill = nullptr;
-
-			if (!mGameBoard.MovePiece(*mPlayers[i], currMove, toFill))
-			{
-				// TODO:
-				//HandleGameOver();
-				return;
-			}
-
-			// Check if it was a winning move which ate the last flag of the oponnent.
-			// If so, the player who just moved wins the game.
-			// Note that the flags number of the current player haven't changed.
-			if (mPlayers[GetOpponentIndex(i)]->GetFlagsCount() == 0)
-			{
-				ReportGameOver((Winner)mPlayers[i]->GetPlayerNum(), FLAGS_CAPTURED);
 				return;
 			}
 
 			// Notify only of there was a fight
-			if (toFill != nullptr)
+			if (fightToFill != nullptr) // There was fight
 			{
-				mPlayers[i]->GetPlayerAlgorithm()->notifyFightResult(*toFill);
+				mPlayers[i]->GetPlayerAlgorithm()->notifyFightResult(*fightToFill);
+				countNoFightMoves = 0;
+			}
+			else // There was no fight
+			{
+				countNoFightMoves++;
 			}
 
 			unique_ptr<JokerChange> currJokerChange = mPlayers[i]->GetPlayerAlgorithm()->getJokerChange();
 
-			if (!ChangeJokerRepresentation(*currJokerChange, i + 1))
+			if (currJokerChange != nullptr) // if a change is requested
 			{
-				return;
+				if (!ChangeJokerRepresentation(*currJokerChange, i + 1))
+				{
+					return;
+				}
 			}
 
-			// For the other player.
-			PlayerAlgorithm* opponentAlgorithm = mPlayers[GetOpponentIndex(i)]->GetPlayerAlgorithm();
-			opponentAlgorithm->notifyOnOpponentMove(*currMove);
-
-			// Notify only of there was a fight
-			if (toFill != nullptr)
-			{
-				opponentAlgorithm->notifyFightResult(*toFill);
-			}
+			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
 		}
-
-		currTurn++;
 	}
 
-	// TODO: ask reason
-	ReportGameOver(Winner::Tie, "No fight for more than " + to_string(MAX_MOVES) + " moves");
+	ReportGameOver(Winner::Tie, TIE_NO_FIGHTS);
 }
 
 void Game::RunGame()
 {
-	HandlePositioning();
+	if (!HandlePositioning())
+	{
+		return;
+	}
 
 	if (ReportGameOverAfterInitBoard())
 	{

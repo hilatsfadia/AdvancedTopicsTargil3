@@ -8,20 +8,21 @@
 #include "Player.h"
 #include "BoardImpl.h"
 #include "PlayerAlgorithm.h"
-//class PlayerAlgorithm;
 class Joker;
 
 #define OUTPUT_FILE_NAME "rps.output"
 #define NUM_OF_PLAYERS 2
 #define FLAGS_CAPTURED "All flags of the opponent are captured"
 #define PIECES_EATEN "All moving PIECEs of the opponent are eaten"
-#define TIE_NO_WINNER "A tie - both Moves input files done without a winner"
+// deleted #define TIE_NO_WINNER "A tie - both Moves input files done without a winner"
 #define TIE_FLAGS_EATEN "A tie - all flags are eaten by both players in the position files"
 //ask
 //#define TIE_NO_MOVING_PIECES "A tie - all moving are eaten by both players in the position files"
-#define BAD_POS_PLAYER "Bad Positioning input file for player %d - line %d"
-#define BAD_POS_BOTH_PLAYERS "Bad Positioning input file for both players - player 1: line %d, player 2: line %d"
-#define BAD_MOVE_PLAYER "Bad Moves input file for player %d - line %d"
+#define BAD_POS_PLAYER "Bad Positioning input for player %d"
+#define BAD_POS_BOTH_PLAYERS "Bad positioning input for both players"
+#define BAD_MOVE_PLAYER "Bad Moves input for player %d"
+#define TIE_NO_FIGHTS "A tie – no fight for 100 moves"
+
 #define MESSAGE_MAX_LEN 150
 #define INPUT_FILE_NAME_MAX_LEN 100
 
@@ -50,10 +51,7 @@ private:
 	// Returns false in case input file is missing or cannot be opened 
 	bool PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions,
 		std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board);
-
-	//// If input file(s) doesn't exist - print usage
-	//static void PrintUsageMessage();
-
+	
 	// When one of the input files (position file or move file) has bad format,
 	// update message and winner.
 	void SetBadInputFileMessageWithWinner(int loserNum, Winner winner, const char* templateBadFormatMessage);
@@ -96,7 +94,14 @@ private:
 	bool PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
 
 	// Position on the board the initial pieces of the players, according to their algorithm.
-	void HandlePositioning();
+	bool HandlePositioning();
+
+	// If game over, returns nullptr.
+	// Else, returns the current move of the given player.
+	unique_ptr<Move> CheckGetMove(int playerIndex, FightInfo* fightToFill);
+
+	// Notify the given other player about the current move and fight that occured.
+	void NotifyOtherPlayer(int otherPlayerIndex, FightInfo* fightToFill, Move& move);
 
 	// Play the game by making the players' moves.
 	void HandleMoves();

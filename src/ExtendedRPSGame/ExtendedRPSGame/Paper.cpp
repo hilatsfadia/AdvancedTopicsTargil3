@@ -38,3 +38,14 @@ Piece* Paper::FightWithOtherPieceType(Piece* enemy)
 		}
 	}
 }
+
+bool Paper::IsStrongerThan(Piece* other) const
+{
+	PieceFactory::PieceType otherPieceType = other->GetPieceType();
+	if ((otherPieceType == PieceFactory::PieceType::Flag) || (otherPieceType == PieceFactory::PieceType::Rock))
+	{
+		return true;
+	}
+
+	return false;
+}

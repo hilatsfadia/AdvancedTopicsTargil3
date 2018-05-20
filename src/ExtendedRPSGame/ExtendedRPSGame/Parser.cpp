@@ -8,6 +8,9 @@
 #include <fstream>
 #include <iostream>
 
+#define PLAYER_POSITION_FILE "player%d.rps_board"
+#define PLAYER_MOVE_FILE "player%d.rps_moves"
+
 using namespace std;
 
 void Parser::Split(const std::string& s, char delim, std::vector<std::string>& outElems)
@@ -79,7 +82,7 @@ bool Parser::CheckReadOK(int player, std::ifstream& inFile, const std::string& p
 	return true;
 }
 
-Point* Parser::GetPositionFromChars(const std::string & posx, const std::string & posy, int playerNum, int lineNum)
+PointImpl* Parser::GetPositionFromChars(const std::string & posx, const std::string & posy)
 {
 	try
 	{
@@ -91,4 +94,27 @@ Point* Parser::GetPositionFromChars(const std::string & posx, const std::string 
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
 		return nullptr;
 	}
+}
+
+ // TODO: fileUsage message
+void Parser::PrintUsageMessage(int playerNum)
+{
+	cout << "Usage of the program must include in the running directory, those file: " +
+		GetPositionsFileName(1) + ", " + GetPositionsFileName(2) + ", " +
+		GetMovesFileName(1) + ", " + GetMovesFileName(2) << endl;
+}
+
+// TODO: sprintf
+string Parser::GetPositionsFileName(int playerNum)
+{
+	char fileName[INPUT_FILE_NAME_MAX_LEN];
+	sprintf_s(fileName, PLAYER_POSITION_FILE, playerNum);
+	return fileName;
+}
+
+string Parser::GetMovesFileName(int playerNum)
+{
+	char fileName[INPUT_FILE_NAME_MAX_LEN];
+	sprintf_s(fileName, PLAYER_MOVE_FILE, playerNum);
+	return fileName;
 }

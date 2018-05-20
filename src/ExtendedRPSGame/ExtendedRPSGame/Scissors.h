@@ -20,11 +20,12 @@ public:
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Scissors; }
-	~Scissors();
 
 	bool GetIsMovingPiece() const override { return true; }
 
 	char GetPieceChar() const override { return SCISSORS_CHAR; }
+
+	virtual bool IsStrongerThan(Piece* other) const override;
 };
 
 #endif //ADTO_TARGIL1_SCISSORS_H

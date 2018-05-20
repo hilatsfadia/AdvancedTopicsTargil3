@@ -27,9 +27,11 @@ protected:
 
 public:
 	virtual ~Piece() {};
+	//Piece() : mOwner(nullptr) {};
 
 	// TODO: maybe remove the owner itself and keep only it's number
-	Piece(Player* owner = nullptr) : mOwner(owner), mOwnerNum(owner->GetPlayerNum()) {}
+	// TODO!!!
+	Piece(Player* owner) : mOwner(owner) { if (owner != nullptr) mOwnerNum = owner->GetPlayerNum(); }
 	Piece(int ownerNum) : mOwner(nullptr), mOwnerNum(ownerNum) {}
 
 	// Deletes and removes the loser from its owner.
@@ -67,20 +69,10 @@ public:
 
 	virtual char GetPieceChar() const = 0;
 	
-	//virtual bool IsStrongerThan(Piece* other) const { return false; };
+	virtual bool IsStrongerThan(Piece* other) const { return false; };
 
 	// Operator overloading for printing issues.
-	friend std::ostream& operator<<(std::ostream& out, const Piece& piece) {
-		//Player 1: all chars as capital letters
-		//Player 2: all chars as lower letters
-
-		if (piece.GetOwner()->GetPlayerNum() == 2)
-		{
-			return out << tolower(piece.GetPieceChar());
-		}
-
-		return out << piece.GetPieceChar();
-	}
+	friend std::ostream& operator<<(std::ostream& out, const Piece& piece);
 };
 
 #endif //ADTO_TARGIL1_PIECE_H

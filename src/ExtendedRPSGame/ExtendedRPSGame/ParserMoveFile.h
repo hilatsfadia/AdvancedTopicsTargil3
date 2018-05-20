@@ -3,22 +3,21 @@
 
 #include "Parser.h"
 
+#define INVALID_JOKER_CHANGE make_unique<JokerChangeImpl>(PointImpl(-1, -1), '5')
+
 class ParserMoveFile :
 	public Parser
 {
 private:
-	unique_ptr<JokerChange> mCurrJokerChange = nullptr;
-	bool mIsCurrMoveWithJokerChange = false;
+	std::vector<std::string> currMoveLineTokens;
+
 protected:
-	// Process the joker tokens. 
-	// Checks for tokens validity.
-	// Execute the joker representation change.
-	bool processLineJokerTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum);
+	
 
 	// Process a line tokens. 
 	// Checks for tokens validity.
 	// Execute the line.
-	unique_ptr<Move> ProcessMoveLineTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum);
+	unique_ptr<Move> ProcessMoveLineTokens();
 
 	// In case Moves file is done (all lines were used) and the
 	// opponent still have moves : the opponent (given player parameter) will still
@@ -26,21 +25,17 @@ protected:
 	// the players whose Moves file was done will not move.
 	//void ParseRemainingPlayerMoves(Player& player, std::ifstream& playerMoveFileStream, int lineNum);
 
+public:
+	// Handle line move of the given player.
+	// The given stream points to the relevant line.
 	// Tries to split the line into tokens. 
 	// Calls processLineTokens while skipping empty lines.
-	//unique_ptr<Move> ProcessLine(Player& player, const std::string& line, int lineNum, const char* templateBadFormatMessage);
+	unique_ptr<Move> ParseCurrMove(std::ifstream& playerMoveFileStream);
 
-public:
-	// Plays a the current line move of the given player.
-	unique_ptr<Move> ParsePlayerMove(int playerNum, std::ifstream& playerMoveFileStream, int lineNum);
-
-	unique_ptr<JokerChange> GetCurrJokerChange();
-
-	// Handles the parsing of the moves files of the players. 
-	// Each one executes a move in his turn.
-	// In case of an error, or a winning move, stops playing.
-	// If there is a bad format, updates the line number of the error as well as the message and winner.
-	//virtual void ParsePlayersMoveFiles(Player players[], int numOfPlayers, std::vector<std::string>& playerFileNames);
+	// Process the joker tokens. 
+	// Checks for tokens validity.
+	// Execute the joker representation change.
+	unique_ptr<JokerChange> ParseCurrJokerChange();
 };
 
 #endif //ADTO_TARGIL1_PARSER_MOVE_FILE_H
