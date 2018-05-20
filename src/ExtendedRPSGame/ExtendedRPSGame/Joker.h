@@ -39,6 +39,9 @@ public:
 	char GetPieceChar() const override { return JOKER_CHAR; }
 
 	virtual bool IsStrongerThan(Piece* other) const { return mActualPiece->IsStrongerThan(other); };
+
+	// Return the actual piece that this joker represents at the moment
+	const Piece* GetActualPiece() const { return mActualPiece; }
 };
 
 #endif //ADTO_TARGIL1_JOKER_PIECE_H

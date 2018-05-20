@@ -40,6 +40,8 @@ public:
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
 	virtual bool IsStrongerThan(Piece* other) const;
+
+	PieceFactory::PieceType GetStronger(const Piece* piece) const;
 };
 
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H

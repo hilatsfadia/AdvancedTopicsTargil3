@@ -18,7 +18,7 @@ public:
     virtual int getY() const { return this->y; }
 
 	// The L1 distance
-	int DistanceInStepsFrom(PointImpl& other);
+	int DistanceInStepsFrom(const PointImpl& other) const;
 };
 
 
