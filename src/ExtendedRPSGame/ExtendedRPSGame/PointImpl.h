@@ -12,10 +12,14 @@ public:
 public:
     PointImpl() : x(1), y(1) {}
     PointImpl(int x, int y) : x(x), y(y) {}
-	//PointImpl(const Point& point) : x(point.getX()), y(point.getY()) {}
 
     virtual int getX() const { return this->x; }
     virtual int getY() const { return this->y; }
+	void setX(int x) { this->x = x; }
+	void setY(int y) { this->y = y; }
+
+	friend inline bool operator==(const PointImpl& lhs, const PointImpl& rhs);
+	friend inline bool operator!=(const PointImpl& lhs, const PointImpl& rhs) { return !(lhs == rhs); }
 
 	// The L1 distance
 	int DistanceInStepsFrom(const PointImpl& other) const;

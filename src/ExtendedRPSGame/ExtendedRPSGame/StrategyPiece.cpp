@@ -37,7 +37,7 @@ bool StrategyPiece::IsStrongerThan(Piece* other) const
 	return false;
 }
 
-PieceFactory::PieceType StrategyPiece::GetStronger(const Piece* piece) const
+PieceFactory::PieceType StrategyPiece::GetStrongerNotJoker(const Piece * piece) const
 {
 	PieceFactory::PieceType pieceType = piece->GetPieceType();
 
@@ -58,15 +58,32 @@ PieceFactory::PieceType StrategyPiece::GetStronger(const Piece* piece) const
 			return PieceFactory::PieceType::Paper;
 			break;
 		}
+		default:
+		{
+			return PieceFactory::PieceType::Unknown;
+		}
+	}
+}
+
+PieceFactory::PieceType StrategyPiece::GetStronger(const Piece* piece) const
+{
+	PieceFactory::PieceType type = piece->GetPieceType();
+
+	switch (type)
+	{
 		case (PieceFactory::PieceType::Joker):
 		{
 			const Joker* joker = dynamic_cast<const Joker*>(piece);
-			return GetStronger(joker->GetActualPiece());
+			if (joker != nullptr)
+			{
+				return GetStrongerNotJoker(joker->GetActualPiece());
+			}
+
 			break;
 		}
 		default:
 		{
-			return PieceFactory::PieceType::Unknown;
+			return GetStrongerNotJoker(piece);
 			break;
 		}
 	}

@@ -14,6 +14,8 @@ private:
 	bool mIsThreathening = false;
 	bool mIsMovingPiece = false;
 
+	PieceFactory::PieceType GetStrongerNotJoker(const Piece* piece) const;
+
 public:
 	StrategyPiece(int ownerNum, Piece* uncoveredPiece = nullptr) : Piece(ownerNum) { mUncoveredPiece = uncoveredPiece; }
 
