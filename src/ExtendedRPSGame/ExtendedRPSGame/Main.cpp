@@ -3,6 +3,7 @@
 #include "FilePlayerAlgorithm.h"
 #include "Parser.h"
 #include <iostream>
+#include "AutoPlayerAlgorithm.h"
 
 #define COMMAND_LINE_AUTO_ALGORITHM_STR "auto"
 #define COMMAND_LINE_FILE_ALGORITHM_STR "file"
@@ -26,7 +27,7 @@ PlayerAlgorithm* getPlayerAlgoritmFromStr(string str)
 {
 	if (str == COMMAND_LINE_AUTO_ALGORITHM_STR)
 	{
-		//return new 
+		return new AutoPlayerAlgorithm();
 	}
 	else if (str == COMMAND_LINE_FILE_ALGORITHM_STR)
 	{
