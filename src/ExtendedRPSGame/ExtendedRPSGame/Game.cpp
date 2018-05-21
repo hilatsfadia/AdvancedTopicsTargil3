@@ -140,18 +140,17 @@ bool Game::ReportGameOverAfterInitBoard()
 	}
 	else if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
 	{
-		// ask
-		//this->mGameOverMessage = TIE_NO_MOVING_PIECES;
-		ReportGameOver(Winner::Tie, PIECES_EATEN);
+		// As Written in the forum
+		ReportGameOver(Winner::Tie, PIECES_EATEN_BOTH_PLAYERS);
 	}
 	// TODO: maybe not needed. (already checked).
 	else if (noMovingPiecesPlayer1)
 	{
-		ReportGameOver(Winner::Player2, PIECES_EATEN);
+		ReportGameOver(Winner::Player2, PIECES_EATEN_PLAYER);
 	}
 	else if (noMovingPiecesPlayer2)
 	{
-		ReportGameOver(Winner::Player1, PIECES_EATEN);
+		ReportGameOver(Winner::Player1, PIECES_EATEN_PLAYER);
 	}
 	else
 	{
@@ -427,14 +426,15 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 	// Checks if mPlayers[i] can move. If not, he loses the game.
 	if (mPlayers[playerIndex]->GetCountOfMovingPieces() == 0)
 	{
-		ReportGameOver((Winner)mPlayers[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN);
+		ReportGameOver((Winner)mPlayers[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN_PLAYER);
 		return nullptr;
 	}
 
 	// For this player
 	unique_ptr<Move> theMove = mPlayers[playerIndex]->GetPlayerAlgorithm()->getMove();
 
-	// TODO: ask
+	// Written in the forum that we can return nullptr for invalid line/ end of file
+	// In both cases we are allowed to refer to it as a lose.
 	if (theMove == nullptr)
 	{
 		int playerNum = mPlayers[playerIndex]->GetPlayerNum();

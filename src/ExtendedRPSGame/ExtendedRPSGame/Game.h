@@ -14,14 +14,15 @@ class Joker;
 #define OUTPUT_FILE_NAME "rps.output"
 #define NUM_OF_PLAYERS 2
 #define FLAGS_CAPTURED "All flags of the opponent are captured"
-#define PIECES_EATEN "All moving PIECEs of the opponent are eaten"
+#define PIECES_EATEN_PLAYER "All moving PIECEs of the opponent are eaten"
+#define PIECES_EATEN_BOTH_PLAYERS "All moving PIECEs of both players are eaten"
 // deleted #define TIE_NO_WINNER "A tie - both Moves input files done without a winner"
 #define TIE_FLAGS_EATEN "A tie - all flags are eaten by both players in the position files"
 //ask #define TIE_NO_MOVING_PIECES "A tie - all moving are eaten by both players in the position files"
 #define BAD_POS_PLAYER "Bad Positioning input for player %d"
 #define BAD_POS_BOTH_PLAYERS "Bad Positioning input for both players"
 #define BAD_MOVE_PLAYER "Bad Moves input for player %d"
-#define TIE_NO_FIGHTS "A tie – no fight for 100 moves"
+#define TIE_NO_FIGHTS "A tie – no fight for 100 moves" // No fight for 100 consequative moves
 
 #define MESSAGE_MAX_LEN 150
 #define INPUT_FILE_NAME_MAX_LEN 100

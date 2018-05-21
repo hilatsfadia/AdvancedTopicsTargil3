@@ -92,9 +92,12 @@ public:
 	bool MovePiece(const Player& player, const std::unique_ptr<Move>& move, FightInfoImpl& toFill);
 
 	// Get Board in the given position, when axis values start from 1.
+	// Assumes position is legal.
 	BoardSquare& GetBoardInPosition(const Point& position);
 
 	// TODO: look at const overloading
+	// Get Board in the given position, when axis values start from 1.
+	// Assumes position is legal.
 	const BoardSquare& GetBoardInPosition(const Point& position) const;
 
 	// Get Board in (x,x), when axis values start from 1.
