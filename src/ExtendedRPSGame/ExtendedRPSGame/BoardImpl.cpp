@@ -136,7 +136,7 @@ Piece* BoardImpl::GetPieceOfPlayer(const Point& position, int playerNum)
 //	return false;
 //}
 
-bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfo* toFill)
+bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfoImpl& toFill)
 {
 	Piece* pieceSource = GetPieceOfPlayer(posFrom, player.GetPlayerNum());
 
@@ -179,7 +179,7 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 		Piece* winningPiece = pieceDestination->Fight(pieceSource);
 		int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
 
-		toFill = new FightInfoImpl(&posTo, pieceSource->GetPieceChar(), pieceDestination->GetPieceChar(), winner);
+		toFill.SetFightInfoValues(&posTo, pieceSource->GetPieceChar(), pieceDestination->GetPieceChar(), winner);
 		boardSquareDestination.ChangeSquarePiece(winningPiece);
 	}
 
@@ -188,7 +188,7 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 	return true;
 }
 
-bool BoardImpl::MovePiece(const Player& player, const unique_ptr<Move>& move, FightInfo* toFill)
+bool BoardImpl::MovePiece(const Player& player, const unique_ptr<Move>& move, FightInfoImpl& toFill)
 {
 	return MovePiece(player, move->getFrom(), move->getTo(), toFill);
 }

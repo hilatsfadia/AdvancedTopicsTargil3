@@ -10,6 +10,7 @@
 #include "ParserMoveFile.h"
 #include "Player.h"
 #include "Joker.h"
+#include "FightInfoImpl.h"
 
 #define MAX_MOVES 100
 
@@ -181,10 +182,10 @@ void Game::MakeOutputFile(const std::string& gameOverMessage, bool ifToPrintBoar
     ofstream outFile(OUTPUT_FILE_NAME);
     outFile << "Winner: " << to_string((int)mWinner) << endl;
     outFile << "Reason: " << gameOverMessage << endl;
-    outFile << endl;
 
 	if (ifToPrintBoard)
 	{
+		outFile << endl;
 		mGameBoard.Print(outFile);
 	}
 
@@ -421,7 +422,7 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	return true;
 }
 
-unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfo* fightToFill)
+unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 {
 	// Checks if mPlayers[i] can move. If not, he loses the game.
 	if (mPlayers[playerIndex]->GetCountOfMovingPieces() == 0)
@@ -441,9 +442,7 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfo* fightToFill)
 		return nullptr;
 	}
 
-	FightInfo* toFill = nullptr;
-
-	if (!mGameBoard.MovePiece(*mPlayers[playerIndex], theMove, toFill))
+	if (!mGameBoard.MovePiece(*mPlayers[playerIndex], theMove, fightToFill))
 	{
 		int playerNum = mPlayers[playerIndex]->GetPlayerNum();
 		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
@@ -462,16 +461,16 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfo* fightToFill)
 	return theMove;
 }
 
-void Game::NotifyOtherPlayer(int otherPlayerIndex, FightInfo* fightToFill, Move& move)
+void Game::NotifyOtherPlayer(int otherPlayerIndex, FightInfoImpl& fightToFill, Move& move)
 {
 	// For the other player.
 	PlayerAlgorithm* opponentAlgorithm = mPlayers[otherPlayerIndex]->GetPlayerAlgorithm();
 	opponentAlgorithm->notifyOnOpponentMove(move);
 
 	// Notify only of there was a fight
-	if (fightToFill != nullptr)
+	if (fightToFill.isInitialized())
 	{
-		opponentAlgorithm->notifyFightResult(*fightToFill);
+		opponentAlgorithm->notifyFightResult(fightToFill);
 	}
 }
 
@@ -485,7 +484,7 @@ void Game::HandleMoves()
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
-			FightInfo* fightToFill = nullptr;
+			FightInfoImpl fightToFill;
 
 			unique_ptr<Move> currMove = CheckGetMove(i, fightToFill);
 
@@ -495,9 +494,9 @@ void Game::HandleMoves()
 			}
 
 			// Notify only of there was a fight
-			if (fightToFill != nullptr) // There was fight
+			if (fightToFill.isInitialized()) // There was fight
 			{
-				mPlayers[i]->GetPlayerAlgorithm()->notifyFightResult(*fightToFill);
+				mPlayers[i]->GetPlayerAlgorithm()->notifyFightResult(fightToFill);
 				countNoFightMoves = 0;
 			}
 			else // There was no fight

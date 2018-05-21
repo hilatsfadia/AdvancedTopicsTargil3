@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "BoardImpl.h"
 #include "PlayerAlgorithm.h"
+
 class Joker;
 
 #define OUTPUT_FILE_NAME "rps.output"
@@ -16,10 +17,9 @@ class Joker;
 #define PIECES_EATEN "All moving PIECEs of the opponent are eaten"
 // deleted #define TIE_NO_WINNER "A tie - both Moves input files done without a winner"
 #define TIE_FLAGS_EATEN "A tie - all flags are eaten by both players in the position files"
-//ask
-//#define TIE_NO_MOVING_PIECES "A tie - all moving are eaten by both players in the position files"
+//ask #define TIE_NO_MOVING_PIECES "A tie - all moving are eaten by both players in the position files"
 #define BAD_POS_PLAYER "Bad Positioning input for player %d"
-#define BAD_POS_BOTH_PLAYERS "Bad positioning input for both players"
+#define BAD_POS_BOTH_PLAYERS "Bad Positioning input for both players"
 #define BAD_MOVE_PLAYER "Bad Moves input for player %d"
 #define TIE_NO_FIGHTS "A tie – no fight for 100 moves"
 
@@ -98,10 +98,10 @@ private:
 
 	// If game over, returns nullptr.
 	// Else, returns the current move of the given player.
-	unique_ptr<Move> CheckGetMove(int playerIndex, FightInfo* fightToFill);
+	unique_ptr<Move> CheckGetMove(int playerIndex, FightInfoImpl& fightToFill);
 
 	// Notify the given other player about the current move and fight that occured.
-	void NotifyOtherPlayer(int otherPlayerIndex, FightInfo* fightToFill, Move& move);
+	void NotifyOtherPlayer(int otherPlayerIndex, FightInfoImpl& fightToFill, Move& move);
 
 	// Play the game by making the players' moves.
 	void HandleMoves();

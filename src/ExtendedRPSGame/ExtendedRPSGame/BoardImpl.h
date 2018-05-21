@@ -6,7 +6,7 @@
 #include "Piece.h"
 #include "Board.h"
 #include "PointImpl.h"
-#include "FightInfo.h"
+#include "FightInfoImpl.h"
 #include <memory>
 
 class Move;
@@ -85,11 +85,11 @@ public:
 
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
-	bool MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfo* toFill);
+	bool MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfoImpl& toFill);
 
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
-	bool MovePiece(const Player& player, const std::unique_ptr<Move>& move, FightInfo* toFill);
+	bool MovePiece(const Player& player, const std::unique_ptr<Move>& move, FightInfoImpl& toFill);
 
 	// Get Board in the given position, when axis values start from 1.
 	BoardSquare& GetBoardInPosition(const Point& position);
