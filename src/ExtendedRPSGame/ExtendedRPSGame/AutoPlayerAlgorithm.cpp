@@ -17,23 +17,28 @@
 #include <ctime>
 
 
-void AutoPlayerAlgorithm::initMovesVector(std::vector<unique_ptr<PiecePosition>>& vectorToFill)
+void AutoPlayerAlgorithm::initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
+	int yPos = (player - 1) * (M / 2) + 1;
 	PointImpl point;
 	int xPos = 1;
-	int yPos = 1;
+	//int yPos = 1;
+
 	for (int flag = 0; flag < F; flag++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), FLAG_CHAR));
 		if (xPos == N) {
 			xPos = 1;
 			yPos++;
 		}
-		xPos++;
+		else
+		{
+			xPos++;
+		}
 	}
-	if (yPos != M) {
-		yPos++;
-		xPos = 1;
-	}
+	//if (yPos != M) {
+	//	yPos++;
+	//	xPos = 1;
+	//}
 	for (int bomb = 0; bomb < B; bomb++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), BOMB_CHAR));
 
@@ -41,7 +46,10 @@ void AutoPlayerAlgorithm::initMovesVector(std::vector<unique_ptr<PiecePosition>>
 			xPos = 1;
 			yPos++;
 		}
-		xPos++;
+		else
+		{
+			xPos++;
+		}
 	}
 
 	for (int joker = 0; joker < J; joker++) {
@@ -52,55 +60,70 @@ void AutoPlayerAlgorithm::initMovesVector(std::vector<unique_ptr<PiecePosition>>
 			xPos = 1;
 			yPos++;
 		}
-		xPos++;
+		else
+		{
+			xPos++;
+		}
 	}
 
 	for (int rock = 0; rock < R; rock++) {
-		point = generateRandomPoint();
-		while (pointExists(point, vectorToFill)) {
-			point = generateRandomPoint();
+
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), ROCK_CHAR));
+		if (xPos == N) {
+			xPos = 1;
+			yPos++;
 		}
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(point, ROCK_CHAR));
+		else
+		{
+			xPos++;
+		}
 	}
 
 	for (int paper = 0; paper < P; paper++) {
-		point = generateRandomPoint();
-		while (pointExists(point, vectorToFill)) {
-			point = generateRandomPoint();
+
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), PAPER_CHAR));
+		if (xPos == N) {
+			xPos = 1;
+			yPos++;
 		}
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(point, PAPER_CHAR));
+		else
+		{
+			xPos++;
+		}
 	}
 
 	for (int scissors = 0; scissors < S; scissors++) {
-		point = generateRandomPoint();
-		while (pointExists(point, vectorToFill)) {
-			point = generateRandomPoint();
+
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), SCISSORS_CHAR));
+		if (xPos == N) {
+			xPos = 1;
+			yPos++;
 		}
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(point, SCISSORS_CHAR));
-	}
-
-
-
-}
-
-bool AutoPlayerAlgorithm::pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill) {
-	for (unique_ptr<PiecePosition>& piece : vectorToFill) {
-		if (piece->getPosition().getX() == point.getX()
-			&& piece->getPosition().getY() == point.getY()) {
-			return true;
+		else
+		{
+			xPos++;
 		}
 	}
-	return false;
+
 }
 
-PointImpl AutoPlayerAlgorithm::generateRandomPoint() {
-	srand((int)time(0));
-	int range = N;
-	int rnd_x = 1 + (rand() % range);
-	int rnd_y = 1 + (rand() % range);
-
-	return PointImpl(rnd_x, rnd_y);
-}
+//bool AutoPlayerAlgorithm::pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill) {
+//	for (unique_ptr<PiecePosition>& piece : vectorToFill) {
+//		if (piece->getPosition().getX() == point.getX()
+//			&& piece->getPosition().getY() == point.getY()) {
+//			return true;
+//		}
+//	}
+//	return false;
+//}
+//
+//PointImpl AutoPlayerAlgorithm::generateRandomPoint() {
+//	int range = N;
+//	int rnd_x = 1 + ( % range);
+//	int rnd_y = 1 + ( % range);
+//
+//	return PointImpl(rnd_x, rnd_y);
+//}
 
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
@@ -124,47 +147,6 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 		mGameBoardInfo.GetBoardInPosition(piecePos->getPosition()).ChangeSquarePiece(strategyPiece);
 	}
 
-}
-
-
-void AutoPlayerAlgorithm::initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
-{
-	if (player == 1)
-	{
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(1, 1), FLAG_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(2, 1), JOKER_CHAR, BOMB_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(1, 3), JOKER_CHAR, BOMB_CHAR));
-		mJokerLocations.push_back(PointImpl(2, 1));
-		mJokerLocations.push_back(PointImpl(1, 3));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(1, 2), BOMB_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(2, 2), BOMB_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(3, 6), SCISSORS_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(4, 5), ROCK_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(2, 5), ROCK_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(4, 4), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(5, 3), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(3, 4), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(1, 4), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(2, 3), PAPER_CHAR));
-	}
-	else
-	{
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(10, 10), FLAG_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(9, 10), JOKER_CHAR, BOMB_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(10, 9), JOKER_CHAR, BOMB_CHAR));
-		mJokerLocations.push_back(PointImpl(9, 10));
-		mJokerLocations.push_back(PointImpl(10, 9));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(9, 9), BOMB_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(9, 8), BOMB_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(4, 7), SCISSORS_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(7, 6), ROCK_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(4, 5), ROCK_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(6, 8), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(8, 8), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(8, 9), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(1, 7), PAPER_CHAR));
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(8, 3), PAPER_CHAR));
-	}
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
@@ -364,22 +346,22 @@ bool AutoPlayerAlgorithm::checkIsThreatening(int xPos, int yPos, int player) {
 	StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(piece);
 
 	if (strategyPiece != nullptr && strategyPiece->GetIsMovingPiece()) {
-		if (mGameBoardInfo.GetBoardInPosition(xPos + 1, yPos).IsEmpty() == false
+		if (xPos < N && mGameBoardInfo.GetBoardInPosition(xPos + 1, yPos).IsEmpty() == false
 			&& mGameBoardInfo.GetBoardInPosition(xPos + 1, yPos).GetPiece()->GetOwnerNum() == opponent
 			&& mGameBoardInfo.GetBoardInPosition(xPos, yPos).GetPiece()->IsStrongerThan(mGameBoardInfo.GetBoardInPosition(xPos + 1, yPos).GetPiece())) {
 			isThreatening = true;
 		}
-		else if (mGameBoardInfo.GetBoardInPosition(xPos - 1, yPos).IsEmpty() == false
+		else if (xPos > 1 && mGameBoardInfo.GetBoardInPosition(xPos - 1, yPos).IsEmpty() == false
 			&& mGameBoardInfo.GetBoardInPosition(xPos - 1, yPos).GetPiece()->GetOwnerNum() == opponent
 			&& mGameBoardInfo.GetBoardInPosition(xPos, yPos).GetPiece()->IsStrongerThan(mGameBoardInfo.GetBoardInPosition(xPos - 1, yPos).GetPiece())) {
 			isThreatening = true;
 		}
-		else if (mGameBoardInfo.GetBoardInPosition(xPos, yPos + 1).IsEmpty() == false
+		else if (yPos < M && mGameBoardInfo.GetBoardInPosition(xPos, yPos + 1).IsEmpty() == false
 			&& mGameBoardInfo.GetBoardInPosition(xPos, yPos + 1).GetPiece()->GetOwnerNum() == opponent
 			&& mGameBoardInfo.GetBoardInPosition(xPos, yPos).GetPiece()->IsStrongerThan(mGameBoardInfo.GetBoardInPosition(xPos, yPos + 1).GetPiece())) {
 			isThreatening = true;
 		}
-		else if (mGameBoardInfo.GetBoardInPosition(xPos, yPos - 1).IsEmpty() == false
+		else if (yPos > 1 && mGameBoardInfo.GetBoardInPosition(xPos, yPos - 1).IsEmpty() == false
 			&& mGameBoardInfo.GetBoardInPosition(xPos, yPos - 1).GetPiece()->GetOwnerNum() == opponent
 			&& mGameBoardInfo.GetBoardInPosition(xPos, yPos).GetPiece()->IsStrongerThan(mGameBoardInfo.GetBoardInPosition(xPos, yPos - 1).GetPiece())) {
 			isThreatening = true;
@@ -517,7 +499,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::saveAPiece() {
 					&& strategyPiece->GetIsThreatened() == true) {
 					PointImpl* posTo = runForYourLife(col, row);
 					if (posTo != nullptr) {
-						return std::make_unique<MoveImpl>(&posFrom, posTo);
+						return std::make_unique<MoveImpl>(posFrom, *posTo);
 					}
 				}
 			}
@@ -545,7 +527,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::eatOpponentPiece() {
 					&& strategyPiece->GetIsThreathening() == true) {
 					PointImpl* posTo = conquerPiece(col, row);
 					if (posTo != nullptr) {
-						return std::make_unique<MoveImpl>(&posFrom, posTo); //problem with pointers or points
+						return std::make_unique<MoveImpl>(posFrom, *posTo); //problem with pointers or points
 					}
 				}
 			}
@@ -586,7 +568,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
 			if (!mGameBoardInfo.GetBoardInPosition(col, row).IsEmpty()
 				&& mGameBoardInfo.GetBoardInPosition(col, row).GetPiece()->GetOwnerNum() == mPlayer
 				&& mGameBoardInfo.GetBoardInPosition(col, row).GetPiece()->GetIsMovingPiece()) {
-				move = std::make_unique<MoveImpl>(&pos, getEmptySquareToMoveTo(pos));
+				move = std::make_unique<MoveImpl>(pos, *getEmptySquareToMoveTo(pos));
 				if (move != nullptr) {
 					return move;
 				}
@@ -611,13 +593,14 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag() {
 				for (unique_ptr<PointImpl>& pos : posVector) {
 					moveTo = getPlaceTowardsFlag(*pos, flagPoint, true);
 					if (moveTo != nullptr) {
-						return std::make_unique<MoveImpl>(pos.get(), moveTo);
+						return std::make_unique<MoveImpl>(*pos, *moveTo);
 					}
 				}
 			}
 
 		}
 	}
+
 	PointImpl* moveClosest;
 	for (PointImpl& flagPoint : mOpponentFlagLocations) {
 		for (int d = 0; d < N - 1 + M - 1; d++) {
@@ -625,7 +608,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag() {
 			if (posVector.size() != 0) {
 				moveClosest = getPlaceTowardsFlag(*posVector[0], flagPoint, false);
 				if (moveClosest != nullptr) {
-					return std::make_unique<MoveImpl>(posVector[0].get(), moveClosest);
+					return std::make_unique<MoveImpl>(*posVector[0], *moveClosest);
 				}
 			}
 		}

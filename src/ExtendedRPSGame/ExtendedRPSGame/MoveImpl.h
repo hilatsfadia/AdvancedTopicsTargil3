@@ -7,14 +7,15 @@
 
 #include "Point.h"
 #include "Move.h"
+#include "PointImpl.h"
 
 class MoveImpl : public Move{
-    Point* mFrom;
-    Point* mTo;
+	PointImpl mFrom;
+	PointImpl mTo;
 public:
-    MoveImpl(Point* from, Point* to) : mFrom(from), mTo(to){}
-    virtual const Point& getFrom() const { return  *mFrom; }
-    virtual const Point& getTo() const { return  *mTo; }
+	MoveImpl(const PointImpl& from, const PointImpl& to) : mFrom(from), mTo(to){}
+    virtual const Point& getFrom() const { return mFrom; }
+    virtual const Point& getTo() const { return  mTo; }
 };
 
 

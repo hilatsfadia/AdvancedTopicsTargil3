@@ -69,8 +69,8 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens()
 		return nullptr;
 	}
 
-	Point* posFrom = GetPositionFromChars(currMoveLineTokens[FROM_X_TOKEN_NUM], currMoveLineTokens[FROM_Y_TOKEN_NUM]);
-	Point* posTo = GetPositionFromChars(currMoveLineTokens[TO_X_TOKEN_NUM], currMoveLineTokens[TO_Y_TOKEN_NUM]);
+	PointImpl* posFrom = GetPositionFromChars(currMoveLineTokens[FROM_X_TOKEN_NUM], currMoveLineTokens[FROM_Y_TOKEN_NUM]);
+	PointImpl* posTo = GetPositionFromChars(currMoveLineTokens[TO_X_TOKEN_NUM], currMoveLineTokens[TO_Y_TOKEN_NUM]);
 
 	if (!posFrom || !posTo)
 	{
@@ -78,7 +78,7 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens()
 		return nullptr;
 	}
 
-	return make_unique<MoveImpl>(posFrom, posTo);
+	return make_unique<MoveImpl>(*posFrom, *posTo);
 }
 
 unique_ptr<Move> ParserMoveFile::ParseCurrMove(std::ifstream& playerMoveFileStream)
