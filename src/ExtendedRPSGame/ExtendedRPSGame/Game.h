@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
+//#include <array>
 #include <string>
 #include "Player.h"
 #include "BoardImpl.h"
@@ -37,6 +38,8 @@ private:
 
 	BoardImpl mGameBoard;
 	Player* mPlayers[NUM_OF_PLAYERS];
+
+	std::vector<unique_ptr<PlayerAlgorithm>> algorithmsVec;
 
 	// TODO: check if needed
 	Winner mWinner = Winner::None;
@@ -124,7 +127,7 @@ public:
 	//	BAD_POS_INPUT_FILE_PLAYER1, BAD_POS_INPUT_FILE_PLAYER2,
 	//	BAD_POS_INPUT_FILES, BAD_MOVE_INPUT_FILE_PLAYER1, BAD_MOVE_INPUT_FILE_PLAYER2, NO_WINNER};
 
-	Game(PlayerAlgorithm* player1Algorithm, PlayerAlgorithm* player2Algorithm);
+	Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm);
 
 	virtual ~Game();
 

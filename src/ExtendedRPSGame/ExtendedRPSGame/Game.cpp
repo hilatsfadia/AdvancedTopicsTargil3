@@ -210,11 +210,13 @@ void Game::ReportGameOver(Winner winner, const std::string & gameOverMessage, bo
 	MakeOutputFile(gameOverMessage, ifToPrintBoard);
 }
 
-Game::Game(PlayerAlgorithm* player1Algorithm, PlayerAlgorithm* player2Algorithm)
+Game::Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm)
 {
 	// TODO: maybe save as array of algorithms (forum).
-	mPlayers[0] = new Player(player1Algorithm);
-	mPlayers[1] = new Player(player2Algorithm);
+	mPlayers[0] = new Player();
+	mPlayers[1] = new Player();
+	algorithmsVec.push_back(std::move(player1Algorithm));
+	algorithmsVec.push_back(std::move(player2Algorithm));
 }
 
 Game::~Game()
@@ -368,7 +370,7 @@ bool Game::HandlePositioning()
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		mPlayers[i]->GetPlayerAlgorithm()->getInitialPositions(i + 1, playersPiecePositions[i]);
+		algorithmsVec[i]->getInitialPositions(i + 1, playersPiecePositions[i]);
 	}
 
 	// Puts the pieces on two temp boards, as suggested in class,
@@ -390,7 +392,7 @@ bool Game::HandlePositioning()
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		mPlayers[i]->GetPlayerAlgorithm()->notifyOnInitialBoard(mGameBoard, fights);
+		algorithmsVec[i]->notifyOnInitialBoard(mGameBoard, fights);
 	}
 
 	return true;
@@ -443,7 +445,7 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 	}
 
 	// For this player
-	unique_ptr<Move> theMove = mPlayers[playerIndex]->GetPlayerAlgorithm()->getMove();
+	unique_ptr<Move> theMove = algorithmsVec[playerIndex]->getMove();
 
 	// Written in the forum that we can return nullptr for invalid line/ end of file
 	// In both cases we are allowed to refer to it as a lose.
@@ -476,13 +478,13 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 void Game::NotifyOtherPlayer(int otherPlayerIndex, FightInfoImpl& fightToFill, Move& move)
 {
 	// For the other player.
-	PlayerAlgorithm* opponentAlgorithm = mPlayers[otherPlayerIndex]->GetPlayerAlgorithm();
-	opponentAlgorithm->notifyOnOpponentMove(move);
+	PlayerAlgorithm& opponentAlgorithm = *algorithmsVec[otherPlayerIndex];
+	opponentAlgorithm.notifyOnOpponentMove(move);
 
 	// Notify only of there was a fight
 	if (fightToFill.isInitialized())
 	{
-		opponentAlgorithm->notifyFightResult(fightToFill);
+		opponentAlgorithm.notifyFightResult(fightToFill);
 	}
 }
 
@@ -508,7 +510,7 @@ void Game::HandleMoves()
 			// Notify only of there was a fight
 			if (fightToFill.isInitialized()) // There was fight
 			{
-				mPlayers[i]->GetPlayerAlgorithm()->notifyFightResult(fightToFill);
+				algorithmsVec[i]->notifyFightResult(fightToFill);
 				countNoFightMoves = 0;
 			}
 			else // There was no fight
@@ -516,7 +518,7 @@ void Game::HandleMoves()
 				countNoFightMoves++;
 			}
 
-			unique_ptr<JokerChange> currJokerChange = mPlayers[i]->GetPlayerAlgorithm()->getJokerChange();
+			unique_ptr<JokerChange> currJokerChange = algorithmsVec[i]->getJokerChange();
 
 			if (currJokerChange != nullptr) // if a change is requested
 			{

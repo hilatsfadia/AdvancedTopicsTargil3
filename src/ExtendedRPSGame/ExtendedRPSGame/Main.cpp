@@ -4,6 +4,7 @@
 #include "Parser.h"
 #include <iostream>
 #include "AutoPlayerAlgorithm.h"
+#include <memory>
 
 #define COMMAND_LINE_AUTO_ALGORITHM_STR "auto"
 #define COMMAND_LINE_FILE_ALGORITHM_STR "file"
@@ -12,6 +13,7 @@
 using std::string;
 using std::cout;
 using std::endl;
+using std::make_unique;
 
 void PrintUsage()
 {
@@ -23,15 +25,15 @@ void PrintUsage()
 }
 
 // Creates a player algorithm object according to the given str.
-PlayerAlgorithm* getPlayerAlgoritmFromStr(string str)
+unique_ptr<PlayerAlgorithm> getPlayerAlgoritmFromStr(string str)
 {
 	if (str == COMMAND_LINE_AUTO_ALGORITHM_STR)
 	{
-		return new AutoPlayerAlgorithm();
+		return make_unique<AutoPlayerAlgorithm>();
 	}
 	else if (str == COMMAND_LINE_FILE_ALGORITHM_STR)
 	{
-		return new FilePlayerAlgorithm();
+		return make_unique<FilePlayerAlgorithm>();
 	}
 
 	return nullptr;
@@ -64,8 +66,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	PlayerAlgorithm* player1Algorithm = getPlayerAlgoritmFromStr(algorithmsStrings[0]);
-	PlayerAlgorithm* player2Algorithm = getPlayerAlgoritmFromStr(algorithmsStrings[2]);
+	unique_ptr<PlayerAlgorithm> player1Algorithm = getPlayerAlgoritmFromStr(algorithmsStrings[0]);
+	unique_ptr<PlayerAlgorithm> player2Algorithm = getPlayerAlgoritmFromStr(algorithmsStrings[2]);
 
 	// Unknown parameter
 	if ((player1Algorithm == nullptr) || (player2Algorithm == nullptr))
@@ -74,11 +76,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	Game game(player1Algorithm, player2Algorithm);
+	Game game(std::move(player1Algorithm), std::move(player2Algorithm));
 	game.RunGame();
-
-	delete player1Algorithm;
-	delete player2Algorithm;
 
     return 0;
 }

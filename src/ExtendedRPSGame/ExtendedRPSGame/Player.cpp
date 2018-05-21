@@ -8,11 +8,10 @@ Player::~Player()
 {
 }
 
-Player::Player(PlayerAlgorithm* playerAlgorithm)
+Player::Player()
 {
 	mPlayerNum = mPlayerCounter;
 	mPlayerCounter++;
-	mPlayerAlgorithm = playerAlgorithm;
 	mCountPieces[PieceFactory::PieceType::Rock] = 0;
 	mCountPieces[PieceFactory::PieceType::Paper] = 0;
 	mCountPieces[PieceFactory::PieceType::Scissors] = 0;
@@ -27,6 +26,27 @@ Player::Player(PlayerAlgorithm* playerAlgorithm)
 	mMaxCountPieces[PieceFactory::PieceType::Joker] = J;
 	mMaxCountPieces[PieceFactory::PieceType::Flag] = F;
 }
+
+//
+//Player::Player(PlayerAlgorithm* playerAlgorithm)
+//{
+//	mPlayerNum = mPlayerCounter;
+//	mPlayerCounter++;
+//	mPlayerAlgorithm = playerAlgorithm;
+//	mCountPieces[PieceFactory::PieceType::Rock] = 0;
+//	mCountPieces[PieceFactory::PieceType::Paper] = 0;
+//	mCountPieces[PieceFactory::PieceType::Scissors] = 0;
+//	mCountPieces[PieceFactory::PieceType::Bomb] = 0;
+//	mCountPieces[PieceFactory::PieceType::Joker] = 0;
+//	mCountPieces[PieceFactory::PieceType::Flag] = 0;
+//
+//	mMaxCountPieces[PieceFactory::PieceType::Rock] = R;
+//	mMaxCountPieces[PieceFactory::PieceType::Paper] = P;
+//	mMaxCountPieces[PieceFactory::PieceType::Scissors] = S;
+//	mMaxCountPieces[PieceFactory::PieceType::Bomb] = B;
+//	mMaxCountPieces[PieceFactory::PieceType::Joker] = J;
+//	mMaxCountPieces[PieceFactory::PieceType::Flag] = F;
+//}
 
 int Player::GetPieceCount(PieceFactory::PieceType pieceType)
 {

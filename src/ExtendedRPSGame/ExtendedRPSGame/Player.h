@@ -28,10 +28,11 @@ class Player
 	int mCountPoints = 0;
 	int mPositionedAllFlags = false;
 
-	PlayerAlgorithm* mPlayerAlgorithm = nullptr;
+	//unique_ptr<PlayerAlgorithm> mPlayerAlgorithm = nullptr;
 
 public:
-	Player(PlayerAlgorithm* playerAlgorithm);
+	//Player(PlayerAlgorithm* playerAlgorithm);
+	Player();
 	~Player();
 
 	int GetPlayerNum() const { return mPlayerNum; }
@@ -62,7 +63,7 @@ public:
 	void AddToCountMovingPieces(PieceFactory::PieceType pieceType);
 	void RemoveFromCountMovingPieces(PieceFactory::PieceType pieceType);
 
-	PlayerAlgorithm* GetPlayerAlgorithm() { return mPlayerAlgorithm; }
+	//PlayerAlgorithm* GetPlayerAlgorithm() { return mPlayerAlgorithm; }
 	//friend bool operator==(const Player& lhs, const Player& rhs);
 	//friend bool operator!=(const Player& lhs, const Player& rhs) { return !(lhs == rhs); }
 };
