@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "Joker.h"
 #include "FightInfoImpl.h"
+#include "PiecePositionImpl.h"
 
 #define MAX_MOVES 100
 
@@ -302,7 +303,7 @@ bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePo
 	for (std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
 	{
 		// TODO: define
-		if (piecePos->getJokerRep() == '#')
+		if (piecePos->getJokerRep() == NON_JOKER_REP)
 		{
 			if (!PutNonJokerOnBoard(player, piecePos, board))
 			{
