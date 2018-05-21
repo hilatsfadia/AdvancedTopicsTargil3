@@ -67,7 +67,7 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 				PointImpl* pos = new PointImpl(col, row);
 
 				int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
-				vectorToFill.push_back(std::make_unique<FightInfoImpl>(pos, player1Piece->GetPieceChar(), player2Piece->GetPieceChar(), winner));
+				vectorToFill.push_back(std::make_unique<FightInfoImpl>(*pos, player1Piece->GetPieceChar(), player2Piece->GetPieceChar(), winner));
 				boardSquare.ChangeSquarePiece(winningPiece);
 			}
 			else if (player1Piece != nullptr)
@@ -179,7 +179,7 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 		Piece* winningPiece = pieceDestination->Fight(pieceSource);
 		int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
 
-		toFill.SetFightInfoValues(&posTo, pieceSource->GetPieceChar(), pieceDestination->GetPieceChar(), winner);
+		toFill.SetFightInfoValues(posTo, pieceSource->GetPieceChar(), pieceDestination->GetPieceChar(), winner);
 		boardSquareDestination.ChangeSquarePiece(winningPiece);
 	}
 
