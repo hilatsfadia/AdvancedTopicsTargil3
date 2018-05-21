@@ -72,8 +72,9 @@ private:
 
 	//char getCharFromPieceType(PieceFactory::PieceType type);
 	
-	
-
+	PointImpl generateRandomPoint();
+	bool pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+	void initMovesVector(std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 public:
 	// Returns the initialization file name of the given player
 	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;

@@ -13,6 +13,94 @@
 #include "Bomb.h"
 #include "Joker.h"
 #include "JokerChangeImpl.h"
+#include <cstdlib>
+#include <ctime>
+
+
+void AutoPlayerAlgorithm::initMovesVector(std::vector<unique_ptr<PiecePosition>>& vectorToFill)
+{
+	PointImpl point;
+	int xPos = 1;
+	int yPos = 1;
+	for (int flag = 0; flag < F; flag++) {
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), FLAG_CHAR));
+		if (xPos == N) {
+			xPos = 1;
+			yPos++;
+		}
+		xPos++;
+	}
+	if (yPos != M) {
+		yPos++;
+		xPos = 1;
+	}
+	for (int bomb = 0; bomb < B; bomb++) {
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), BOMB_CHAR));
+
+		if (xPos == N) {
+			xPos = 1;
+			yPos++;
+		}
+		xPos++;
+	}
+
+	for (int joker = 0; joker < J; joker++) {
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), JOKER_CHAR, BOMB_CHAR));
+		mJokerLocations.push_back(PointImpl(xPos, yPos));
+
+		if (xPos == N) {
+			xPos = 1;
+			yPos++;
+		}
+		xPos++;
+	}
+
+	for (int rock = 0; rock < R; rock++) {
+		point = generateRandomPoint();
+		while (pointExists(point, vectorToFill)) {
+			point = generateRandomPoint();
+		}
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(point, ROCK_CHAR));
+	}
+
+	for (int paper = 0; paper < P; paper++) {
+		point = generateRandomPoint();
+		while (pointExists(point, vectorToFill)) {
+			point = generateRandomPoint();
+		}
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(point, PAPER_CHAR));
+	}
+
+	for (int scissors = 0; scissors < S; scissors++) {
+		point = generateRandomPoint();
+		while (pointExists(point, vectorToFill)) {
+			point = generateRandomPoint();
+		}
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(point, SCISSORS_CHAR));
+	}
+
+
+
+}
+
+bool AutoPlayerAlgorithm::pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill) {
+	for (unique_ptr<PiecePosition>& piece : vectorToFill) {
+		if (piece->getPosition().getX() == point.getX()
+			&& piece->getPosition().getY() == point.getY()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+PointImpl AutoPlayerAlgorithm::generateRandomPoint() {
+	srand((int)time(0));
+	int range = N;
+	int rnd_x = 1 + (rand() % range);
+	int rnd_y = 1 + (rand() % range);
+
+	return PointImpl(rnd_x, rnd_y);
+}
 
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
