@@ -8,7 +8,9 @@
 #include "Flag.h"
 #include "Player.h"
 
-Piece* PieceFactory::GetPieceFromChar(char pieceChar, Player* owner)
+using std::shared_ptr;
+
+Piece* PieceFactory::GetPieceFromChar(char pieceChar, shared_ptr<Player> owner)
 {
 	Piece* toReturn = nullptr;
 

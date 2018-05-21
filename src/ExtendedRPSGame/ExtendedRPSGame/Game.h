@@ -39,7 +39,7 @@ private:
 	BoardImpl mGameBoard;
 	//Player* mPlayersVec[NUM_OF_PLAYERS];
 
-	std::vector<unique_ptr<Player>> mPlayersVec;
+	std::vector<shared_ptr<Player>> mPlayersVec;
 	std::vector<unique_ptr<PlayerAlgorithm>> mAlgorithmsVec;
 
 	// TODO: check if needed
@@ -82,7 +82,7 @@ private:
 
 	bool IsGameOver() { return mWinner != Game::Winner::None; }
 
-	bool PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board);
+	bool PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board);
 
 	// Note that if this player index is 1 than the other player index is 0 and vice versa.
 	// Index is 0 based
@@ -90,17 +90,17 @@ private:
 
 	// Put a non joker piece in given position.  
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool PutNonJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
+	bool PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
 
 	// Changes the joker actual type to the one represented by the given character.
 	bool ChangeJokerActualType(Joker* joker, char cJokerRepresantation);
 
 	// Initializes the joker with it's owner and actual type represented by the given character.
-	bool InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, Player* owner);
+	bool InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, int playerNum);
 
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
+	bool PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
 
 	// Position on the board the initial pieces of the players, according to their algorithm.
 	bool HandlePositioning();

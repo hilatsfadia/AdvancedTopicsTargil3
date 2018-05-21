@@ -49,7 +49,7 @@ Piece* Piece::BothPiecesLosers(Piece* enemy)
 	return nullptr;
 }
 
-bool Piece::InitializeOwner(Player* owner)
+bool Piece::InitializeOwner(std::shared_ptr<Player> owner)
 { 
 	mOwnerNum = owner->GetPlayerNum();
 	PieceFactory::PieceType pieceType = GetPieceType();

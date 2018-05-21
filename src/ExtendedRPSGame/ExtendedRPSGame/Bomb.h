@@ -16,7 +16,7 @@ protected:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
 public:
-	Bomb(Player* owner = nullptr) : Piece(owner) {}
+	Bomb(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
 	Bomb(int ownerNum) : Piece(ownerNum) {}
 
 	// Gets this piece type.

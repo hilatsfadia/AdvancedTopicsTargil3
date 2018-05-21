@@ -4,11 +4,15 @@
 #include <ostream>
 #include "PieceFactory.h"
 #include "Player.h"
+#include <memory>
+
+using std::shared_ptr;
 
 class Piece
 {
 protected:
-	Player* mOwner;
+	// shared ptr because it is shared between it's pieces and the game.
+	shared_ptr<Player> mOwner;
 	int mOwnerNum;
 	
 	//PieceType mPieceType;
@@ -31,7 +35,7 @@ public:
 
 	// TODO: maybe remove the owner itself and keep only it's number
 	// TODO!!!
-	Piece(Player* owner) : mOwner(owner) { if (owner != nullptr) mOwnerNum = owner->GetPlayerNum(); }
+	Piece(shared_ptr<Player> owner = nullptr) : mOwner(owner) { if (owner != nullptr) mOwnerNum = owner->GetPlayerNum(); }
 	Piece(int ownerNum) : mOwner(nullptr), mOwnerNum(ownerNum) {}
 
 	// Deletes and removes the loser from its owner.
@@ -44,7 +48,7 @@ public:
 	Piece* BothPiecesLosers(Piece* enemy);
 
 	// Update both the piece and the owner of the ownership.
-	bool InitializeOwner(Player* owner);
+	bool InitializeOwner(std::shared_ptr<Player> owner);
 
 	// Ownership through joker
 	// Sets the owner without notifying him.
@@ -52,7 +56,7 @@ public:
 	//void SetTransparentOwner(Player* owner);
 
 	// Gets the owner of this piece
-	Player* GetOwner() const { return mOwner; }
+	shared_ptr<Player> GetOwner() const { return mOwner; }
 
 	// Gets the owner number of this piece
 	int GetOwnerNum() { return mOwnerNum; }

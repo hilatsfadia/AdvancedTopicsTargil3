@@ -212,8 +212,8 @@ void Game::ReportGameOver(Winner winner, const std::string & gameOverMessage, bo
 
 Game::Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm)
 {
-	mPlayersVec.push_back(make_unique<Player>());
-	mPlayersVec.push_back(make_unique<Player>());
+	mPlayersVec.push_back(make_shared<Player>());
+	mPlayersVec.push_back(make_shared<Player>());
 	mAlgorithmsVec.push_back(std::move(player1Algorithm));
 	mAlgorithmsVec.push_back(std::move(player2Algorithm));
 }
@@ -222,7 +222,7 @@ Game::~Game()
 {
 }
 
-bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
+bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
 {
 	Piece* piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
@@ -231,7 +231,7 @@ bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& p
 		return false;
 	}
 
-	if (!piece->InitializeOwner(&player))
+	if (!piece->InitializeOwner(mPlayersVec[playerNum]))
 	{
 		cout << "A PIECE type appears in file more than its number" << endl;
 		return false;
@@ -261,9 +261,9 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	return true;
 }
 
-bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, Player* owner)
+bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, int playerNum)
 {
-	if (!joker->InitializeOwner(owner))
+	if (!joker->InitializeOwner(mPlayersVec[playerNum]))
 	{
 		std::cout << "A PIECE type appears in file more than its number" << std::endl;
 		return false;
@@ -278,13 +278,13 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 	return true;
 }
 
-bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
+bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
 {
 	// actualPiece shouldn't have an owner! because we don't want to 
 	// count it as one of the player's pieces.
 	Joker* joker = new Joker();
 
-	if (!InitJokerOwnerAndActualType(joker, piecePos->getJokerRep(), &player))
+	if (!InitJokerOwnerAndActualType(joker, piecePos->getJokerRep(), playerNum))
 	{
 		// Already printed error.
 		return false;
@@ -295,21 +295,21 @@ bool Game::PutJokerOnBoard(Player& player, std::unique_ptr<PiecePosition>& piece
 	return board.PutPieceOnTempPlayerBoard(joker, piecePos->getPosition());
 }
 
-bool Game::PutPlayerPiecesOnBoard(Player& player, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)
+bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)
 {
 	for (std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
 	{
 		// TODO: define
 		if (piecePos->getJokerRep() == NON_JOKER_REP)
 		{
-			if (!PutNonJokerOnBoard(player, piecePos, board))
+			if (!PutNonJokerOnBoard(playerNum, piecePos, board))
 			{
 				return false;
 			}
 		}
 		else
 		{
-			if (!PutJokerOnBoard(player, piecePos, board))
+			if (!PutJokerOnBoard(playerNum, piecePos, board))
 			{
 				return false;
 			}
@@ -329,10 +329,10 @@ void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, c
 bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
 	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board) {
 
-	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(*mPlayersVec[0], player1PiecePositions, tempPlayer1Board) ||
+	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(0, player1PiecePositions, tempPlayer1Board) ||
 		(!mPlayersVec[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
 
-	bool isErrorInPlayer2Positioning = !PutPlayerPiecesOnBoard(*mPlayersVec[1], player2PiecePositions, tempPlayer2Board) ||
+	bool isErrorInPlayer2Positioning = !PutPlayerPiecesOnBoard(1, player2PiecePositions, tempPlayer2Board) ||
 		(!mPlayersVec[1]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
 
 	// Positions invalid.
