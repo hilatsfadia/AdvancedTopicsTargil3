@@ -37,9 +37,10 @@ private:
 	enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
 	BoardImpl mGameBoard;
-	Player* mPlayers[NUM_OF_PLAYERS];
+	//Player* mPlayersVec[NUM_OF_PLAYERS];
 
-	std::vector<unique_ptr<PlayerAlgorithm>> algorithmsVec;
+	std::vector<unique_ptr<Player>> mPlayersVec;
+	std::vector<unique_ptr<PlayerAlgorithm>> mAlgorithmsVec;
 
 	// TODO: check if needed
 	Winner mWinner = Winner::None;

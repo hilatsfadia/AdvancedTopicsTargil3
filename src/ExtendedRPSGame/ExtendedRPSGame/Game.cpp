@@ -87,11 +87,11 @@ using namespace std;
 //{
 //	bool isGameOver = true;
 //
-//	if (mPlayers[0]->GetFlagsCount() == 0)
+//	if (mPlayersVec[0]->GetFlagsCount() == 0)
 //	{
 //		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
 //	}
-//	else if (mPlayers[1]->GetFlagsCount() == 0)
+//	else if (mPlayersVec[1]->GetFlagsCount() == 0)
 //	{
 //		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
 //	}
@@ -121,8 +121,8 @@ Game::Winner Game::GetWinner(int loserNum) const
 
 bool Game::ReportAllMovingPiecesEaten()
 {
-	bool noMovingPiecesPlayer1 = (mPlayers[0]->GetCountOfMovingPieces() == 0);
-	bool noMovingPiecesPlayer2 = (mPlayers[1]->GetCountOfMovingPieces() == 0);
+	bool noMovingPiecesPlayer1 = (mPlayersVec[0]->GetCountOfMovingPieces() == 0);
+	bool noMovingPiecesPlayer2 = (mPlayersVec[1]->GetCountOfMovingPieces() == 0);
 
 	// TODO: ask if also tie if moving pieces of both players are eaten in the moving stage.
 	if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
@@ -149,8 +149,8 @@ bool Game::ReportAllMovingPiecesEaten()
 bool Game::ReportGameOverAfterInitBoard()
 {
 	bool isGameOver = true;
-	bool noFlagsPlayer1 = (mPlayers[0]->GetFlagsCount() == 0);
-	bool noFlagsPlayer2 = (mPlayers[1]->GetFlagsCount() == 0);
+	bool noFlagsPlayer1 = (mPlayersVec[0]->GetFlagsCount() == 0);
+	bool noFlagsPlayer2 = (mPlayersVec[1]->GetFlagsCount() == 0);
 
 	if (noFlagsPlayer1 && noFlagsPlayer2)
 	{
@@ -212,19 +212,14 @@ void Game::ReportGameOver(Winner winner, const std::string & gameOverMessage, bo
 
 Game::Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm)
 {
-	// TODO: maybe save as array of algorithms (forum).
-	mPlayers[0] = new Player();
-	mPlayers[1] = new Player();
-	algorithmsVec.push_back(std::move(player1Algorithm));
-	algorithmsVec.push_back(std::move(player2Algorithm));
+	mPlayersVec.push_back(make_unique<Player>());
+	mPlayersVec.push_back(make_unique<Player>());
+	mAlgorithmsVec.push_back(std::move(player1Algorithm));
+	mAlgorithmsVec.push_back(std::move(player2Algorithm));
 }
 
 Game::~Game()
 {
-	for (int i = 0; i < NUM_OF_PLAYERS; i++)
-	{
-		delete mPlayers[i];
-	}
 }
 
 bool Game::PutNonJokerOnBoard(Player & player, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
@@ -334,11 +329,11 @@ void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, c
 bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
 	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board) {
 
-	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(*mPlayers[0], player1PiecePositions, tempPlayer1Board) ||
-		(!mPlayers[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
+	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(*mPlayersVec[0], player1PiecePositions, tempPlayer1Board) ||
+		(!mPlayersVec[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
 
-	bool isErrorInPlayer2Positioning = !PutPlayerPiecesOnBoard(*mPlayers[1], player2PiecePositions, tempPlayer2Board) ||
-		(!mPlayers[1]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
+	bool isErrorInPlayer2Positioning = !PutPlayerPiecesOnBoard(*mPlayersVec[1], player2PiecePositions, tempPlayer2Board) ||
+		(!mPlayersVec[1]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
 
 	// Positions invalid.
 	// Position for both players are invalid
@@ -370,7 +365,7 @@ bool Game::HandlePositioning()
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		algorithmsVec[i]->getInitialPositions(i + 1, playersPiecePositions[i]);
+		mAlgorithmsVec[i]->getInitialPositions(i + 1, playersPiecePositions[i]);
 	}
 
 	// Puts the pieces on two temp boards, as suggested in class,
@@ -392,7 +387,7 @@ bool Game::HandlePositioning()
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++)
 	{
-		algorithmsVec[i]->notifyOnInitialBoard(mGameBoard, fights);
+		mAlgorithmsVec[i]->notifyOnInitialBoard(mGameBoard, fights);
 	}
 
 	return true;
@@ -437,28 +432,28 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 
 unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 {
-	// Checks if mPlayers[i] can move. If not, he loses the game.
-	if (mPlayers[playerIndex]->GetCountOfMovingPieces() == 0)
+	// Checks if mPlayersVec[i] can move. If not, he loses the game.
+	if (mPlayersVec[playerIndex]->GetCountOfMovingPieces() == 0)
 	{
-		ReportGameOver((Winner)mPlayers[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN_PLAYER);
+		ReportGameOver((Winner)mPlayersVec[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN_PLAYER);
 		return nullptr;
 	}
 
 	// For this player
-	unique_ptr<Move> theMove = algorithmsVec[playerIndex]->getMove();
+	unique_ptr<Move> theMove = mAlgorithmsVec[playerIndex]->getMove();
 
 	// Written in the forum that we can return nullptr for invalid line/ end of file
 	// In both cases we are allowed to refer to it as a lose.
 	if (theMove == nullptr)
 	{
-		int playerNum = mPlayers[playerIndex]->GetPlayerNum();
+		int playerNum = mPlayersVec[playerIndex]->GetPlayerNum();
 		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return nullptr;
 	}
 
-	if (!mGameBoard.MovePiece(*mPlayers[playerIndex], theMove, fightToFill))
+	if (!mGameBoard.MovePiece(*mPlayersVec[playerIndex], theMove, fightToFill))
 	{
-		int playerNum = mPlayers[playerIndex]->GetPlayerNum();
+		int playerNum = mPlayersVec[playerIndex]->GetPlayerNum();
 		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return nullptr;
 	}
@@ -466,9 +461,9 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 	// Check if it was a winning move which ate the last flag of the oponnent.
 	// If so, the player who just moved wins the game.
 	// Note that the flags number of the current player haven't changed.
-	if (mPlayers[GetOpponentIndex(playerIndex)]->GetFlagsCount() == 0)
+	if (mPlayersVec[GetOpponentIndex(playerIndex)]->GetFlagsCount() == 0)
 	{
-		ReportGameOver((Winner)mPlayers[playerIndex]->GetPlayerNum(), FLAGS_CAPTURED);
+		ReportGameOver((Winner)mPlayersVec[playerIndex]->GetPlayerNum(), FLAGS_CAPTURED);
 		return nullptr;
 	}
 
@@ -478,7 +473,7 @@ unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 void Game::NotifyOtherPlayer(int otherPlayerIndex, FightInfoImpl& fightToFill, Move& move)
 {
 	// For the other player.
-	PlayerAlgorithm& opponentAlgorithm = *algorithmsVec[otherPlayerIndex];
+	PlayerAlgorithm& opponentAlgorithm = *mAlgorithmsVec[otherPlayerIndex];
 	opponentAlgorithm.notifyOnOpponentMove(move);
 
 	// Notify only of there was a fight
@@ -510,7 +505,7 @@ void Game::HandleMoves()
 			// Notify only of there was a fight
 			if (fightToFill.isInitialized()) // There was fight
 			{
-				algorithmsVec[i]->notifyFightResult(fightToFill);
+				mAlgorithmsVec[i]->notifyFightResult(fightToFill);
 				countNoFightMoves = 0;
 			}
 			else // There was no fight
@@ -518,7 +513,7 @@ void Game::HandleMoves()
 				countNoFightMoves++;
 			}
 
-			unique_ptr<JokerChange> currJokerChange = algorithmsVec[i]->getJokerChange();
+			unique_ptr<JokerChange> currJokerChange = mAlgorithmsVec[i]->getJokerChange();
 
 			if (currJokerChange != nullptr) // if a change is requested
 			{
