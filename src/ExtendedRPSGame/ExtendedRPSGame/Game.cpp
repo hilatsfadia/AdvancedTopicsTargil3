@@ -118,13 +118,38 @@ Game::Winner Game::GetWinner(int loserNum) const
 	return Game::Winner::None;
 }
 
+bool Game::ReportAllMovingPiecesEaten()
+{
+	bool noMovingPiecesPlayer1 = (mPlayers[0]->GetCountOfMovingPieces() == 0);
+	bool noMovingPiecesPlayer2 = (mPlayers[1]->GetCountOfMovingPieces() == 0);
+
+	// TODO: ask if also tie if moving pieces of both players are eaten in the moving stage.
+	if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
+	{
+		// As Written in the forum
+		ReportGameOver(Winner::Tie, PIECES_EATEN_BOTH_PLAYERS);
+		return true;
+	}
+	// TODO: maybe not needed. (already checked).
+	else if (noMovingPiecesPlayer1)
+	{
+		ReportGameOver(Winner::Player2, PIECES_EATEN_PLAYER);
+		return true;
+	}
+	else if (noMovingPiecesPlayer2)
+	{
+		ReportGameOver(Winner::Player1, PIECES_EATEN_PLAYER);
+		return true;
+	}
+
+	return false;
+}
+
 bool Game::ReportGameOverAfterInitBoard()
 {
 	bool isGameOver = true;
 	bool noFlagsPlayer1 = (mPlayers[0]->GetFlagsCount() == 0);
 	bool noFlagsPlayer2 = (mPlayers[1]->GetFlagsCount() == 0);
-	bool noMovingPiecesPlayer1 = (mPlayers[0]->GetCountOfMovingPieces() == 0);
-	bool noMovingPiecesPlayer2 = (mPlayers[1]->GetCountOfMovingPieces() == 0);
 
 	if (noFlagsPlayer1 && noFlagsPlayer2)
 	{
@@ -138,21 +163,7 @@ bool Game::ReportGameOverAfterInitBoard()
 	{
 		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
 	}
-	else if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
-	{
-		// As Written in the forum
-		ReportGameOver(Winner::Tie, PIECES_EATEN_BOTH_PLAYERS);
-	}
-	// TODO: maybe not needed. (already checked).
-	else if (noMovingPiecesPlayer1)
-	{
-		ReportGameOver(Winner::Player2, PIECES_EATEN_PLAYER);
-	}
-	else if (noMovingPiecesPlayer2)
-	{
-		ReportGameOver(Winner::Player1, PIECES_EATEN_PLAYER);
-	}
-	else
+	else if (!ReportAllMovingPiecesEaten())
 	{
 		isGameOver = false;
 	}
@@ -515,6 +526,13 @@ void Game::HandleMoves()
 			}
 
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
+
+			// Check if it was a winning /losing Move in which one player ate all the other's moving pieces.
+			// As written in the forum, Joker change can fix no moving pieces situation?
+			if (ReportAllMovingPiecesEaten())
+			{
+				return;
+			}
 		}
 	}
 

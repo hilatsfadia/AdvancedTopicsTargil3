@@ -70,7 +70,7 @@ private:
 
 	void getVectorThreateningPieces(PointImpl & pos, std::vector<PointImpl>& posVectorToFill);
 
-	char getCharFromPieceType(PieceFactory::PieceType type);
+	//char getCharFromPieceType(PieceFactory::PieceType type);
 	
 	
 
@@ -78,7 +78,7 @@ public:
 	// Returns the initialization file name of the given player
 	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
 	
-	void initMovesVector(std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+	void initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 
 	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
 	

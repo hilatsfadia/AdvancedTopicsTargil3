@@ -66,6 +66,10 @@ private:
 
 	void ReportGameOver(Winner winner, const std::string & gameOverMessage, bool ifToPrintBoard = true);
 
+	// TODO: maybe pass a boolean, if to check tie.
+	// Returns true iff all the pieces of one of the players or for both are eaten.
+	bool ReportAllMovingPiecesEaten();
+
 	bool ReportGameOverAfterInitBoard();
 
 	// Checks whether one of the players wins the game, i.e

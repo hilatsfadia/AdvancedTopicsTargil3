@@ -1,10 +1,24 @@
 #include "stdafx.h"
 #include "StrategyPiece.h"
 #include "Joker.h"
+#include "Rock.h"
+#include "Paper.h"
+#include "Scissors.h"
+#include "Joker.h"
 
 PieceFactory::PieceType StrategyPiece::GetPieceType() const
 {
 	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Unknown : mUncoveredPiece->GetPieceType());
+}
+
+bool StrategyPiece::GetIsMovingPiece() const
+{
+	if (mUncoveredPiece != nullptr)
+	{
+		return mUncoveredPiece->GetIsMovingPiece();
+	}
+
+	return mIsMovingPiece;
 }
 
 char StrategyPiece::GetPieceChar() const
@@ -37,7 +51,7 @@ bool StrategyPiece::IsStrongerThan(Piece* other) const
 	return false;
 }
 
-PieceFactory::PieceType StrategyPiece::GetStrongerNotJoker(const Piece * piece) const
+char StrategyPiece::GetStrongerNotJoker(const Piece * piece) const
 {
 	PieceFactory::PieceType pieceType = piece->GetPieceType();
 
@@ -45,27 +59,27 @@ PieceFactory::PieceType StrategyPiece::GetStrongerNotJoker(const Piece * piece) 
 	{
 		case (PieceFactory::PieceType::Paper):
 		{
-			return PieceFactory::PieceType::Scissors;
+			return SCISSORS_CHAR;
 			break;
 		}
 		case (PieceFactory::PieceType::Scissors):
 		{
-			return PieceFactory::PieceType::Rock;
+			return ROCK_CHAR;
 			break;
 		}
 		case (PieceFactory::PieceType::Rock):
 		{
-			return PieceFactory::PieceType::Paper;
+			return PAPER_CHAR;
 			break;
 		}
 		default:
 		{
-			return PieceFactory::PieceType::Unknown;
+			return COVERED_CHAR;
 		}
 	}
 }
 
-PieceFactory::PieceType StrategyPiece::GetStronger(const Piece* piece) const
+char StrategyPiece::GetStronger(const Piece* piece) const
 {
 	PieceFactory::PieceType type = piece->GetPieceType();
 
@@ -88,5 +102,5 @@ PieceFactory::PieceType StrategyPiece::GetStronger(const Piece* piece) const
 		}
 	}
 
-	return PieceFactory::PieceType::Unknown;
+	return COVERED_CHAR;
 }
