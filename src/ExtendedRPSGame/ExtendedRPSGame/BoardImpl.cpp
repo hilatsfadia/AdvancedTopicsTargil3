@@ -66,24 +66,33 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 			if ((!player1BoardSquare.IsEmpty()) && (!player2BoardSquare.IsEmpty()))
 			{
 				Piece::WinningPiece winner = player1Piece.Fight(player2Piece);
-
-				//int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
 				vectorToFill.push_back(std::make_unique<FightInfoImpl>(PointImpl(col, row), player1Piece.GetPieceChar(), player2Piece.GetPieceChar(), (int)winner));
 
-				// TODO:!
-				//if (winner == Piece::WinningPiece::ThisPiece)
-				//{
-				//}
-				//boardSquare.ChangeSquarePiece(winningPiece);
-			//}
-			//else if (player1Piece != nullptr)
-			//{
-			//	boardSquare.ChangeSquarePiece(player1Piece);
-			//}
-			//else if (player2Piece != nullptr)
-			//{
-			//	boardSquare.ChangeSquarePiece(player2Piece);
-			//}
+				switch (winner)
+				{
+					case (Piece::WinningPiece::ThisPiece):
+					{
+						boardSquare.MovePieceFromSquare(player1BoardSquare);
+						break;
+					}
+					case (Piece::WinningPiece::enemy):
+					{
+						boardSquare.MovePieceFromSquare(player2BoardSquare);
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+			}
+			else if (!player1BoardSquare.IsEmpty())
+			{
+				boardSquare.MovePieceFromSquare(player1BoardSquare);
+			}
+			else if (!player2BoardSquare.IsEmpty())
+			{
+				boardSquare.MovePieceFromSquare(player2BoardSquare);
 			}
 		}
 	}
