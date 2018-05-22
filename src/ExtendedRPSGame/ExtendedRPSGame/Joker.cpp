@@ -39,11 +39,11 @@ Piece::WinningPiece Joker::FightPieceOfTheSameType(Piece& enemy)
 {
 	// Assert enemy is Joker? This method should not be called with other types.
 	Piece::WinningPiece winningPiece = mActualPiece->Fight(enemy);
-	if (winningPiece == Piece::WinningPiece::ThisPiece)
+	if (winningPiece == Piece::WinningPiece::CallingObject)
 	{
 		enemy.LoseToPiece();
 	}
-	else if (winningPiece == Piece::WinningPiece::enemy)
+	else if (winningPiece == Piece::WinningPiece::OtherObject)
 	{
 		this->LoseToPiece();
 	}
@@ -55,11 +55,11 @@ Piece::WinningPiece Joker::FightWithOtherPieceType(Piece& enemy)
 {
 	Piece::WinningPiece winningPiece = mActualPiece->Fight(enemy);
 
-	if (winningPiece == Piece::WinningPiece::ThisPiece)
+	if (winningPiece == Piece::WinningPiece::CallingObject)
 	{
 		enemy.LoseToPiece();
 	}
-	else if (winningPiece == Piece::WinningPiece::enemy)
+	else if (winningPiece == Piece::WinningPiece::OtherObject)
 	{
 		this->LoseToPiece();
 	}

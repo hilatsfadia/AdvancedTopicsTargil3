@@ -70,12 +70,12 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 
 				switch (winner)
 				{
-					case (Piece::WinningPiece::ThisPiece):
+					case (Piece::WinningPiece::CallingObject):
 					{
 						boardSquare.MovePieceFromSquare(player1BoardSquare);
 						break;
 					}
-					case (Piece::WinningPiece::enemy):
+					case (Piece::WinningPiece::OtherObject):
 					{
 						boardSquare.MovePieceFromSquare(player2BoardSquare);
 						break;
@@ -195,15 +195,18 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 		// TODO: refactor (look positioning)
 		Piece::WinningPiece winningPiece = pieceDestination.Fight(*pieceSource);
 		int winner;
+		char sourceChar = pieceSource->GetPieceChar();
+		char destinationChar = pieceDestination.GetPieceChar();
 
 		switch (winningPiece)
 		{
-			case (Piece::WinningPiece::ThisPiece):
+			case (Piece::WinningPiece::CallingObject):
 			{
 				winner = pieceDestination.GetOwner()->GetPlayerNum();
+				boardSquareSource.ClearSquare();
 				break;
 			}
-			case (Piece::WinningPiece::enemy):
+			case (Piece::WinningPiece::OtherObject):
 			{
 				winner = pieceSource->GetOwner()->GetPlayerNum();
 				boardSquareDestination.MovePieceFromSquare(boardSquareSource);
@@ -216,10 +219,15 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 			}
 		}
 
-		toFill.SetFightInfoValues(posTo, pieceSource->GetPieceChar(), pieceDestination.GetPieceChar(), winner);
+		if (pieceSource->GetOwner()->GetPlayerNum() == 1)
+		{
+			toFill.SetFightInfoValues(posTo, sourceChar, destinationChar, winner);
+		}
+		else
+		{
+			toFill.SetFightInfoValues(posTo, destinationChar, sourceChar, winner);
+		}
 	}
-
-	GetBoardInPosition(posFrom).ClearSquare();
 
 	return true;
 }

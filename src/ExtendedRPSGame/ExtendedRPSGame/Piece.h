@@ -19,7 +19,7 @@ protected:
 	//PieceType mPieceType;
 
 public:
-	enum class WinningPiece { Tie = 0, ThisPiece = 1, enemy = 2 };
+	enum class WinningPiece { Tie = 0, CallingObject = 1, OtherObject = 2 };
 	//enum class WinningPiece { Tie, ThisPiece, enemy };
 
 	virtual ~Piece() {};

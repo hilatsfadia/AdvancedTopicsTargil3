@@ -4,5 +4,5 @@
 Piece::WinningPiece Flag::FightWithOtherPieceType(Piece& enemy)
 {
 	LoseToPiece();
-	return WinningPiece::enemy;
+	return WinningPiece::OtherObject;
 }

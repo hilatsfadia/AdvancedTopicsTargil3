@@ -10,13 +10,13 @@ Piece::WinningPiece Scissors::FightWithOtherPieceType(Piece& enemy)
 		case (PieceFactory::PieceType::Rock):
 		{
 			LoseToPiece();
-			return WinningPiece::enemy;
+			return WinningPiece::OtherObject;
 			break;
 		}
 		case (PieceFactory::PieceType::Paper):
 		{
 			enemy.LoseToPiece();
-			return WinningPiece::ThisPiece;
+			return WinningPiece::CallingObject;
 			break;
 		}
 		default:

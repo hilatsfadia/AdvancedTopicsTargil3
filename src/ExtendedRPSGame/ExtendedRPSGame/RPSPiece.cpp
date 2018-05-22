@@ -15,13 +15,13 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 		}
 		case (PieceFactory::PieceType::Joker):
 		{
-			if (enemy.Fight(*this) == WinningPiece::enemy)
+			if (enemy.Fight(*this) == WinningPiece::OtherObject)
 			{
-				return WinningPiece::ThisPiece;
+				return WinningPiece::CallingObject;
 			}
-			else if (enemy.Fight(*this) == WinningPiece::ThisPiece)
+			else if (enemy.Fight(*this) == WinningPiece::CallingObject)
 			{
-				return WinningPiece::enemy;
+				return WinningPiece::OtherObject;
 			}
 			else
 			{
@@ -32,7 +32,7 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 		case (PieceFactory::PieceType::Flag):
 		{
 			enemy.LoseToPiece();
-			return WinningPiece::ThisPiece;
+			return WinningPiece::CallingObject;
 			break;
 		}
 		default:
