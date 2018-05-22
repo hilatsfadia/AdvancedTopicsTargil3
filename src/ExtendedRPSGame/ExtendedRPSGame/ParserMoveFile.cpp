@@ -48,7 +48,7 @@ unique_ptr<JokerChange> ParserMoveFile::ParseCurrJokerChange()
 		return INVALID_JOKER_CHANGE;
 	}
 
-	PointImpl* posJoker = GetPositionFromChars(currMoveLineTokens[JOKER_X_TOKEN_NUM], currMoveLineTokens[JOKER_Y_TOKEN_NUM]);
+	unique_ptr<PointImpl> posJoker = GetPositionFromChars(currMoveLineTokens[JOKER_X_TOKEN_NUM], currMoveLineTokens[JOKER_Y_TOKEN_NUM]);
 	if (!posJoker)
 	{
 		// Already printed error.
@@ -69,8 +69,8 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens()
 		return nullptr;
 	}
 
-	PointImpl* posFrom = GetPositionFromChars(currMoveLineTokens[FROM_X_TOKEN_NUM], currMoveLineTokens[FROM_Y_TOKEN_NUM]);
-	PointImpl* posTo = GetPositionFromChars(currMoveLineTokens[TO_X_TOKEN_NUM], currMoveLineTokens[TO_Y_TOKEN_NUM]);
+	unique_ptr<PointImpl> posFrom = GetPositionFromChars(currMoveLineTokens[FROM_X_TOKEN_NUM], currMoveLineTokens[FROM_Y_TOKEN_NUM]);
+	unique_ptr<PointImpl> posTo = GetPositionFromChars(currMoveLineTokens[TO_X_TOKEN_NUM], currMoveLineTokens[TO_Y_TOKEN_NUM]);
 
 	if (!posFrom || !posTo)
 	{

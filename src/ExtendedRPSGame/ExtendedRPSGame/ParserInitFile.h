@@ -9,7 +9,7 @@ class ParserInitFile :
 protected:
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	bool processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 	
 	// Process a line tokens. 
 	// Checks for tokens validity.

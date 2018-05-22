@@ -82,11 +82,11 @@ bool Parser::CheckReadOK(int player, std::ifstream& inFile, const std::string& p
 	return true;
 }
 
-PointImpl* Parser::GetPositionFromChars(const std::string & posx, const std::string & posy)
+unique_ptr<PointImpl> Parser::GetPositionFromChars(const std::string & posx, const std::string & posy)
 {
 	try
 	{
-		return new PointImpl{ stoi(posx), stoi(posy) };
+		return std::make_unique<PointImpl>( stoi(posx), stoi(posy) );
 	}
 	catch (std::exception& e)
 	{

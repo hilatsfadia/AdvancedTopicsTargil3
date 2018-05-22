@@ -20,7 +20,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl* pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	//Piece* piece = nullptr;
 
@@ -36,7 +36,7 @@ bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>
 		return false;
 	}
 
-	vectorToFill.push_back(std::make_unique<PiecePositionImpl>(*pos, JOKER_CHAR, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0]));
+	vectorToFill.push_back(std::make_unique<PiecePositionImpl>(pos, JOKER_CHAR, tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM][0]));
 
 	return true;
 }
@@ -50,7 +50,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 		return false;
 	}
 
-	PointImpl* pos = GetPositionFromChars(tokens[X_TOKEN_NUM], tokens[Y_TOKEN_NUM]);
+	unique_ptr<PointImpl> pos = GetPositionFromChars(tokens[X_TOKEN_NUM], tokens[Y_TOKEN_NUM]);
 	if (!pos)
 	{
 		// Already printed error.
@@ -73,7 +73,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 	{
 		// It's a joker line
 		// (tokens.size() == INIT_LINE_TOKENS_COUNT_WITH_JOKER)
-		return processJokerLine(playerNum, tokens, pos, vectorToFill);
+		return processJokerLine(playerNum, tokens, *pos, vectorToFill);
 	}
 
 	return true;

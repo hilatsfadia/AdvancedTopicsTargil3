@@ -50,7 +50,7 @@ protected:
 	bool CheckReadOK(int player, std::ifstream& inFile, const std::string& playerfileName, int lineNum);
 
 	// Gets the Point of the position from coordinates strings
-	static PointImpl* GetPositionFromChars(const std::string& posy, const std::string& posx);
+	static unique_ptr<PointImpl> GetPositionFromChars(const std::string& posy, const std::string& posx);
 
 public:
 	Parser(Game* game) : mGame(game) {}
