@@ -389,7 +389,8 @@ bool AutoPlayerAlgorithm::checkIsThreatening(int xPos, int yPos, int player) {
 }
 
 void AutoPlayerAlgorithm::movePieceOnInfoBoard(const Move& move) {
-	BoardImpl::BoardSquare& boardSquare = mGameBoardInfo.GetBoardInPosition(move.getFrom());
+	// TODO: delete!
+	//BoardImpl::BoardSquare& boardSquare = mGameBoardInfo.GetBoardInPosition(move.getFrom());
 	Piece* pieceToMove = mGameBoardInfo.GetBoardInPosition(move.getFrom()).GetPiece();
 	StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(pieceToMove);
 	if (pieceToMove->GetOwnerNum() == mOpponent) {
