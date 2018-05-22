@@ -53,7 +53,6 @@ protected:
 	static unique_ptr<PointImpl> GetPositionFromChars(const std::string& posy, const std::string& posx);
 
 public:
-	Parser(Game* game) : mGame(game) {}
 	Parser() {}
 
 	virtual ~Parser() {}

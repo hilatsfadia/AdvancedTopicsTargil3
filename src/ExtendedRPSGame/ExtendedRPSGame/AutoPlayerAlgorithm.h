@@ -1,31 +1,32 @@
-//#ifndef ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
-//#define ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <vector>
-//#include <string>
-//#include <fstream>
-//#include <iterator>
-//#include <iostream>
-//#include "PlayerAlgorithm.h"
-//#include "BoardImpl.h"
-//#include <cctype>
-//#include "Player.h"
-//#include "MoveImpl.h"
-//#define PIECE_TYPE_NUM 6
-//
-//class AutoPlayerAlgorithm : public PlayerAlgorithm
-//{
-//private:
-//	BoardImpl mGameBoardInfo; //TODO: pointer?
-//	bool mFlagPlaceKnown;
-//	int mPlayer;
-//	int mOpponent;
-//	int mNumCoveredPieces;
-//	int mNumMovablePieces;
-//	std::vector<PointImpl> mOpponentFlagLocations;
-//	std::vector<PointImpl> mJokerLocations;
-//
+#ifndef ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
+#define ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
+#include <stdlib.h>
+#include <stdio.h>
+#include <vector>
+#include <string>
+#include <fstream>
+#include <iterator>
+#include <iostream>
+#include "PlayerAlgorithm.h"
+#include "BoardImpl.h"
+#include <cctype>
+#include "Player.h"
+#include "MoveImpl.h"
+#include "PiecePositionImpl.h"
+#define PIECE_TYPE_NUM 6
+
+class AutoPlayerAlgorithm : public PlayerAlgorithm
+{
+private:
+	BoardImpl mGameBoardInfo; //TODO: pointer?
+	bool mFlagPlaceKnown;
+	int mPlayer;
+	int mOpponent;
+	int mNumCoveredPieces;
+	int mNumMovablePieces;
+	std::vector<PointImpl> mOpponentFlagLocations;
+	std::vector<PointImpl> mJokerLocations;
+
 //	void eraseJokerLocation(const Point& jokerPos);
 //
 //	void updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos);
@@ -75,11 +76,13 @@
 //	//PointImpl generateRandomPoint();
 //	//bool pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 //	//void initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
-//public:
-//	// Returns the initialization file name of the given player
-//	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
-//	
-//	void initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+public:
+	// Returns the initialization file name of the given player
+	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
+	
+	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, int count, char typeChar, char jokerReper = NON_JOKER_REP);
+
+	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 //
 //	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
 //	
@@ -92,10 +95,10 @@
 //	virtual unique_ptr<Move> getMove() override;
 //
 //	virtual unique_ptr<JokerChange> getJokerChange() override; // nullptr if no change is requested
-//
-//	
-//};
-//
-//
-//#endif //ADTO_TARGIL1_UNCOVEREDPIECE_H
-//
+
+	
+};
+
+
+#endif //ADTO_TARGIL1_UNCOVEREDPIECE_H
+
