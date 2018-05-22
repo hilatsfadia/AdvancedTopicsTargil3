@@ -2,6 +2,7 @@
 #define ADTO_TARGIL1_JOKER_PIECE_H
 
 #include "Piece.h"
+#include <memory>
 
 #define JOKER_CHAR 'J'
 
@@ -9,7 +10,7 @@ class Joker :
 	public Piece
 {
 protected:
-	Piece* mActualPiece = nullptr;
+	std::unique_ptr<Piece> mActualPiece = nullptr;
 
 	// When a joker wants to move to an occupied location by other joker.
 	// Make a fight between the jokers actual representation.
@@ -32,7 +33,7 @@ public:
 	// Return true if the given new piece has the same owner as this joker,
 	// and it represents a piece the Joker wants to be, from: R P S B
 	// If so, delete old actual piece and replace it by the given new piece.
-	bool SetActualPieceType(Piece* newPiece);
+	bool SetActualPieceType(unique_ptr<Piece> newPiece);
 
 	bool GetIsMovingPiece() const override { return mActualPiece->GetIsMovingPiece(); }
 
@@ -41,7 +42,8 @@ public:
 	virtual bool IsStrongerThan(Piece* other) const { return mActualPiece->IsStrongerThan(other); };
 
 	// Return the actual piece that this joker represents at the moment
-	const Piece* GetActualPiece() const { return mActualPiece; }
+	// TODO: delete it!
+	const Piece* GetActualPiece() const { return mActualPiece.get(); }
 };
 
 #endif //ADTO_TARGIL1_JOKER_PIECE_H

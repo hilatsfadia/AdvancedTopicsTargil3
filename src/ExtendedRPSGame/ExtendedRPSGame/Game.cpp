@@ -224,7 +224,7 @@ Game::~Game()
 
 bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
 {
-	Piece* piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
+	unique_ptr<Piece> piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
 	{
 		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
@@ -239,15 +239,12 @@ bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pie
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-
-	// TODO: impl!
-	//return board.PutPieceOnTempPlayerBoard(piece, piecePos->getPosition());
-	return true;
+	return board.PutPieceOnTempPlayerBoard(std::move(piece), piecePos->getPosition());
 }
 
 bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 {
-	Piece* actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
+	unique_ptr<Piece> actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
 	if (actualPiece == nullptr)
 	{
 		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
@@ -255,7 +252,7 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	}
 
 	// If not a valid PIECE for a Joker
-	if (!joker->SetActualPieceType(actualPiece))
+	if (!joker->SetActualPieceType(std::move(actualPiece)))
 	{
 		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;

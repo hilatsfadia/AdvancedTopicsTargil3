@@ -26,9 +26,9 @@ char StrategyPiece::GetPieceChar() const
 	return ((mUncoveredPiece == nullptr) ? COVERED_CHAR : mUncoveredPiece->GetPieceChar());
 }
 
-void StrategyPiece::UncoverPiece(Piece* uncoveredPiece)
+void StrategyPiece::UncoverPiece(std::unique_ptr<Piece> uncoveredPiece)
 {
-	mUncoveredPiece = uncoveredPiece;
+	mUncoveredPiece = std::move(uncoveredPiece);
 
 	if (mUncoveredPiece != nullptr)
 	{

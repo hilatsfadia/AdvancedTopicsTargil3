@@ -9,84 +9,83 @@
 #include "Player.h"
 
 using std::shared_ptr;
+using std::make_unique;
 
-Piece* PieceFactory::GetPieceFromChar(char pieceChar, shared_ptr<Player> owner)
+unique_ptr<Piece> PieceFactory::GetPieceFromChar(char pieceChar, shared_ptr<Player> owner)
 {
-	Piece* toReturn = nullptr;
-
 	switch (pieceChar)
 	{
 		case ROCK_CHAR: {
-			toReturn = new Rock(owner);
+			return make_unique<Rock>(owner);
 			break;
 		}
 		case PAPER_CHAR: {
-			toReturn = new Paper(owner);
+			return make_unique<Paper>(owner);
 			break;
 		}
 		case SCISSORS_CHAR: {
-			toReturn = new Scissors(owner);
+			return make_unique<Scissors>(owner);
 			break;
 		}
 		case BOMB_CHAR: {
-			toReturn = new Bomb(owner);
+			return make_unique<Bomb>(owner);
 			break;
 		}
 		//case JOKER_UPPER_CASE_CHAR: {
-		//	toReturn = new Joker(pieceChar);
+		//	return make_unique<Joker(pieceChar);
 		//	break;
 		//}
 		case FLAG_CHAR: {
-			toReturn = new Flag(owner);
+			return make_unique<Flag>(owner);
 			break;
 		}
 		default:
 		{
-			toReturn = nullptr;
+			return nullptr;
 			break;
 		}
 	}
 
-	return toReturn;
+	return nullptr;
 }
 
-Piece * PieceFactory::GetPieceFromChar(char pieceChar, int ownerNum)
+unique_ptr<Piece> PieceFactory::GetPieceFromChar(char pieceChar, int ownerNum)
 {
 	Piece* toReturn = nullptr;
 
 	switch (pieceChar)
 	{
 		case ROCK_CHAR: {
-			toReturn = new Rock(ownerNum);
+			return make_unique<Rock>(ownerNum);
 			break;
 		}
 		case PAPER_CHAR: {
-			toReturn = new Paper(ownerNum);
+			return make_unique<Paper>(ownerNum);
 			break;
 		}
 		case SCISSORS_CHAR: {
-			toReturn = new Scissors(ownerNum);
+			return make_unique<Scissors>(ownerNum);
 			break;
 		}
 		case BOMB_CHAR: {
-			toReturn = new Bomb(ownerNum);
+			return make_unique<Bomb>(ownerNum);
 			break;
 		}
 		//case JOKER_UPPER_CASE_CHAR: {
-		//	toReturn = new Joker(pieceChar);
+		//	return make_unique<Joker(pieceChar);
 		//	break;
 		//}
 		case FLAG_CHAR: {
-			toReturn = new Flag(ownerNum);
+			return make_unique<Flag>(ownerNum);
 			break;
 		}
 		default:
 		{
-			toReturn = nullptr;
+			return nullptr;
 			break;
 		}
 	}
 
-	return toReturn;
+	return nullptr;
 }
 

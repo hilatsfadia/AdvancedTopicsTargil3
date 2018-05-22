@@ -3,7 +3,7 @@
 #include "Piece.h"
 #include "Player.h"
 
-bool Joker::SetActualPieceType(Piece* newPiece)
+bool Joker::SetActualPieceType(unique_ptr<Piece> newPiece)
 {
 	PieceFactory::PieceType newPieceType = newPiece->GetPieceType();
 	if ((newPieceType != PieceFactory::PieceType::Rock) &&
@@ -26,13 +26,12 @@ bool Joker::SetActualPieceType(Piece* newPiece)
 		if (mActualPiece != nullptr)
 		{
 			mActualPiece->GetOwner()->RemoveFromCountMovingPieces(mActualPiece->GetPieceType());
-			delete mActualPiece;
 		}
 		
 		newPiece->GetOwner()->AddToCountMovingPieces(newPieceType);
 	}
 
-	mActualPiece = newPiece;
+	mActualPiece = std::move(newPiece);
 	return true;
 }
 
