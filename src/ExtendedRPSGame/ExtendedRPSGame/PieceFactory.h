@@ -18,6 +18,7 @@ public:
 	// Returns the created piece, or nullptr if pieceChar can't represent a piece.
 	// TODO: maybe remove the owner, kepp only it's number
 	static Piece* GetPieceFromChar(char pieceChar, std::shared_ptr<Player> owner = nullptr);
+
 	static Piece* GetPieceFromChar(char pieceChar, int ownerNum);
 };
 

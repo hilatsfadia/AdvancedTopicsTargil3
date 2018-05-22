@@ -19,7 +19,7 @@ BoardImpl::~BoardImpl(){
 	//}
 }
 
-bool BoardImpl::PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
+bool BoardImpl::PutPieceOnTempPlayerBoard(unique_ptr<Piece> piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
 	if ((piece == nullptr) || !CheckIfValidPosition(pos))
 	{
 		// TODO: ask
@@ -33,7 +33,7 @@ bool BoardImpl::PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos) { // T
 	// if board square is empty
 	if (boardSquare.IsEmpty())
 	{
-		boardSquare.ChangeSquarePiece(piece);
+		boardSquare.ChangeSquarePiece(std::move(piece));
 	}
 	else
 	{
@@ -57,26 +57,33 @@ void BoardImpl::InitByTempBoards(BoardImpl& player1Board, BoardImpl& player2Boar
 	{
 		for (int col = 1; col <= GetColsNum(); col++)
 		{
-			Piece* player1Piece = player1Board.GetBoardInPosition(col, row).GetPiece();
-			Piece* player2Piece = player2Board.GetBoardInPosition(col, row).GetPiece();
+			BoardSquare& player1BoardSquare = player1Board.GetBoardInPosition(col, row);
+			Piece& player1Piece = player1BoardSquare.PeekPiece();
+			BoardSquare& player2BoardSquare = player2Board.GetBoardInPosition(col, row);
+			Piece& player2Piece = player2BoardSquare.PeekPiece();
 			BoardSquare& boardSquare = this->GetBoardInPosition(col, row);
 
-			if ((player1Piece != nullptr) && (player2Piece != nullptr))
+			if ((!player1BoardSquare.IsEmpty()) && (!player2BoardSquare.IsEmpty()))
 			{
-				Piece* winningPiece = player1Piece->Fight(player2Piece);
-				PointImpl* pos = new PointImpl(col, row);
+				Piece::WinningPiece winner = player1Piece.Fight(player2Piece);
 
-				int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
-				vectorToFill.push_back(std::make_unique<FightInfoImpl>(*pos, player1Piece->GetPieceChar(), player2Piece->GetPieceChar(), winner));
-				boardSquare.ChangeSquarePiece(winningPiece);
-			}
-			else if (player1Piece != nullptr)
-			{
-				boardSquare.ChangeSquarePiece(player1Piece);
-			}
-			else if (player2Piece != nullptr)
-			{
-				boardSquare.ChangeSquarePiece(player2Piece);
+				//int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
+				vectorToFill.push_back(std::make_unique<FightInfoImpl>(PointImpl(col, row), player1Piece.GetPieceChar(), player2Piece.GetPieceChar(), (int)winner));
+
+				// TODO:!
+				//if (winner == Piece::WinningPiece::ThisPiece)
+				//{
+				//}
+				//boardSquare.ChangeSquarePiece(winningPiece);
+			//}
+			//else if (player1Piece != nullptr)
+			//{
+			//	boardSquare.ChangeSquarePiece(player1Piece);
+			//}
+			//else if (player2Piece != nullptr)
+			//{
+			//	boardSquare.ChangeSquarePiece(player2Piece);
+			//}
 			}
 		}
 	}
@@ -138,6 +145,9 @@ Piece* BoardImpl::GetPieceOfPlayer(const Point& position, int playerNum)
 
 bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfoImpl& toFill)
 {
+	BoardImpl::BoardSquare& boardSquareSource = GetBoardInPosition(posFrom);
+	BoardImpl::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
+
 	Piece* pieceSource = GetPieceOfPlayer(posFrom, player.GetPlayerNum());
 
 	if (pieceSource == nullptr)
@@ -158,17 +168,15 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 		return false;
 	}
 
-	BoardImpl::BoardSquare& boardSquareDestination = GetBoardInPosition(posTo);
-
 	if (boardSquareDestination.IsEmpty())
 	{
-		boardSquareDestination.ChangeSquarePiece(pieceSource);
+		boardSquareDestination.MovePieceFromSquare(boardSquareSource);
 	}
 	else
 	{
-		Piece* pieceDestination = boardSquareDestination.GetPiece();
+		Piece& pieceDestination = boardSquareDestination.PeekPiece();
 
-		if (pieceSource->GetOwner() == pieceDestination->GetOwner())
+		if (pieceSource->GetOwner() == pieceDestination.GetOwner())
 		{
 			std::cout << "The moving is illegal because the destination has a piece of the same player" << std::endl;
 			return false;
@@ -176,11 +184,30 @@ bool BoardImpl::MovePiece(const Player& player, const Point& posFrom, const Poin
 
 		// If we got here than there should be a fight.
 		// TODO: refactor (look positioning)
-		Piece* winningPiece = pieceDestination->Fight(pieceSource);
-		int winner = (winningPiece == nullptr) ? 0 : winningPiece->GetOwner()->GetPlayerNum();
+		Piece::WinningPiece winningPiece = pieceDestination.Fight(*pieceSource);
+		int winner;
 
-		toFill.SetFightInfoValues(posTo, pieceSource->GetPieceChar(), pieceDestination->GetPieceChar(), winner);
-		boardSquareDestination.ChangeSquarePiece(winningPiece);
+		switch (winningPiece)
+		{
+			case (Piece::WinningPiece::ThisPiece):
+			{
+				winner = pieceDestination.GetOwner()->GetPlayerNum();
+				break;
+			}
+			case (Piece::WinningPiece::enemy):
+			{
+				winner = pieceSource->GetOwner()->GetPlayerNum();
+				boardSquareDestination.MovePieceFromSquare(boardSquareSource);
+				break;
+			}
+			default:
+			{
+				winner = 0;
+				break;
+			}
+		}
+
+		toFill.SetFightInfoValues(posTo, pieceSource->GetPieceChar(), pieceDestination.GetPieceChar(), winner);
 	}
 
 	GetBoardInPosition(posFrom).ClearSquare();
@@ -223,15 +250,13 @@ void BoardImpl::Print(std::ostream& outFile) const
 	{
 		for (int col = 1; col <= GetColsNum(); col++)
 		{
-			const Piece* currPiece = GetBoardInPosition(col, row).GetPiece();
-			if (currPiece == nullptr)
+			if (GetBoardInPosition(col, row).IsEmpty())
 			{
 				outFile << " ";
 			}
 			else
 			{
-				//Piece* temp = GetBoardInPosition(col, row).GetPiece();
-				outFile << *GetBoardInPosition(col, row).GetPiece();
+				outFile << GetBoardInPosition(col, row);
 			}
 		}
 
@@ -251,11 +276,18 @@ int BoardImpl::GetColsNum() const
 
 int BoardImpl::getPlayer(const Point& pos) const
 {
-	BoardSquare square = GetBoardInPosition(pos);
+	const BoardSquare& square = GetBoardInPosition(pos);
 	if (square.IsEmpty())
 	{
 		return 0;
 	}
 
-	return square.GetPiece()->GetOwner()->GetPlayerNum();
+	return square.PeekPiece().GetOwner()->GetPlayerNum();
 }
+
+void BoardImpl::BoardSquare::MovePieceFromSquare(BoardSquare & other)
+{
+	this->piece = std::move(other.piece);
+	other.ClearSquare();
+}
+

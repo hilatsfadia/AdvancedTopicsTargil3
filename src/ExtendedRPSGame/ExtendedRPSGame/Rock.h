@@ -1,22 +1,22 @@
 #ifndef ADTO_TARGIL1_ROCK_H
 #define ADTO_TARGIL1_ROCK_H
 
-#include "Piece.h"
+#include "RPSPiece.h"
 
 #define ROCK_CHAR 'R'
 
 class Rock :
-	public Piece
+	public RPSPiece
 {
 protected:
 	// Rock implements it according to its own rules.
 	// When a piece wants to move to an occupied location by a piece of other type,
 	// Deletes and removes the loser from its owner.
 	// Returns the winning piece. If there is no winner, returns nullptr.
-	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
+	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
 public:
-	Rock(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
-	Rock(int ownerNum) : Piece(ownerNum) {}
+	Rock(shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
+	Rock(int ownerNum) : RPSPiece(ownerNum) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Rock; }

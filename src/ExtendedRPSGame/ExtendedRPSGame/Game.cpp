@@ -239,7 +239,10 @@ bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pie
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(piece, piecePos->getPosition());
+
+	// TODO: impl!
+	//return board.PutPieceOnTempPlayerBoard(piece, piecePos->getPosition());
+	return true;
 }
 
 bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
@@ -282,9 +285,9 @@ bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pieceP
 {
 	// actualPiece shouldn't have an owner! because we don't want to 
 	// count it as one of the player's pieces.
-	Joker* joker = new Joker();
-
-	if (!InitJokerOwnerAndActualType(joker, piecePos->getJokerRep(), playerNum))
+	unique_ptr<Joker> joker = make_unique<Joker>();
+	// TODO: change!
+	if (!InitJokerOwnerAndActualType(joker.get(), piecePos->getJokerRep(), playerNum))
 	{
 		// Already printed error.
 		return false;
@@ -292,7 +295,7 @@ bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pieceP
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(joker, piecePos->getPosition());
+	return board.PutPieceOnTempPlayerBoard(std::move(joker), piecePos->getPosition());
 }
 
 bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)

@@ -1,40 +1,27 @@
 #include "stdafx.h"
 #include "Paper.h"
 
-Piece* Paper::FightWithOtherPieceType(Piece* enemy)
+Piece::WinningPiece Paper::FightWithOtherPieceType(Piece& enemy)
 {
-	PieceFactory::PieceType enemyPieceType = enemy->GetPieceType();
+	PieceFactory::PieceType enemyPieceType = enemy.GetPieceType();
 
 	switch (enemyPieceType)
 	{
 		case (PieceFactory::PieceType::Rock):
 		{
-			return enemy->LoseToPiece(this);
+			enemy.LoseToPiece();
+			return WinningPiece::ThisPiece;
 			break;
 		}
 		case (PieceFactory::PieceType::Scissors):
 		{
-			return LoseToPiece(enemy);
-			break;
-		}
-		case (PieceFactory::PieceType::Bomb):
-		{
-			return BothPiecesLosers(enemy);
-			break;
-		}
-		case (PieceFactory::PieceType::Joker):
-		{
-			return enemy->Fight(this);
-			break;
-		}
-		case (PieceFactory::PieceType::Flag):
-		{
-			return enemy->LoseToPiece(this);
+			LoseToPiece();
+			return WinningPiece::enemy;
 			break;
 		}
 		default:
 		{
-			return nullptr;
+			return RPSPiece::FightWithOtherPieceType(enemy);
 		}
 	}
 }

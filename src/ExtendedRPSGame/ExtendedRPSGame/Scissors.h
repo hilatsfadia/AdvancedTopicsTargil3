@@ -1,22 +1,22 @@
 #ifndef ADTO_TARGIL1_SCISSORS_H
 #define ADTO_TARGIL1_SCISSORS_H
 
-#include "Piece.h"
+#include "RPSPiece.h"
 
 #define SCISSORS_CHAR 'S'
 
 class Scissors :
-	public Piece
+	public RPSPiece
 {
 protected:
 	// Scissors implements it according to its own rules.
 	// When a piece wants to move to an occupied location by a piece of other type,
 	// Deletes and removes the loser from its owner.
 	// Returns the winning piece. If there is no winner, returns nullptr.
-	virtual Piece* FightWithOtherPieceType(Piece* enemy) override;
+	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
 public:
-	Scissors(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
-	Scissors(int ownerNum) : Piece(ownerNum) {}
+	Scissors(shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
+	Scissors(int ownerNum) : RPSPiece(ownerNum) {}
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Scissors; }

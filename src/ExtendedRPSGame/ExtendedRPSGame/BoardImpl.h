@@ -31,29 +31,47 @@ private:
 	class BoardSquare {
 	private:
 		// The piece in this square if exists, otherwise nullptr.
-		Piece* piece = nullptr;
+		unique_ptr<Piece> piece = nullptr;
 	public:
 		// If this square has no piece
-		bool IsEmpty() 
+		bool IsEmpty() const
 		{
 			return (piece == nullptr);
 		}
 
 		// Remove piece from this square
 		void ClearSquare() {
+			// The assignment operator deletes the old pointer
+			// if existed.
 			piece = nullptr;
 		}
 
 		// Put other piece in this square
-		void ChangeSquarePiece(Piece* newPiece) {
-			piece = newPiece;
+		// Steal its belongings.
+		void ChangeSquarePiece(unique_ptr<Piece> newPiece) {
+			// The assignment operator deletes the old pointer
+			// if existed.
+			piece = std::move(newPiece);
 		}
 
 		// Get this square piece
-		Piece* GetPiece() { return piece; }
+		// TODO: delete!
+		Piece* GetPiece() { return piece.get(); }
 
 		// Get this square piece
-		const Piece* GetPiece() const { return piece; }
+		Piece& PeekPiece() { return *piece; }
+
+		// Get this square piece
+		// TODO: maybe weak_ptr?
+		const Piece& PeekPiece() const { return *piece; }
+
+		// Init by other boardSquare
+		void MovePieceFromSquare(BoardSquare& other);
+
+		// Operator overloading for printing issues.
+		friend std::ostream& operator<<(std::ostream& out, const BoardSquare& boardSquare) {
+			return out << *boardSquare.piece;
+		}
 	};
 
 	const int mRows = N;
@@ -67,7 +85,7 @@ public:
 	// Tries to the piece in the given position. 
 	// Returns true if the piece can be put in the position.
 	// TODO: maybe static
-	bool PutPieceOnTempPlayerBoard(Piece* piece, const Point& pos);
+	bool PutPieceOnTempPlayerBoard(unique_ptr<Piece> piece, const Point& pos);
 
 	// Combine the two players' boards to one.
 	// Maybe require fights.

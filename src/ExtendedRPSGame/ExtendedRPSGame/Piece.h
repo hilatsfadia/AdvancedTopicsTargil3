@@ -11,25 +11,17 @@ using std::shared_ptr;
 class Piece
 {
 protected:
+
 	// shared ptr because it is shared between it's pieces and the game.
 	shared_ptr<Player> mOwner;
 	int mOwnerNum;
 	
 	//PieceType mPieceType;
 
-	// When a piece wants to move to an occupied location by a piece of the same type.
-	// Deletes and removes both pieces from their owner.
-	virtual Piece* FightPieceOfTheSameType(Piece* enemy);
-
-	// Inherited classes should implement according to their own rules.
-	// When a piece wants to move to an occupied location by a piece of other type,
-	// Deletes and removes the loser from its owner.
-	// Returns the winning piece. If there is no winner, returns nullptr.
-	//virtual Piece* FightWithOtherPieceType(Piece* enemy) = 0;
-	// TODO: look
-	virtual Piece* FightWithOtherPieceType(Piece* enemy) { return nullptr; }
-
 public:
+	enum class WinningPiece { Tie = 0, ThisPiece = 1, enemy = 2 };
+	//enum class WinningPiece { Tie, ThisPiece, enemy };
+
 	virtual ~Piece() {};
 	//Piece() : mOwner(nullptr) {};
 
@@ -40,12 +32,12 @@ public:
 
 	// Deletes and removes the loser from its owner.
 	// Returns winner.
-	Piece* LoseToPiece(Piece* enemy);
+	void LoseToPiece();
 
 	// For Explosion with bomb or tools of the same type.
 	// Deletes and removes both pieces from their owner.
 	// Returns nullptr.
-	Piece* BothPiecesLosers(Piece* enemy);
+	void BothPiecesLosers(Piece& enemy);
 
 	// Update both the piece and the owner of the ownership.
 	bool InitializeOwner(std::shared_ptr<Player> owner);
@@ -61,10 +53,22 @@ public:
 	// Gets the owner number of this piece
 	int GetOwnerNum() { return mOwnerNum; }
 
+	// When a piece wants to move to an occupied location by a piece of the same type.
+	// Deletes and removes both pieces from their owner.
+	virtual WinningPiece FightPieceOfTheSameType(Piece& enemy);
+
+	// Inherited classes should implement according to their own rules.
+	// When a piece wants to move to an occupied location by a piece of other type,
+	// Deletes and removes the loser from its owner.
+	// Returns the winning piece. If there is no winner, returns Tie.
+	//virtual Piece* FightWithOtherPieceType(Piece* enemy) = 0;
+	// TODO: look
+	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) { return WinningPiece::Tie; }
+
 	// When a piece wants to move to an occupied location,
 	// the two pieces fight, and at most one of them stays alive.
 	// Returns the winning piece. If there is no winner, returns nullptr.
-	Piece* Fight(Piece* enemy);
+	WinningPiece Fight(Piece& enemy);
 
 	// Gets this piece type. (Look at PieceFactory::PieceType enum).
 	virtual PieceFactory::PieceType GetPieceType() const = 0;

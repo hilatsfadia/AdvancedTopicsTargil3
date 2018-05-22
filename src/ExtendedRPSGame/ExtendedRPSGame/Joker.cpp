@@ -36,49 +36,34 @@ bool Joker::SetActualPieceType(Piece* newPiece)
 	return true;
 }
 
-Piece* Joker::FightPieceOfTheSameType(Piece* enemy)
+Piece::WinningPiece Joker::FightPieceOfTheSameType(Piece& enemy)
 {
-	//if (Joker* enemyJoker = dynamic_cast<Joker*>(enemy))
-	//{
-	//}
-
-	// Assert this is the case. This method should not be called with other types.
-	Joker* enemyJoker = dynamic_cast<Joker*>(enemy);
-	Piece* winningPiece = mActualPiece->Fight(enemyJoker->mActualPiece);
-	if (winningPiece == nullptr)
+	// Assert enemy is Joker? This method should not be called with other types.
+	Piece::WinningPiece winningPiece = mActualPiece->Fight(enemy);
+	if (winningPiece == Piece::WinningPiece::ThisPiece)
 	{
-		return nullptr;
+		enemy.LoseToPiece();
 	}
-	else if (winningPiece == mActualPiece)
+	else if (winningPiece == Piece::WinningPiece::enemy)
 	{
-		return enemyJoker->LoseToPiece(this);
-	}
-	else if (winningPiece == enemyJoker->mActualPiece)
-	{
-		return this->LoseToPiece(enemyJoker);
+		this->LoseToPiece();
 	}
 
-	// Assert in this case that winningPiece == nullptr
-	return nullptr;
+	return winningPiece;
 }
 
-Piece* Joker::FightWithOtherPieceType(Piece* enemy)
+Piece::WinningPiece Joker::FightWithOtherPieceType(Piece& enemy)
 {
-	Piece* winningPiece = mActualPiece->Fight(enemy);
+	Piece::WinningPiece winningPiece = mActualPiece->Fight(enemy);
 
-	if (winningPiece == nullptr)
+	if (winningPiece == Piece::WinningPiece::ThisPiece)
 	{
-		return nullptr;
+		enemy.LoseToPiece();
 	}
-	else if (winningPiece == mActualPiece)
+	else if (winningPiece == Piece::WinningPiece::enemy)
 	{
-		return this;
-	}
-	else if (winningPiece == enemy)
-	{
-		return this->LoseToPiece(enemy);
+		this->LoseToPiece();
 	}
 
-	// Assert in this case that winningPiece == nullptr
-	return nullptr;
+	return winningPiece;
 }

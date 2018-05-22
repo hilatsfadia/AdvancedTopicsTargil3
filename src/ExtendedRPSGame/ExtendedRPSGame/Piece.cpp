@@ -3,7 +3,7 @@
 #include "Player.h"
 #include <cctype>
 
-Piece* Piece::LoseToPiece(Piece* enemy)
+void Piece::LoseToPiece()
 {
 	// TODO: throw exception. maybe move to destructor
 	if (!this->mOwner->DecPieceCount(this->GetPieceType()))
@@ -13,7 +13,7 @@ Piece* Piece::LoseToPiece(Piece* enemy)
 	// TODO: delete for move files
 	// As long as you're careful, its okay (not evil) for an object to commit suicide (delete this).
 	//delete this;
-	return enemy;
+	//return enemy;
 }
 
 //
@@ -28,9 +28,9 @@ Piece* Piece::LoseToPiece(Piece* enemy)
 //	return this;
 //}
 
-Piece* Piece::BothPiecesLosers(Piece* enemy)
+void Piece::BothPiecesLosers(Piece& enemy)
 {
-	PieceFactory::PieceType enemyPieceType = enemy->GetPieceType();
+	PieceFactory::PieceType enemyPieceType = enemy.GetPieceType();
 
 	// TODO: throw exception
 	if (!this->mOwner->DecPieceCount(this->GetPieceType()))
@@ -38,7 +38,7 @@ Piece* Piece::BothPiecesLosers(Piece* enemy)
 	}
 
 	// TODO: throw exception
-	if (!enemy->mOwner->DecPieceCount(enemyPieceType))
+	if (!enemy.mOwner->DecPieceCount(enemyPieceType))
 	{
 	}
 
@@ -46,7 +46,7 @@ Piece* Piece::BothPiecesLosers(Piece* enemy)
 	//delete enemy;
 	// As long as you're careful, its okay (not evil) for an object to commit suicide (delete this).
 	//delete this;
-	return nullptr;
+	//return nullptr;
 }
 
 bool Piece::InitializeOwner(std::shared_ptr<Player> owner)
@@ -64,22 +64,15 @@ bool Piece::InitializeOwner(std::shared_ptr<Player> owner)
 	return true;
 }
 
-Piece* Piece::FightPieceOfTheSameType(Piece* enemy)
+Piece::WinningPiece Piece::FightPieceOfTheSameType(Piece& enemy)
 {
-	// Fight between tools of the same type
-	return BothPiecesLosers(enemy);
+	BothPiecesLosers(enemy);
+	return Piece::WinningPiece::Tie;
 }
 
-Piece* Piece::Fight(Piece* enemy)
+Piece::WinningPiece Piece::Fight(Piece& enemy)
 {
-	if (enemy == nullptr)
-	{
-		return this;
-	}
-	
-	PieceFactory::PieceType enemyPieceType = enemy->GetPieceType();
-
-	if (this->GetPieceType() == enemyPieceType)
+	if (this->GetPieceType() == enemy.GetPieceType())
 	{
 		// Fight between tools of the same type
 		return FightPieceOfTheSameType(enemy);

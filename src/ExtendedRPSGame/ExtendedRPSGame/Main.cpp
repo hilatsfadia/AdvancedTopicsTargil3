@@ -29,7 +29,8 @@ unique_ptr<PlayerAlgorithm> getPlayerAlgoritmFromStr(string str)
 {
 	if (str == COMMAND_LINE_AUTO_ALGORITHM_STR)
 	{
-		return make_unique<AutoPlayerAlgorithm>();
+		//return make_unique<AutoPlayerAlgorithm>();
+		return nullptr;
 	}
 	else if (str == COMMAND_LINE_FILE_ALGORITHM_STR)
 	{
