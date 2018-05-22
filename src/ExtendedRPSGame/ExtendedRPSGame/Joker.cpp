@@ -5,12 +5,6 @@
 
 bool Joker::SetActualPieceType(Piece* newPiece)
 {
-	if (this->GetOwner() != newPiece->GetOwner())
-	{
-		// Shouldn't happen.
-		return false;
-	}
-
 	PieceFactory::PieceType newPieceType = newPiece->GetPieceType();
 	if ((newPieceType != PieceFactory::PieceType::Rock) &&
 		(newPieceType != PieceFactory::PieceType::Paper) &&
@@ -20,14 +14,25 @@ bool Joker::SetActualPieceType(Piece* newPiece)
 		return false;
 	}
 
-	// newPiece is ok
-	if (mActualPiece != nullptr)
+	if (this->GetOwner() != nullptr)
 	{
-		mActualPiece->GetOwner()->RemoveFromCountMovingPieces(mActualPiece->GetPieceType());
-		delete mActualPiece;
+		if (this->GetOwner() != newPiece->GetOwner())
+		{
+			// Shouldn't happen.
+			return false;
+		}
+
+		// newPiece is ok
+		if (mActualPiece != nullptr)
+		{
+			mActualPiece->GetOwner()->RemoveFromCountMovingPieces(mActualPiece->GetPieceType());
+			delete mActualPiece;
+		}
+		
+		newPiece->GetOwner()->AddToCountMovingPieces(newPieceType);
 	}
+
 	mActualPiece = newPiece;
-	newPiece->GetOwner()->AddToCountMovingPieces(newPieceType);
 	return true;
 }
 

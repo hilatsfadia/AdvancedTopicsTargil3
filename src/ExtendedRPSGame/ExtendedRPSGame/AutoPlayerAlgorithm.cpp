@@ -20,6 +20,11 @@
 void AutoPlayerAlgorithm::initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
 	int yPos = (player - 1) * (M / 2) + 1;
+	// TODO: delete!
+	//if (player == 2)
+	//{
+	//	yPos--;
+	//}
 	PointImpl point;
 	int xPos = 1;
 	//int yPos = 1;
@@ -53,7 +58,7 @@ void AutoPlayerAlgorithm::initMovesVector(int player, std::vector<unique_ptr<Pie
 	}
 
 	for (int joker = 0; joker < J; joker++) {
-		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), JOKER_CHAR, BOMB_CHAR));
+		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), JOKER_CHAR, ROCK_CHAR));
 		mJokerLocations.push_back(PointImpl(xPos, yPos));
 
 		if (xPos == N) {
@@ -129,7 +134,7 @@ void AutoPlayerAlgorithm::initMovesVector(int player, std::vector<unique_ptr<Pie
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
 	mPlayer = player; //setting the players fields
-	if (mPlayer = 1) {
+	if (mPlayer == 1) {
 		mOpponent = 2;
 	}
 	else {
@@ -137,12 +142,22 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 	}
 	mFlagPlaceKnown = false;
 	mNumCoveredPieces = R + P + S + B + F + J;
-	mNumMovablePieces = R + P + S + B + F + J;
+	mNumMovablePieces = 0;
 
 	initMovesVector(player, vectorToFill);
 
 	for (std::unique_ptr<PiecePosition>& piecePos : vectorToFill){
-		Piece* uncoveredPiece = PieceFactory::GetPieceFromChar(piecePos->getPiece(), mPlayer);
+		Piece* uncoveredPiece = nullptr;
+		if (piecePos->getPiece() == JOKER_CHAR)
+		{
+			Joker* jokerPiece = new Joker(mPlayer);
+			jokerPiece->SetActualPieceType(PieceFactory::GetPieceFromChar(piecePos->getJokerRep(), mPlayer));
+			uncoveredPiece = jokerPiece;
+		}
+		else
+		{
+			uncoveredPiece = PieceFactory::GetPieceFromChar(piecePos->getPiece(), mPlayer);
+		}
 		StrategyPiece* strategyPiece = new StrategyPiece(mPlayer, uncoveredPiece);
 		mGameBoardInfo.GetBoardInPosition(piecePos->getPosition()).ChangeSquarePiece(strategyPiece);
 	}
@@ -155,8 +170,8 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 	{
 		for (int col = 1; col <= N; col++) 
 		{
-			PointImpl pos = PointImpl(row, col); 
-			if (b.getPlayer(pos) > 0 && b.getPlayer(pos) == mOpponent) {
+			PointImpl pos = PointImpl(col, row); 
+			if (b.getPlayer(pos) == mOpponent) {
 				StrategyPiece* strategyPiece = new StrategyPiece(mOpponent); //uncovered piece
 				mGameBoardInfo.GetBoardInPosition(col, row).ClearSquare(); //delets the former piece in square
 				mGameBoardInfo.GetBoardInPosition(col,row).ChangeSquarePiece(strategyPiece);
@@ -181,37 +196,40 @@ void AutoPlayerAlgorithm::updateSquareAfterFight(const FightInfo& fight) {
 	StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(piece);
 
 	//next exercise remember to add handling to more than one flag
-	int owner = piece->GetOwnerNum();
+	//int owner = piece->GetOwnerNum();
 	int winner = fight.getWinner();
-	//TODO: add here, if pos!=piece of move - reveal joker.
-	if (fight.getPiece(mPlayer) == JOKER_CHAR
-		&& (winner == 0 || winner == mOpponent)) {
-		eraseJokerLocation(fight.getPosition());
-	}
+
 	if (winner == 0) {
+		if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
+			eraseJokerLocation(fight.getPosition());
+		}
 		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
 	}
-
-	else if (owner != winner) {
-		
+	else if (winner == mOpponent) {
+		if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
+			eraseJokerLocation(fight.getPosition());
+		}
 		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
 		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ChangeSquarePiece(new StrategyPiece(winner, PieceFactory::GetPieceFromChar(fight.getPiece(winner), winner)));
+		//cant remember movable here. maybe need update?
+	}
+	//else if (owner != winner) {
+	//	
+	//	
 
-	}
-	else {
-		
-		if (piece->GetPieceType() == PieceFactory::PieceType::Unknown) {
-			strategyPiece->UncoverPiece(fight.getPiece(mOpponent));
-		}
-		if (owner == mOpponent &&
-			piece->GetPieceChar() !=
-			fight.getPiece(mOpponent)) {
-			mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
-			Joker* joker = new Joker(mOpponent);
-			joker->SetActualPieceType(PieceFactory::GetPieceFromChar(fight.getPiece(mOpponent), mOpponent));
-			mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ChangeSquarePiece(new StrategyPiece(mOpponent, joker));
-		}
-	}
+	//}
+	//else {
+	//	
+	//	
+	//	if (owner == mOpponent &&
+	//		piece->GetPieceChar() !=
+	//		fight.getPiece(mOpponent)) {
+	//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
+	//		Joker* joker = new Joker(mOpponent);
+	//		joker->SetActualPieceType(PieceFactory::GetPieceFromChar(fight.getPiece(mOpponent), mOpponent));
+	//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ChangeSquarePiece(new StrategyPiece(mOpponent, joker));
+	//	}
+	//}
 	
 	if (winner == mOpponent || winner == 0){
 		mNumCoveredPieces--;
@@ -243,12 +261,12 @@ unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 {
 	findFlag();
 	unique_ptr<Move> move;
-	if (mFlagPlaceKnown == true) {
-		move = conquerTheFlag();	//why would it give nullptr?
-	} 
-	else {
-		move = getNormalMove();
-	}
+	//if (mFlagPlaceKnown == true) {
+	//	move = conquerTheFlag();	//why would it give nullptr?
+	//} 
+	//else {
+	move = getNormalMove();
+	//}
 	if (mGameBoardInfo.GetBoardInPosition(move->getFrom()).GetPiece()->GetPieceType() == PieceFactory::PieceType::Joker) {
 		updateJokerLocation(move->getFrom(), move->getTo());
 	}
@@ -371,17 +389,21 @@ bool AutoPlayerAlgorithm::checkIsThreatening(int xPos, int yPos, int player) {
 }
 
 void AutoPlayerAlgorithm::movePieceOnInfoBoard(const Move& move) {
-
-	Piece* pieceToMove = mGameBoardInfo.GetBoardInPosition(move.getTo()).GetPiece();
+	BoardImpl::BoardSquare& boardSquare = mGameBoardInfo.GetBoardInPosition(move.getFrom());
+	Piece* pieceToMove = mGameBoardInfo.GetBoardInPosition(move.getFrom()).GetPiece();
 	StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(pieceToMove);
 	if (pieceToMove->GetOwnerNum() == mOpponent) {
 		strategyPiece->SetIsMovingPiece(true);
-		mNumMovablePieces--;
+		mNumMovablePieces++;
 	}
-
-	mGameBoardInfo.GetBoardInPosition(move.getTo()).ClearSquare(); 
-	mGameBoardInfo.GetBoardInPosition(move.getTo()).ChangeSquarePiece(pieceToMove);
-
+	if (mGameBoardInfo.GetBoardInPosition(move.getTo()).IsEmpty()) {
+		mGameBoardInfo.GetBoardInPosition(move.getTo()).ChangeSquarePiece(pieceToMove);
+	}
+	if (pieceToMove->GetOwnerNum() == mPlayer && !mGameBoardInfo.GetBoardInPosition(move.getTo()).IsEmpty()) {
+		mGameBoardInfo.GetBoardInPosition(move.getTo()).ClearSquare();
+		mGameBoardInfo.GetBoardInPosition(move.getTo()).ChangeSquarePiece(pieceToMove);
+	}
+	
 	mGameBoardInfo.GetBoardInPosition(move.getFrom()).ClearSquare();
 }
 
@@ -470,7 +492,6 @@ void AutoPlayerAlgorithm::findFlag() {
 						&& !strategyPiece->GetIsMovingPiece()) {
 						strategyPiece->UncoverPiece(FLAG_CHAR);
 						mNumCoveredPieces--;
-						mNumMovablePieces--;
 						mOpponentFlagLocations.push_back(PointImpl(col, row));
 					}
 				}
@@ -540,7 +561,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::eatOpponentPiece() {
 unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
 	unique_ptr<Move> move;
 
-	move = saveAPiece();
+	/*move = saveAPiece();
 
 	if (move != nullptr) {
 		return move;
@@ -551,7 +572,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
 	if (move != nullptr) {
 		return move;
 	}
-
+*/
 	for (int row = 1; row <= M; row++)
 	{
 		for (int col = 1; col <= N; col++)
@@ -565,6 +586,8 @@ unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
 			//	int g = 5;
 			//}
 
+			// TODO: delete!!!
+			//Piece* stam = mGameBoardInfo.GetBoardInPosition(col, row).GetPiece();
 			if (!mGameBoardInfo.GetBoardInPosition(col, row).IsEmpty()
 				&& mGameBoardInfo.GetBoardInPosition(col, row).GetPiece()->GetOwnerNum() == mPlayer
 				&& mGameBoardInfo.GetBoardInPosition(col, row).GetPiece()->GetIsMovingPiece()) {
