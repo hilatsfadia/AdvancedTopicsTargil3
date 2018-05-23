@@ -237,6 +237,11 @@ bool BoardImpl::MovePiece(const Player& player, const unique_ptr<Move>& move, Fi
 	return MovePiece(player, move->getFrom(), move->getTo(), toFill);
 }
 
+void BoardImpl::PutPieceInPosition(const Point & position, unique_ptr<Piece> piece)
+{
+	GetBoardInPosition(position).ChangeSquarePiece(std::move(piece));
+}
+
 BoardImpl::BoardSquare& BoardImpl::GetBoardInPosition(int x, int y){
     return board[y-1][x-1];
 }

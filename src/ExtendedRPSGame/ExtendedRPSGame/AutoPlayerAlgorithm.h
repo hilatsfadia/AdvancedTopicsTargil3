@@ -77,12 +77,25 @@ private:
 //	//bool pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 //	//void initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 public:
-	// Returns the initialization file name of the given player
-	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
 	
-	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, int count, char typeChar, char jokerReper = NON_JOKER_REP);
+	// Updates the line number according to given isToMoveForward. 
+	// If true, inc pos, else, dec pos
+	void UpdateLineNumber(int& yPos, bool isToMoveForward);
 
+	// Init the initial positions for a specific piece type, starting from the given position.
+	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper = NON_JOKER_REP);
+
+	// Does the filling of the given vector with the positions.
 	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+
+	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
+
+	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
+	virtual void notifyOnOpponentMove(const Move& move) override; // called only on opponent's move
+	virtual void notifyFightResult(const FightInfo& fightInfo) override; // called only if there was a fight
+	virtual unique_ptr<Move> getMove() override;
+	virtual unique_ptr<JokerChange> getJokerChange() override; // nullptr if no change is requested
+
 //
 //	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
 //	

@@ -17,7 +17,8 @@ private:
 	char GetStrongerNotJoker(const Piece* piece) const;
 
 public:
-	StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum) { mUncoveredPiece = std::move(uncoveredPiece); }
+	StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
+	StrategyPiece(int ownerNum) : Piece(ownerNum) { }
 
 	// Gets this piece type.
 	// If this piece is still covered, gets PieceType::Unknown.

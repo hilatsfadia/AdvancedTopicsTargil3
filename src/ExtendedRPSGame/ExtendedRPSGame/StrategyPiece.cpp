@@ -6,6 +6,14 @@
 #include "Scissors.h"
 #include "Joker.h"
 
+StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
+{
+	if (uncoveredPiece != nullptr)
+	{
+		mUncoveredPiece = std::move(uncoveredPiece);
+	}
+}
+
 PieceFactory::PieceType StrategyPiece::GetPieceType() const
 {
 	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Unknown : mUncoveredPiece->GetPieceType());

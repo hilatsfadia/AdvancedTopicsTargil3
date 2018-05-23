@@ -109,6 +109,9 @@ public:
 	// Maybe requires fight.
 	bool MovePiece(const Player& player, const std::unique_ptr<Move>& move, FightInfoImpl& toFill);
 
+	// It is the caller responsibility to call CheckIfValidPosition before this function 
+	void PutPieceInPosition(const Point& position, unique_ptr<Piece> piece);
+
 	// Get Board in the given position, when axis values start from 1.
 	// Assumes position is legal.
 	BoardSquare& GetBoardInPosition(const Point& position);

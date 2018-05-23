@@ -18,13 +18,26 @@
 
 using std::make_unique;
 
-void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, int count, char typeChar, char jokerReper)
+
+void AutoPlayerAlgorithm::UpdateLineNumber(int & yPos, bool isToMoveForward)
+{
+	if (isToMoveForward)
+	{
+		yPos++;
+	}
+	else
+	{
+		yPos--;
+	}
+}
+
+void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper)
 {
 	for (int i = 0; i < count; i++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), typeChar, jokerReper));
 		if (xPos == N) {
 			xPos = 1;
-			yPos++;
+			UpdateLineNumber(yPos, isToMoveForward);
 		}
 		else
 		{
@@ -39,22 +52,26 @@ void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<Piec
 
 void AutoPlayerAlgorithm::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
-	int yPos = (player - 1) * (M / 2) + 1;
-	// TODO: delete!
-	//if (player == 2)
-	//{
-	//	yPos--;
-	//}
+	//int yPos = (player - 1) * (M / 2) + 1;
 	PointImpl point;
 	int xPos = 1;
-	//int yPos = 1;
+	int yPos = (player == 1) ? 1 : M;
+	bool isToMoveForward = (player == 1) ? true : false;
 
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, F, FLAG_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, B, BOMB_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, J, JOKER_CHAR, ROCK_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, R, ROCK_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, P, PAPER_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, S, SCISSORS_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, F, FLAG_CHAR);
+
+	if (B > 0)
+	{
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, 1, BOMB_CHAR);
+		xPos = 1;
+		UpdateLineNumber(yPos, isToMoveForward);
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, B - 1, BOMB_CHAR);
+	}
+
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, BOMB_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, R, ROCK_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, P, PAPER_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
 }
 
 //bool AutoPlayerAlgorithm::pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill) {
@@ -105,10 +122,33 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 		}
 
 		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer, std::move(uncoveredPiece));
-		mGameBoardInfo.GetBoardInPosition(piecePos->getPosition()).ChangeSquarePiece(std::move(strategyPiece));
+		mGameBoardInfo.PutPieceInPosition(piecePos->getPosition(), std::move(strategyPiece));
 	}
 
 }
+
+void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
+{
+}
+
+void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move)
+{
+}
+
+void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo)
+{
+}
+
+unique_ptr<Move> AutoPlayerAlgorithm::getMove()
+{
+	return unique_ptr<Move>();
+}
+
+unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
+{
+	return unique_ptr<JokerChange>();
+}
+
 
 //void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
 //{
