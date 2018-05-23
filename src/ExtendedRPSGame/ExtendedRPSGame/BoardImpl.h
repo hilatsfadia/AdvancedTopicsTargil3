@@ -146,12 +146,12 @@ public:
 		GetBoardInPosition(target).StealPieceFromSquare(GetBoardInPosition(source));
 	}
 
-	bool IsEmptyInPosition(const Point& position)
+	bool IsEmptyInPosition(const Point& position) const
 	{
-		return GetBoardInPosition(position).IsEmpty();
+		return IsEmptyInPosition(position.getX(), position.getY());
 	}
 
-	bool IsEmptyInPosition(int x, int y)
+	bool IsEmptyInPosition(int x, int y) const
 	{
 		return GetBoardInPosition(x, y).IsEmpty();
 	}
@@ -170,7 +170,12 @@ public:
 
 	T& PeekPieceInPosition(const Point& position) 
 	{
-		return GetBoardInPosition(position).PeekPiece(); 
+		return PeekPieceInPosition(position.getX(), position.getY());
+	}
+
+	T& PeekPieceInPosition(int x, int y)
+	{
+		return GetBoardInPosition(x, y).PeekPiece();
 	}
 
 	// Checks if the position isn't out of range.

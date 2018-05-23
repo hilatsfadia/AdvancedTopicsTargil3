@@ -26,8 +26,8 @@ private:
 	//bool mFlagPlaceKnown;
 	int mPlayer;
 	int mOpponent;
-	//int mNumCoveredPieces;
-	//int mNumMovablePieces;
+	int mNumCoveredPieces;
+	int mNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
 
@@ -78,22 +78,30 @@ private:
 //
 //	PointImpl * runForYourLife(int xPos, int yPos);
 //
-//	void findFlag();
+	void findOpponentFlag();
 //
 //	unique_ptr<Move> saveAPiece();
 //
 //	unique_ptr<Move> eatOpponentPiece();
-//
-//
-//	unique_ptr<Move> conquerTheFlag();
-//
-//	void getVectorToMoveToFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
-//
-//	PointImpl* GetMoveHorizotally(PointImpl &moveFrom, const PointImpl &flagPos);
-//
-//	PointImpl* GetMoveVertically(PointImpl & moveFrom, const PointImpl & flagPos);
-//
-//	PointImpl * getPlaceTowardsFlag(PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened);
+
+	bool AreBothBoardsEmptyInPosition(int x, int y) const;
+	bool AreBothBoardsEmptyInPosition(const Point& pos) const;
+
+	//-----------------------------------------------------------
+	// conquerTheFlag helper functions
+	//-----------------------------------------------------------
+	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
+
+	unique_ptr<PointImpl> GetUnoccupiedPlace(bool condition1, PointImpl& option1, bool condition2, PointImpl& option2) const;
+
+	unique_ptr<PointImpl> GetUnoccupiedPlaceHorizotally(const PointImpl &moveFrom, const PointImpl &flagPos) const;
+
+	unique_ptr<PointImpl> GetUnoccupiedPlaceVertically(const PointImpl & moveFrom, const PointImpl & flagPos)const;
+
+	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened) const;
+
+	unique_ptr<Move> conquerTheFlag();
+
 //
 //	bool checkIsThreatened(int xPos, int yPos, int player);
 //

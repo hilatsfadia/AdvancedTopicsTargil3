@@ -15,8 +15,6 @@ class Joker;
 class Parser
 {
 protected:
-	// The game for which the parser works.
-	Game* mGame;
 
 	// trim from start (in place)
 	static inline void Ltrim(std::string& s);
