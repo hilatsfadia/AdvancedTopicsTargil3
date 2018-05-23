@@ -1,0 +1,98 @@
+// Removes the location of joker of the current player from the list of saved joker locations (mJokerLocations)
+void eraseJokerLocation(const Point& jokerPos);
+
+// Updates the location of joker of the current player in the list of saved joker locations (mJokerLocations)
+void updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos);
+
+// Updates the information for the piece if it is threatened
+void updateIsThreatened(int player);
+
+// Updates the information for the piece if it is threatening
+void updateIsThreatening(int player);
+
+// // Checks if a certain piece is threatening some piece nearby on the board
+bool checkIsThreatening(int xPos, int yPos, int player);
+
+// Moves the strategy piece on the dummy board (mGameBoardInfo), that is used to keep all the information that helps the strategy of the player algorithm
+void movePieceOnInfoBoard(const Move& getMove);
+
+// Returns a coordinate (point) on the board to move to, by which the current player will eat the opponents piece
+PointImpl * conquerPiece(int xPos, int yPos);
+
+// Returns a coordinate (point) on the board to move to, that is not taken by another piece
+PointImpl * getEmptySquareToMoveTo(PointImpl pos);
+
+// Returns a coordinate (point) on the board to move to, by which the current player will be saved from the opponents piece
+PointImpl * runForYourLife(int xPos, int yPos);
+
+// Go over the information about the opponent pieces (how many are movable / known to the player) and checks if can assume the opponent's flags locations
+void findFlag();
+
+// Returns a move by which the current player will be saved from the opponents piece
+unique_ptr<Move> saveAPiece();
+
+// Returns a move by which the current player will eat the opponents piece
+unique_ptr<Move> eatOpponentPiece();
+
+//Returns the best move in consideration that the location of the opponent flag is not known
+unique_ptr<Move> getNormalMove();
+
+//Returns the best move in consideration that the location of the opponent flag is known, and is trying to be conquered by the player
+unique_ptr<Move> conquerTheFlag();
+
+// Returns a vector of suggested locations to move to in a certain distance from the opponents flag
+void getVectorToMoveToFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
+
+// Returns a suggested coordinate (point) to move to on the horizontal axis, from a given coordinate towards the opponent flag
+PointImpl* GetMoveHorizotally(PointImpl &moveFrom, const PointImpl &flagPos);
+
+// Returns a suggested coordinate (point) to move to on the vertical axis, from a given coordinate towards the opponent flag
+PointImpl* GetMoveVertically(PointImpl & moveFrom, const PointImpl & flagPos);
+
+// Returns the best coordinate (point) to move to towards the opponet flag, given a certain coordinate on board
+PointImpl * getPlaceTowardsFlag(PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened);
+
+// Checks if a certain piece is threatened by some piece nearby on the board
+bool checkIsThreatened(int xPos, int yPos, int player);
+
+// Checks if a certain piece is threatened by a certain piece nearby on the board
+bool returnThreatened(int xPos, int yPos, int newxPos, int newyPos, int opponent);
+
+// Checks if a certain piece is threatened by a certain piece nearby on the board
+bool returnPointThreatening(int xpos, int ypos, int newxpos, int newypos);
+
+// Returns a vector of locations that have pieces in them that are threatening the piece given
+void getVectorThreateningPieces(PointImpl & pos, std::vector<PointImpl>& posVectorToFill);
+
+// Initializes the vector of locations that the player want to position his pieces on board
+void initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+
+// Updates the line number according to given isToMoveForward. If true, inc pos, else, dec pos
+void UpdateLineNumber(int& yPos, bool isToMoveForward);
+
+// Init the initial positions for a specific piece type, starting from the given position.
+void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper = NON_JOKER_REP);
+
+// Does the filling of the given vector with the positions.
+void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+
+//Initializes the vector of locations that the player want to position his pieces on board and initializes the strategy board as well
+virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
+
+// Initializes the strategy pieces  of the opponent on the strategy board (mGameBoardInfo) and update it according to the fights that have been conducted prior the beginning of the game
+virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
+
+// Updates the strategy pieces of the opponent on the strategy board (mGameBoardInfo) according to its moves
+virtual void notifyOnOpponentMove(const Move& move) override; // called only on opponent's move
+
+// Updates the strategy pieces on the strategy board (mGameBoardInfo) for both players according to the fight that had been conducted 
+virtual void notifyFightResult(const FightInfo& fightInfo) override; // called only if there was a fight
+
+// Returns the best move for the current player, according to the information known to him on the opponent
+virtual unique_ptr<Move> getMove() override;
+
+// Returns the best joker change for the current player, according to the information known to him on the opponent
+virtual unique_ptr<JokerChange> getJokerChange() override; // nullptr if no change is requested
+
+// Update a certain square on the board, according to the result of the fight	
+void updateSquareAfterFight(const FightInfo & fight);

@@ -1,8 +1,8 @@
 COMP = g++-5.3.0
 #put all your object files here
-OBJS = Board.o Bomb.o Flag.o Game.o Joker.o Main.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o Player.o Rock.o Scissors.o
-#The executabel filename DON'T CHANGE
-EXEC = ex1
+OBJS = AutoPlayerAlgorithm.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorith.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
+#The executable filename DON'T CHANGE
+EXEC = ex2
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
 
@@ -10,40 +10,100 @@ $(EXEC): $(OBJS)
 	$(COMP) $(OBJS) -o $@
 #a rule for building a simple c++ source file
 #use g++ -MM Main.cpp to see dependencies
-Board.o: Board.cpp Board.h Piece.h PieceFactory.h
+
+AutoPlayerAlgorithm.o: AutoPlayerAlgorithm.cpp AutoPlayerAlgorithm.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h BoardImpl.h Piece.h PieceFactory.h Player.h PointImpl.h \
+ FightInfoImpl.h MoveImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h \
+ Paper.h RPSPiece.h Rock.h Scissors.h Bomb.h Joker.h JokerChangeImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Bomb.o: Bomb.cpp Bomb.h Piece.h PieceFactory.h
+BoardImpl.o: BoardImpl.cpp BoardImpl.h Piece.h PieceFactory.h Player.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h PointImpl.h FightInfoImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Flag.o: Flag.cpp Flag.h Piece.h PieceFactory.h
+Bomb.o:  Bomb.cpp Bomb.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
+ Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Game.o: Game.cpp Game.h Player.h PieceFactory.h Board.h Piece.h \
- ParserInitFile.h Parser.h ParserMoveFile.h
+FightInfoImpl.o: FightInfoImpl.cpp FightInfoImpl.h FightInfo.h \
+ PointImpl.h Point.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Joker.o: Joker.cpp Joker.h Piece.h PieceFactory.h
+FilePlayerAlgorith.o:FilePlayerAlgorithm.cpp FilePlayerAlgorithm.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h ParserMoveFile.h Parser.h Player.h PieceFactory.h \
+ BoardImpl.h Piece.h PointImpl.h FightInfoImpl.h ParserInitFile.h \
+ MoveImpl.h JokerChangeImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Main.o: Main.cpp
+Flag.o: Flag.cpp Flag.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
+ Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Paper.o: Paper.cpp Paper.h Piece.h PieceFactory.h
+Game.o: Game.cpp Game.h Player.h PieceFactory.h PlayerAlgorithm.h Point.h \
+ PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h BoardImpl.h \
+ Piece.h PointImpl.h FightInfoImpl.h ParserInitFile.h Parser.h \
+ ParserMoveFile.h Joker.h PiecePositionImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Parser.o: Parser.cpp Parser.h Player.h PieceFactory.h Board.h Piece.h \
- Game.h Joker.h
+Joker.o: Joker.cpp Joker.h Piece.h PieceFactory.h Player.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-ParserInitFile.o: ParserInitFile.cpp ParserInitFile.h Parser.h Player.h \
- PieceFactory.h Board.h Piece.h Game.h Joker.h
+JokerChangeImpl.o:  JokerChangeImpl.cpp JokerChangeImpl.h PointImpl.h \
+ Point.h JokerChange.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+Main.o: Main.cpp Game.h Player.h PieceFactory.h PlayerAlgorithm.h Point.h \
+ PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h BoardImpl.h \
+ Piece.h PointImpl.h FightInfoImpl.h FilePlayerAlgorithm.h \
+ ParserMoveFile.h Parser.h AutoPlayerAlgorithm.h MoveImpl.h \
+ PiecePositionImpl.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+MoveImpl.o: MoveImpl.cpp MoveImpl.h Point.h Move.h PointImpl.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+Paper.o: Paper.cpp Paper.h RPSPiece.h Piece.h PieceFactory.h Player.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+Parser.o: Parser.cpp Parser.h Player.h PieceFactory.h PlayerAlgorithm.h \
+ Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h \
+ BoardImpl.h Piece.h PointImpl.h FightInfoImpl.h Game.h Joker.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+ParserInitFile.o:  ParserInitFile.cpp ParserInitFile.h Parser.h Player.h \
+ PieceFactory.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h \
+ FightInfo.h Move.h JokerChange.h BoardImpl.h Piece.h PointImpl.h \
+ FightInfoImpl.h Game.h Joker.h PiecePositionImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 ParserMoveFile.o: ParserMoveFile.cpp ParserMoveFile.h Parser.h Player.h \
- PieceFactory.h Board.h Piece.h Game.h Joker.h
+ PieceFactory.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h \
+ FightInfo.h Move.h JokerChange.h BoardImpl.h Piece.h PointImpl.h \
+ FightInfoImpl.h Game.h Joker.h MoveImpl.h JokerChangeImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Piece.o: Piece.cpp Piece.h PieceFactory.h Player.h
+Piece.o:  Piece.cpp Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
+ Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-PieceFactory.o: PieceFactory.cpp PieceFactory.h Rock.h Piece.h Paper.h \
- Scissors.h Bomb.h Joker.h Flag.h
+PieceFactory.o:  PieceFactory.cpp PieceFactory.h Rock.h RPSPiece.h Piece.h \
+ Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
+ Move.h JokerChange.h Paper.h Scissors.h Bomb.h Joker.h Flag.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Player.o: Player.cpp Player.h PieceFactory.h
+PiecePositionImpl.o: PiecePositionImpl.cpp PiecePositionImpl.h \
+ PointImpl.h Point.h PiecePosition.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Rock.o: Rock.cpp Rock.h Piece.h PieceFactory.h
+Player.o:  Player.cpp Player.h PieceFactory.h PlayerAlgorithm.h Point.h \
+ PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-Scissors.o: Scissors.cpp Scissors.h Piece.h PieceFactory.h
+PointImpl.o:  PointImpl.cpp PointImpl.h Point.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+Rock.o:  Rock.cpp Rock.h RPSPiece.h Piece.h PieceFactory.h Player.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+RPSPiece.o:  RPSPiece.cpp RPSPiece.h Piece.h PieceFactory.h Player.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+Scissors.o: Scissors.cpp Scissors.h RPSPiece.h Piece.h PieceFactory.h \
+ Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
+ Move.h JokerChange.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+StrategyPiece.o: StrategyPiece.cpp StrategyPiece.h Piece.h PieceFactory.h \
+ Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
+ Move.h JokerChange.h Joker.h Rock.h RPSPiece.h Paper.h Scissors.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 clean:
 	rm -f $(OBJS) $(EXEC)

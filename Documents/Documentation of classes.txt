@@ -1,0 +1,88 @@
+//AutoPlayerAlgorithm
+Creates an auto algorithm for the player. That is, generating the moves according to finding the best move possible.
+
+//Board
+Abstract class. Generates and handles the board which the game is played upon.
+
+//BoardImpl
+Generates and handles the board which the game is played upon.
+
+//Bomb
+Creates and handles all instances of piece of type bomb. Inherits type piece.
+
+//FightInfo
+Abstract class. Manages a struct that holds all the information of a current fight which was conducted on the board.
+
+//FightInfoImpl
+Manages a struct that holds all the information of a current fight which was conducted on the board.
+
+//FilePlayerAlgorithm
+Creates a file algorithm for the player. That is generating moves according to a moves file that had been provided to the algorithm.
+
+//Flag
+Creates and handles all instances of piece of type flag. 
+
+//Game
+Functions as game manager. Manages the progress of the game, and creates the differents algorithms for the different players of the game.
+
+//Joker
+Creates and handles all instances of piece of type joker. 
+
+//JokerChange
+Abstract class. Manages the return of a joker change move on the board for the player.
+
+//JokerChangeImpl
+Manages the return of a joker change move on the board for the player.
+
+//Move
+Abstract class. Manages the return of a move on the board for the player.
+
+//MoveImpl
+Manages the return of a move on the board for the player.
+
+//Paper
+Creates and handles all instances of piece of type paper. 
+
+//Parser
+Handles main helper functions for parsing files.
+
+//ParserInitFile
+Handles the parsing of a positioning file that was given by the player, that instructs how to put his tools on the game board.
+
+//ParserMoveFile
+Handles the parsing of a moves file that was given by the player, that instructs how to move his tools on the game board, in the flow of the game.
+
+//Piece
+Manages the characteristics of the individual piece and its fights on the actual gameboard.
+
+//PieceFactory
+A class that creates new instances of type piece.
+
+//PiecePosition
+Abstract class. Manages a certain position on board given to it.
+
+//PiecePositionImpl
+Manages a certain position on board given to it.
+
+//Player
+Manages and creates a new player to play on board and handles all his pieces.
+
+//PlayerAlgorithm
+Abstract class. Creates an adjusted algorithm for the player whos playing the game (from file or auto).
+
+//Point
+Abstract class. Represents a certain coordinate on board.
+
+//PointImpl
+Represents a certain coordinate on board.
+
+//Rock
+Creates and handles all instances of piece of type rock. 
+
+//Scissors
+Creates and handles all instances of piece of type scissors. 
+
+//StrategyPiece
+Creates and manages an instance the represents a dummy piece on a dummy board, used to keep all the needed information about the flow of the game by a certain auto player algorithm.
+
+
