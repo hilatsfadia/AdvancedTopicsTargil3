@@ -12,7 +12,7 @@ class Piece
 {
 protected:
 
-	// shared ptr because it is shared between it's pieces and the game.
+	// shared ptr because it is shared among it's pieces (as their owner) and the game.
 	shared_ptr<Player> mOwner;
 	int mOwnerNum;
 	

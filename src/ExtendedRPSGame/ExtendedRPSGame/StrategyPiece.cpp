@@ -5,13 +5,11 @@
 #include "Paper.h"
 #include "Scissors.h"
 #include "Joker.h"
+#include <memory>
 
 StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
 {
-	if (uncoveredPiece != nullptr)
-	{
-		mUncoveredPiece = std::move(uncoveredPiece);
-	}
+	UncoverPiece(std::move(uncoveredPiece));
 }
 
 PieceFactory::PieceType StrategyPiece::GetPieceType() const
@@ -36,17 +34,39 @@ char StrategyPiece::GetPieceChar() const
 
 void StrategyPiece::UncoverPiece(std::unique_ptr<Piece> uncoveredPiece)
 {
-	mUncoveredPiece = std::move(uncoveredPiece);
-
-	if (mUncoveredPiece != nullptr)
+	if (uncoveredPiece != nullptr)
 	{
+		mUncoveredPiece = std::move(uncoveredPiece);
 		mIsMovingPiece = mUncoveredPiece->GetIsMovingPiece();
 	}
 }
 
 void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
 {
-	UncoverPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
+	if (mUncoveredPiece != nullptr)
+	{
+		if (mUncoveredPiece->GetPieceChar() != uncoveredPieceChar) // If this piece should be a joker
+		{
+			// TODO: maybe not needed
+			if (mUncoveredPiece->GetPieceType() == PieceFactory::PieceType::Joker)
+			{
+				Joker& joker = dynamic_cast<Joker&>(*mUncoveredPiece);
+				if (joker.PeekActualPiece().GetPieceChar() != uncoveredPieceChar)
+				{
+					joker.SetActualPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
+					mIsMovingPiece = mUncoveredPiece->GetIsMovingPiece();
+				}
+			}
+			else
+			{
+				UncoverPiece(std::make_unique<Joker>(mOwnerNum, PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum)));
+			}
+		}
+	}
+	else
+	{
+		UncoverPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
+	}
 }
 
 bool StrategyPiece::IsStrongerThan(Piece* other) const

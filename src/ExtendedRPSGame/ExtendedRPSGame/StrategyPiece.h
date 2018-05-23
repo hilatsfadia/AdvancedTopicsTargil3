@@ -32,6 +32,11 @@ public:
 
 	// Uncovers this piece by giving it the actual piece it represents.
 	void UncoverPiece(std::unique_ptr<Piece> uncoveredPiece);
+
+	// Uncover this piece by setting it's real piece.
+	// If this piece is already uncovered, check if it's indeed the given char. If not, update
+	// it to be the relevant joker (with a relevant representation).
+	// uncoveredPieceChar should be R, P, S, B or F (but NOT J)
 	void UncoverPiece(char uncoveredPieceChar);
 
 	// Returns true iff this piece is threatened by an enemy piece (one or more)

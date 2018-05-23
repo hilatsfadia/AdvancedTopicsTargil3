@@ -5,7 +5,6 @@
 #include "PieceFactory.h"
 #include "Move.h"
 #include "FightInfo.h"
-#include "StrategyPiece.h"
 #include "Flag.h"
 #include "Paper.h"
 #include "Rock.h"
@@ -52,9 +51,11 @@ void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<Piec
 
 void AutoPlayerAlgorithm::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
-	//int yPos = (player - 1) * (M / 2) + 1;
 	PointImpl point;
 	int xPos = 1;
+	//int yPos = 1;
+	//int yPos = (player - 1) * (M / 2) + 1;
+	//bool isToMoveForward = true;
 	int yPos = (player == 1) ? 1 : M;
 	bool isToMoveForward = (player == 1) ? true : false;
 
@@ -74,24 +75,25 @@ void AutoPlayerAlgorithm::initPositionsVector(int player, std::vector<unique_ptr
 	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
 }
 
-//bool AutoPlayerAlgorithm::pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill) {
-//	for (unique_ptr<PiecePosition>& piece : vectorToFill) {
-//		if (piece->getPosition().getX() == point.getX()
-//			&& piece->getPosition().getY() == point.getY()) {
-//			return true;
-//		}
-//	}
-//	return false;
-//}
-//
-//PointImpl AutoPlayerAlgorithm::generateRandomPoint() {
-//	int range = N;
-//	int rnd_x = 1 + ( % range);
-//	int rnd_y = 1 + ( % range);
-//
-//	return PointImpl(rnd_x, rnd_y);
-//}
+void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
+{
+	for (std::unique_ptr<PiecePosition>& piecePos : vectorToFill) {
+		unique_ptr<Piece> uncoveredPiece = nullptr;
+		if (piecePos->getPiece() == JOKER_CHAR)
+		{
+			unique_ptr<Joker> jokerPiece = make_unique<Joker>(mPlayer);
+			jokerPiece->SetActualPiece(PieceFactory::GetPieceFromChar(piecePos->getJokerRep(), mPlayer));
+			uncoveredPiece = std::move(jokerPiece);
+		}
+		else
+		{
+			uncoveredPiece = PieceFactory::GetPieceFromChar(piecePos->getPiece(), mPlayer);
+		}
 
+		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer, std::move(uncoveredPiece));
+		mPlayersStrategyBoards[player - 1].PutPieceInPosition(piecePos->getPosition(), std::move(strategyPiece));
+	}
+}
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
@@ -102,33 +104,85 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 	else {
 		mOpponent = 1;
 	}
-	mFlagPlaceKnown = false;
-	mNumCoveredPieces = R + P + S + B + F + J;
-	mNumMovablePieces = 0;
+	//mFlagPlaceKnown = false;
+	//mNumCoveredPieces = R + P + S + B + F + J;
+	//mNumMovablePieces = 0;
 
 	initPositionsVector(player, vectorToFill);
+	initTheAlgorithmPlayerBoard(player, vectorToFill);
+}
 
-	for (std::unique_ptr<PiecePosition>& piecePos : vectorToFill){
-		unique_ptr<Piece> uncoveredPiece = nullptr;
-		if (piecePos->getPiece() == JOKER_CHAR)
-		{
-			unique_ptr<Joker> jokerPiece = make_unique<Joker>(mPlayer);
-			jokerPiece->SetActualPieceType(PieceFactory::GetPieceFromChar(piecePos->getJokerRep(), mPlayer));
-			uncoveredPiece = std::move(jokerPiece);
-		}
-		else
-		{
-			uncoveredPiece = PieceFactory::GetPieceFromChar(piecePos->getPiece(), mPlayer);
-		}
+void AutoPlayerAlgorithm::ClearPlayersBoardsInPosition(const Point& pos)
+{
+	mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
+	mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(pos);
+}
 
-		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer, std::move(uncoveredPiece));
-		mGameBoardInfo.PutPieceInPosition(piecePos->getPosition(), std::move(strategyPiece));
+void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
+{
+	for (int row = 1; row <= M; row++)
+	{
+		for (int col = 1; col <= N; col++)
+		{
+			PointImpl pos = PointImpl(col, row);
+
+			// Update the board of the player of this algorithm, by removing
+			// eaten pieces.
+			if (b.getPlayer(pos) != mPlayer) // it's mOpponent or 0
+			{
+				if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos))
+				{
+					mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
+				}
+			}
+
+			// Update the board of the oponnent player, by getting all it's pieces locations
+			if (b.getPlayer(pos) == mOpponent)
+			{
+				unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mOpponent); //uncovered piece
+				mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(pos); //delets the former piece in square
+				mPlayersStrategyBoards[mOpponent - 1].PutPieceInPosition(pos, std::move(strategyPiece));
+			}
+		}
 	}
+}
 
+void AutoPlayerAlgorithm::updateStrategyAccordingToFights(const std::vector<unique_ptr<FightInfo>>& fights)
+{
+	for (const std::unique_ptr<FightInfo>& fight : fights)
+	{
+		//next exercise remember to add handling to more than one flag
+		int winner = fight->getWinner();
+
+		if (winner == TIE) {
+			//if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
+			//	eraseJokerLocation(fight.getPosition());
+			//}
+			ClearPlayersBoardsInPosition(fight->getPosition());
+		}
+		else if (winner == mOpponent) {
+			//if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
+			//	eraseJokerLocation(fight.getPosition());
+			//}
+			mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight->getPosition()); // already done by the supplied board?
+			mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight->getPosition()).UncoverPiece(fight->getPiece(winner));
+		}
+		else // winner == mPlayer
+		{
+			mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(fight->getPosition());
+		}
+
+		//if (winner == mOpponent || winner == 0){
+		//	mNumCoveredPieces--;
+		//} 
+
+	}
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
 {
+	updateStrategyAccordingToBoard(b);
+	updateStrategyAccordingToFights(fights);
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move)
@@ -177,51 +231,6 @@ unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
 //
 //	}
 //
-//void AutoPlayerAlgorithm::updateSquareAfterFight(const FightInfo& fight) {
-//	Piece* piece = mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece();
-//	StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(piece);
-//
-//	//next exercise remember to add handling to more than one flag
-//	//int owner = piece->GetOwnerNum();
-//	int winner = fight.getWinner();
-//
-//	if (winner == 0) {
-//		if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
-//			eraseJokerLocation(fight.getPosition());
-//		}
-//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
-//	}
-//	else if (winner == mOpponent) {
-//		if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
-//			eraseJokerLocation(fight.getPosition());
-//		}
-//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
-//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ChangeSquarePiece(new StrategyPiece(winner, PieceFactory::GetPieceFromChar(fight.getPiece(winner), winner)));
-//		//cant remember movable here. maybe need update?
-//	}
-//	//else if (owner != winner) {
-//	//	
-//	//	
-//
-//	//}
-//	//else {
-//	//	
-//	//	
-//	//	if (owner == mOpponent &&
-//	//		piece->GetPieceChar() !=
-//	//		fight.getPiece(mOpponent)) {
-//	//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ClearSquare();
-//	//		Joker* joker = new Joker(mOpponent);
-//	//		joker->SetActualPieceType(PieceFactory::GetPieceFromChar(fight.getPiece(mOpponent), mOpponent));
-//	//		mGameBoardInfo.GetBoardInPosition(fight.getPosition()).ChangeSquarePiece(new StrategyPiece(mOpponent, joker));
-//	//	}
-//	//}
-//	
-//	if (winner == mOpponent || winner == 0){
-//		mNumCoveredPieces--;
-//	} 
-//
-//}
 //
 //void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move)
 //{

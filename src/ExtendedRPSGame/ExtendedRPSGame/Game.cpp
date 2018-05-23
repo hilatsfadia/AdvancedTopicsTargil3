@@ -222,7 +222,7 @@ Game::~Game()
 {
 }
 
-bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
+bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board)
 {
 	unique_ptr<Piece> piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
@@ -252,7 +252,7 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	}
 
 	// If not a valid PIECE for a Joker
-	if (!joker->SetActualPieceType(std::move(actualPiece)))
+	if (!joker->SetActualPiece(std::move(actualPiece)))
 	{
 		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;
@@ -278,7 +278,7 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 	return true;
 }
 
-bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
+bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board)
 {
 	// actualPiece shouldn't have an owner! because we don't want to 
 	// count it as one of the player's pieces.
@@ -295,7 +295,7 @@ bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pieceP
 	return board.PutPieceOnTempPlayerBoard(std::move(joker), piecePos->getPosition());
 }
 
-bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)
+bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl<Piece>& board)
 {
 	for (std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
 	{
@@ -327,7 +327,7 @@ void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, c
 }
 
 bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
-	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board) {
+	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board) {
 
 	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(0, player1PiecePositions, tempPlayer1Board) ||
 		(!mPlayersVec[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
@@ -371,7 +371,7 @@ bool Game::HandlePositioning()
 	// Puts the pieces on two temp boards, as suggested in class,
 	// in order to avoid missing an illegal case where one player places two weak pieces in
 	// the same location where the other player has strong piece.
-	BoardImpl tempPlayersBoards[NUM_OF_PLAYERS];
+	BoardImpl<Piece> tempPlayersBoards[NUM_OF_PLAYERS];
 
 	if (!PutPiecePositionsOnBoard(playersPiecePositions[0], playersPiecePositions[1], tempPlayersBoards[0], tempPlayersBoards[1]))
 	{

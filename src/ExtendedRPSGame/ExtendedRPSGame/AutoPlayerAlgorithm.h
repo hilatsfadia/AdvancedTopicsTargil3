@@ -13,19 +13,47 @@
 #include "Player.h"
 #include "MoveImpl.h"
 #include "PiecePositionImpl.h"
+#include "StrategyPiece.h"
+#define NUM_OF_PLAYERS 2
+#define EMPTY_BOARD_LOCATION 0
+#define TIE 0
 #define PIECE_TYPE_NUM 6
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm
 {
 private:
-	BoardImpl mGameBoardInfo; //TODO: pointer?
-	bool mFlagPlaceKnown;
+	BoardImpl<StrategyPiece> mPlayersStrategyBoards[NUM_OF_PLAYERS];
+	//bool mFlagPlaceKnown;
 	int mPlayer;
 	int mOpponent;
-	int mNumCoveredPieces;
-	int mNumMovablePieces;
+	//int mNumCoveredPieces;
+	//int mNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
+
+	//-----------------------------------------------------------
+	// getInitialPositions helper functions
+	//-----------------------------------------------------------
+	// Updates the line number according to given isToMoveForward. 
+	// If true, inc pos, else, dec pos
+	void UpdateLineNumber(int& yPos, bool isToMoveForward);
+
+	// Init the initial positions for a specific piece type, starting from the given position.
+	// Updates the given position to the next position available 
+	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper = NON_JOKER_REP);
+
+	// Does the filling of the given vector with the positions.
+	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+
+	// Init the board of the player of this algorithm.
+	void initTheAlgorithmPlayerBoard(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+
+	//-----------------------------------------------------------
+	// notifyOnInitialBoard helper functions
+	//-----------------------------------------------------------
+	void ClearPlayersBoardsInPosition(const Point& pos);
+	void updateStrategyAccordingToBoard(const Board& b);
+	void updateStrategyAccordingToFights(const std::vector<unique_ptr<FightInfo>>& fights);
 
 //	void eraseJokerLocation(const Point& jokerPos);
 //
@@ -72,21 +100,8 @@ private:
 //	void getVectorThreateningPieces(PointImpl & pos, std::vector<PointImpl>& posVectorToFill);
 //
 //	//char getCharFromPieceType(PieceFactory::PieceType type);
-//	
-//	//PointImpl generateRandomPoint();
-//	//bool pointExists(PointImpl point, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
-//	//void initMovesVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+
 public:
-	
-	// Updates the line number according to given isToMoveForward. 
-	// If true, inc pos, else, dec pos
-	void UpdateLineNumber(int& yPos, bool isToMoveForward);
-
-	// Init the initial positions for a specific piece type, starting from the given position.
-	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper = NON_JOKER_REP);
-
-	// Does the filling of the given vector with the positions.
-	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 
 	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
 
@@ -99,7 +114,6 @@ public:
 //
 //	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
 //	
-//	void updateSquareAfterFight(const FightInfo & fight);
 //	
 //	virtual void notifyOnOpponentMove(const Move& move) override; // called only on opponent's move
 //	

@@ -36,9 +36,10 @@ private:
 
 	enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
-	BoardImpl mGameBoard;
+	BoardImpl<Piece> mGameBoard;
 	//Player* mPlayersVec[NUM_OF_PLAYERS];
 
+	// shared ptr because it is shared among it's pieces (as their owner) and the game.
 	std::vector<shared_ptr<Player>> mPlayersVec;
 	std::vector<unique_ptr<PlayerAlgorithm>> mAlgorithmsVec;
 
@@ -55,7 +56,7 @@ private:
 	// while setting the winner (and relevant message) if any.
 	// Returns false in case input file is missing or cannot be opened 
 	bool PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions,
-		std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board);
+		std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board);
 	
 	// When one of the input files (position file or move file) has bad format,
 	// update message and winner.
@@ -82,7 +83,7 @@ private:
 
 	bool IsGameOver() { return mWinner != Game::Winner::None; }
 
-	bool PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board);
+	bool PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl<Piece>& board);
 
 	// Note that if this player index is 1 than the other player index is 0 and vice versa.
 	// Index is 0 based
@@ -90,7 +91,7 @@ private:
 
 	// Put a non joker piece in given position.  
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
+	bool PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board);
 
 	// Changes the joker actual type to the one represented by the given character.
 	bool ChangeJokerActualType(Joker* joker, char cJokerRepresantation);
@@ -100,7 +101,7 @@ private:
 
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board);
+	bool PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board);
 
 	// Position on the board the initial pieces of the players, according to their algorithm.
 	bool HandlePositioning();
