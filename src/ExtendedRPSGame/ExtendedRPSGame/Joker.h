@@ -40,6 +40,8 @@ public:
 
 	char GetPieceChar() const override { return JOKER_CHAR; }
 
+	char GetActualPieceChar() const override { return mActualPiece->GetPieceChar(); }
+
 	virtual bool IsStrongerThan(Piece* other) const { return mActualPiece->IsStrongerThan(other); };
 
 	const Piece& PeekActualPiece() const { return *mActualPiece; }

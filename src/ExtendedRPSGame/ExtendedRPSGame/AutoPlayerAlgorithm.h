@@ -53,7 +53,16 @@ private:
 	//-----------------------------------------------------------
 	void ClearPlayersBoardsInPosition(const Point& pos);
 	void updateStrategyAccordingToBoard(const Board& b);
-	void updateStrategyAccordingToFights(const std::vector<unique_ptr<FightInfo>>& fights);
+
+	//-----------------------------------------------------------
+	// getMove helper functions
+	//-----------------------------------------------------------
+	unique_ptr<PointImpl> getEmptySquareToMoveTo(const PointImpl& pos);
+	unique_ptr<Move> getNormalMove();
+	//void movePieceOnInfoBoard(const Move& getMove);
+
+
+	void updateStrategyAccordingToFight(const FightInfo& fight);
 
 //	void eraseJokerLocation(const Point& jokerPos);
 //
@@ -64,12 +73,8 @@ private:
 //	void updateIsThreatening(int player);
 //
 //	bool checkIsThreatening(int xPos, int yPos, int player);
-//
-//	void movePieceOnInfoBoard(const Move& getMove);
 //	
 //	PointImpl * conquerPiece(int xPos, int yPos);
-//
-//	PointImpl * getEmptySquareToMoveTo(PointImpl pos);
 //
 //	PointImpl * runForYourLife(int xPos, int yPos);
 //
@@ -79,7 +84,6 @@ private:
 //
 //	unique_ptr<Move> eatOpponentPiece();
 //
-//	unique_ptr<Move> getNormalMove();
 //
 //	unique_ptr<Move> conquerTheFlag();
 //
@@ -104,12 +108,12 @@ private:
 public:
 
 	virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
-
 	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
 	virtual void notifyOnOpponentMove(const Move& move) override; // called only on opponent's move
 	virtual void notifyFightResult(const FightInfo& fightInfo) override; // called only if there was a fight
 	virtual unique_ptr<Move> getMove() override;
 	virtual unique_ptr<JokerChange> getJokerChange() override; // nullptr if no change is requested
+
 
 //
 //	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;

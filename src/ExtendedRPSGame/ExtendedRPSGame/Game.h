@@ -9,6 +9,8 @@
 #include "Player.h"
 #include "BoardImpl.h"
 #include "PlayerAlgorithm.h"
+// TODO delete!!!
+#include <fstream>
 
 class Joker;
 
@@ -45,6 +47,9 @@ private:
 
 	// TODO: check if needed
 	Winner mWinner = Winner::None;
+
+	// TODO: delete!!!
+	std::ofstream logFile;
 
 	//PlayerAlgorithm* mAlgorithms[NUM_OF_PLAYERS];
 

@@ -69,7 +69,7 @@ private:
 		const T& PeekPiece() const { return *piece; }
 
 		// Init by other boardSquare
-		void MovePieceFromSquare(BoardSquare<T>& other)
+		void StealPieceFromSquare(BoardSquare<T>& other)
 		{
 			this->piece = std::move(other.piece);
 			other.ClearSquare();
@@ -117,7 +117,7 @@ public:
 	// Tries to the piece in the given position. 
 	// Returns true if the piece can be put in the position.
 	// TODO: maybe static
-	bool PutPieceOnTempPlayerBoard(unique_ptr<T> piece, const Point& pos);
+	bool PutPieceOnSinglePlayerBoard(unique_ptr<T> piece, const Point& pos);
 
 	// Combine the two players' boards to one.
 	// Maybe require fights.
@@ -141,9 +141,19 @@ public:
 	// Maybe requires fight.
 	bool MovePiece(const Player& player, const std::unique_ptr<Move>& move, FightInfoImpl& toFill);
 
+	void MovePieceWithoutChecks(const Point& source, const Point& target)
+	{
+		GetBoardInPosition(target).StealPieceFromSquare(GetBoardInPosition(source));
+	}
+
 	bool IsEmptyInPosition(const Point& position)
 	{
 		return GetBoardInPosition(position).IsEmpty();
+	}
+
+	bool IsEmptyInPosition(int x, int y)
+	{
+		return GetBoardInPosition(x, y).IsEmpty();
 	}
 
 	// Clear the board in the given position from any piece.

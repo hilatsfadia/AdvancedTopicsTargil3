@@ -8,7 +8,7 @@
 #include "StrategyPiece.h"
 
 template <typename T>
-bool BoardImpl<T>::PutPieceOnTempPlayerBoard(unique_ptr<T> piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
+bool BoardImpl<T>::PutPieceOnSinglePlayerBoard(unique_ptr<T> piece, const Point& pos) { // TODO: error handling, handle out of range + already position taken
 	if ((piece == nullptr) || !CheckIfValidPosition(pos))
 	{
 		// TODO: ask
@@ -62,12 +62,12 @@ void BoardImpl<T>::InitByTempBoards(BoardImpl<T>& player1Board, BoardImpl<T>& pl
 				{
 					case (Piece::WinningPiece::CallingObject):
 					{
-						boardSquare.MovePieceFromSquare(player1BoardSquare);
+						boardSquare.StealPieceFromSquare(player1BoardSquare);
 						break;
 					}
 					case (Piece::WinningPiece::OtherObject):
 					{
-						boardSquare.MovePieceFromSquare(player2BoardSquare);
+						boardSquare.StealPieceFromSquare(player2BoardSquare);
 						break;
 					}
 					default:
@@ -78,11 +78,11 @@ void BoardImpl<T>::InitByTempBoards(BoardImpl<T>& player1Board, BoardImpl<T>& pl
 			}
 			else if (!player1BoardSquare.IsEmpty())
 			{
-				boardSquare.MovePieceFromSquare(player1BoardSquare);
+				boardSquare.StealPieceFromSquare(player1BoardSquare);
 			}
 			else if (!player2BoardSquare.IsEmpty())
 			{
-				boardSquare.MovePieceFromSquare(player2BoardSquare);
+				boardSquare.StealPieceFromSquare(player2BoardSquare);
 			}
 		}
 	}
@@ -147,12 +147,12 @@ T* BoardImpl<T>::GetPieceOfPlayer(const Point& position, int playerNum)
 template <typename T>
 bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const Point& posTo, FightInfoImpl& toFill)
 {
-	BoardImpl<T>::BoardSquare<T>& boardSquareSource = GetBoardInPosition(posFrom);
-	BoardImpl<T>::BoardSquare<T>& boardSquareDestination = GetBoardInPosition(posTo);
+	BoardImpl<T>::BoardSquare<T>& boardSquareAttacker = GetBoardInPosition(posFrom);
+	BoardImpl<T>::BoardSquare<T>& boardSquareAttackee = GetBoardInPosition(posTo);
 
-	Piece* pieceSource = GetPieceOfPlayer(posFrom, player.GetPlayerNum());
+	Piece* pieceAttacker = GetPieceOfPlayer(posFrom, player.GetPlayerNum());
 
-	if (pieceSource == nullptr)
+	if (pieceAttacker == nullptr)
 	{
 		std::cout << "The moving is illegal because given source position is illegal." << std::endl;
 		return false;
@@ -164,21 +164,21 @@ bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const P
 		return false;
 	}
 
-	if (!pieceSource->GetIsMovingPiece())
+	if (!pieceAttacker->GetIsMovingPiece())
 	{
 		std::cout << "The moving is illegal because the relevant piece cannot move." << std::endl;
 		return false;
 	}
 
-	if (boardSquareDestination.IsEmpty())
+	if (boardSquareAttackee.IsEmpty())
 	{
-		boardSquareDestination.MovePieceFromSquare(boardSquareSource);
+		boardSquareAttackee.StealPieceFromSquare(boardSquareAttacker);
 	}
 	else
 	{
-		Piece& pieceDestination = boardSquareDestination.PeekPiece();
+		Piece& pieceAttackee = boardSquareAttackee.PeekPiece();
 
-		if (pieceSource->GetOwner() == pieceDestination.GetOwner())
+		if (pieceAttacker->GetOwner() == pieceAttackee.GetOwner())
 		{
 			std::cout << "The moving is illegal because the destination has a piece of the same player" << std::endl;
 			return false;
@@ -186,23 +186,42 @@ bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const P
 
 		// If we got here than there should be a fight.
 		// TODO: refactor (look positioning)
-		Piece::WinningPiece winningPiece = pieceDestination.Fight(*pieceSource);
+		Piece::WinningPiece winningPiece = pieceAttacker->Fight(pieceAttackee);
 		int winner;
-		char sourceChar = pieceSource->GetPieceChar();
-		char destinationChar = pieceDestination.GetPieceChar();
+		char attackerChar = pieceAttacker->GetActualPieceChar();
+		char attackeeChar = pieceAttackee.GetActualPieceChar();
+		char player1Char, player2Char;
+
+		if (pieceAttacker->GetOwner()->GetPlayerNum() == 1)
+		{
+			player1Char = attackerChar;
+			player2Char = attackeeChar;
+		}
+		else
+		{
+			player1Char = attackeeChar;
+			player2Char = attackerChar;
+		}
 
 		switch (winningPiece)
 		{
 			case (Piece::WinningPiece::CallingObject):
 			{
-				winner = pieceDestination.GetOwner()->GetPlayerNum();
-				boardSquareSource.ClearSquare();
+				winner = pieceAttacker->GetOwner()->GetPlayerNum();
+				boardSquareAttackee.StealPieceFromSquare(boardSquareAttacker);
 				break;
 			}
 			case (Piece::WinningPiece::OtherObject):
 			{
-				winner = pieceSource->GetOwner()->GetPlayerNum();
-				boardSquareDestination.MovePieceFromSquare(boardSquareSource);
+				winner = pieceAttackee.GetOwner()->GetPlayerNum();
+				boardSquareAttacker.ClearSquare();
+				break;
+			}
+			case (Piece::WinningPiece::Tie):
+			{
+				winner = 0;
+				boardSquareAttacker.ClearSquare();
+				boardSquareAttackee.ClearSquare();
 				break;
 			}
 			default:
@@ -212,14 +231,7 @@ bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const P
 			}
 		}
 
-		if (pieceSource->GetOwner()->GetPlayerNum() == 1)
-		{
-			toFill.SetFightInfoValues(posTo, sourceChar, destinationChar, winner);
-		}
-		else
-		{
-			toFill.SetFightInfoValues(posTo, destinationChar, sourceChar, winner);
-		}
+		toFill.SetFightInfoValues(posTo, player1Char, player2Char, winner);
 	}
 
 	return true;

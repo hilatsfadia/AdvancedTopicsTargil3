@@ -75,6 +75,12 @@ public:
 
 	virtual bool GetIsMovingPiece() const = 0;
 
+	// R, P, S, B or F (but NOT J)
+	virtual char GetActualPieceChar() const 
+	{
+		return GetPieceChar();
+	}
+
 	virtual char GetPieceChar() const = 0;
 	
 	virtual bool IsStrongerThan(Piece* other) const { return false; };

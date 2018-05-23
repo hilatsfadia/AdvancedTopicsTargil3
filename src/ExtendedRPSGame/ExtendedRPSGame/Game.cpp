@@ -239,7 +239,7 @@ bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pie
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(std::move(piece), piecePos->getPosition());
+	return board.PutPieceOnSinglePlayerBoard(std::move(piece), piecePos->getPosition());
 }
 
 bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
@@ -292,7 +292,7 @@ bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pieceP
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(std::move(joker), piecePos->getPosition());
+	return board.PutPieceOnSinglePlayerBoard(std::move(joker), piecePos->getPosition());
 }
 
 bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl<Piece>& board)
@@ -487,6 +487,8 @@ void Game::HandleMoves()
 {
 	// One turn consists of two moves of the two players.
 	int countNoFightMoves = 0;
+	// TODO: delete!!!
+	int countMoves = 0;
 
 	// TODO: split to functions
 	while (countNoFightMoves <= MAX_MOVES)
@@ -525,6 +527,13 @@ void Game::HandleMoves()
 
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
 
+			// TODO: delete!!!
+			mGameBoard.Print(logFile);
+			logFile << "###############################################" << endl;
+			logFile << "Count Move: " << countMoves << endl;
+			logFile << "\n\n\n" << endl;
+			logFile.flush();
+
 			// Check if it was a winning /losing Move in which one player ate all the other's moving pieces.
 			// As written in the forum, Joker change can fix no moving pieces situation?
 			if (ReportAllMovingPiecesEaten())
@@ -532,6 +541,8 @@ void Game::HandleMoves()
 				return;
 			}
 		}
+
+		countMoves++;
 	}
 
 	ReportGameOver(Winner::Tie, TIE_NO_FIGHTS);
@@ -543,6 +554,13 @@ void Game::RunGame()
 	{
 		return;
 	}
+
+	// TODO: delete!!!
+	logFile.open("log.txt");
+	mGameBoard.Print(logFile);
+	logFile << "###############################################" << endl;
+	logFile << "\n\n\n" << endl;
+	logFile.flush();
 
 	if (ReportGameOverAfterInitBoard())
 	{
