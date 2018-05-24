@@ -258,7 +258,7 @@ unique_ptr<PointImpl> AutoPlayerAlgorithm::getEmptyThreatFreeSquareToMoveTo(cons
 
 		if (BoardImpl<StrategyPiece>::CheckIfValidPosition(*pos)
 			&& AreBothBoardsEmptyInPosition(*pos)
-			&& (!isThreatenedByNeighbourhood(piece, adjacentLegalPositions, mOpponent)))
+			&& (!isThreatenedByNeighbourhood(piece, *pos, mOpponent)))
 		{
 			return make_unique<PointImpl>(currX, currY);
 		}
@@ -356,7 +356,7 @@ unique_ptr<PointImpl> AutoPlayerAlgorithm::getUnoccupiedPlaceTowardsFlag(const P
 	{
 		currX = pos->getX();
 		currY = pos->getY();
-		threatenedCheck = !ifToCheckThreatened || !isThreatenedByNeighbourhood(piece, adjacentLegalPositions, mOpponent);
+		threatenedCheck = !ifToCheckThreatened || !isThreatenedByNeighbourhood(piece, *pos, mOpponent);
 		if (BoardImpl<StrategyPiece>::CheckIfValidPosition(*pos) 
 			&& AreBothBoardsEmptyInPosition(*pos)
 			&& pos->DistanceInStepsFrom(flagPos) < moveFrom.DistanceInStepsFrom(flagPos)
@@ -439,7 +439,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 
 	//movePieceOnInfoBoard(*move);
 	mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
-
+	
 	//
 	//updateIsThreatened(mPlayer);
 	//updateIsThreatened(mOpponent);
@@ -692,7 +692,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo)
 //}
 
 // TODO: threateningPlayer
-bool AutoPlayerAlgorithm::isThreatenedByNeighbourhood(const Piece& piece, const std::vector<unique_ptr<PointImpl>>& adjacentLegalPositions, int threateningPlayer) const
+bool AutoPlayerAlgorithm::isThreatenedByNeighbourhood(const Piece& piece, const PointImpl& pos, int threateningPlayer) const
 {
 	// TODO: impl!
 	//int opponent = mOpponent;	
@@ -701,6 +701,8 @@ bool AutoPlayerAlgorithm::isThreatenedByNeighbourhood(const Piece& piece, const 
 	//	opponent = mPlayer;
 	//}
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
+	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
+	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
 
 	bool isThreatened = false;
 

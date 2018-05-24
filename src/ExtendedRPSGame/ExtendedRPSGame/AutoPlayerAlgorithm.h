@@ -42,7 +42,7 @@ private:
 
 	void FillAdjacentLegalPositions(const PointImpl & pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
 
-	bool isThreatenedByNeighbourhood(const Piece& piece, const std::vector<unique_ptr<PointImpl>>& adjacentLegalPositions, int threateningPlayer) const;
+	bool isThreatenedByNeighbourhood(const Piece& piece, const PointImpl& pos, int threateningPlayer) const;
 
 	void updateStrategyAccordingToFight(const FightInfo& fight);
 
