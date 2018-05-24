@@ -26,9 +26,10 @@ Piece::WinningPiece Paper::FightWithOtherPieceType(Piece& enemy)
 	}
 }
 
-bool Paper::IsStrongerThan(Piece* other) const
+// TODO: think about joker...
+bool Paper::IsStrongerThan(const Piece& other) const
 {
-	PieceFactory::PieceType otherPieceType = other->GetPieceType();
+	PieceFactory::PieceType otherPieceType = other.GetPieceType();
 	if ((otherPieceType == PieceFactory::PieceType::Flag) || (otherPieceType == PieceFactory::PieceType::Rock))
 	{
 		return true;

@@ -273,10 +273,10 @@ BoardImpl<T>::BoardSquare<T>& BoardImpl<T>::GetBoardInPosition(const Point& posi
 //}
 
 template <typename T>
-bool BoardImpl<T>::CheckIfValidPosition(const Point& position) const
+bool BoardImpl<T>::CheckIfValidPosition(const Point& position)
 {
-	return ((position.getX() <= mColumns) && (position.getX() >= 1) &&
-			(position.getY() <= mRows) && (position.getY() >= 1));
+	return ((position.getX() <= N) && (position.getX() >= 1) &&
+			(position.getY() <= M) && (position.getY() >= 1));
 }
 
 template <typename T>

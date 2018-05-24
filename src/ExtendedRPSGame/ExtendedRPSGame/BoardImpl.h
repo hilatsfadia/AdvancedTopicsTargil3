@@ -81,9 +81,9 @@ private:
 		}
 	};
 
-	const int mRows = N;
-	const int mColumns = M;
-	BoardSquare<T> board[N][M];
+	const int mRows = M;
+	const int mColumns = N;
+	BoardSquare<T> board[M][N];
 
 	// Get Board in the given position, when axis values start from 1.
 	// Assumes position is legal.
@@ -173,13 +173,23 @@ public:
 		return PeekPieceInPosition(position.getX(), position.getY());
 	}
 
+	const T& PeekPieceInPosition(const Point& position) const
+	{
+		return PeekPieceInPosition(position.getX(), position.getY());
+	}
+
 	T& PeekPieceInPosition(int x, int y)
 	{
 		return GetBoardInPosition(x, y).PeekPiece();
 	}
 
+	const T& PeekPieceInPosition(int x, int y) const
+	{
+		return GetBoardInPosition(x, y).PeekPiece();
+	}
+
 	// Checks if the position isn't out of range.
-	bool CheckIfValidPosition(const Point& position) const;
+	static bool CheckIfValidPosition(const Point& position);
 
 	// Prints the board to the console.
 	void Print(std::ostream& outFile) const;

@@ -47,7 +47,7 @@ public:
 	bool GetIsThreathening() { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
-	virtual bool IsStrongerThan(Piece* other) const;
+	virtual bool IsStrongerThan(const Piece& other) const;
 
 	char GetStronger(const Piece* piece) const;
 };

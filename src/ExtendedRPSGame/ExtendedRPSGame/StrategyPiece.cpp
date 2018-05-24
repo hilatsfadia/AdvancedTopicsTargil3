@@ -69,7 +69,7 @@ void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
 	}
 }
 
-bool StrategyPiece::IsStrongerThan(Piece* other) const
+bool StrategyPiece::IsStrongerThan(const Piece& other) const
 {
 	if (mUncoveredPiece != nullptr)
 	{

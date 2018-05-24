@@ -15,6 +15,7 @@
 #include "PiecePositionImpl.h"
 #include "StrategyPiece.h"
 #define NUM_OF_PLAYERS 2
+#define NUM_OF_ADJACENT_POSITIONS 4
 #define EMPTY_BOARD_LOCATION 0
 #define TIE 0
 #define PIECE_TYPE_NUM 6
@@ -30,6 +31,23 @@ private:
 	int mNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
+
+	//-----------------------------------------------------------
+	// General helper functions
+	//-----------------------------------------------------------
+
+	bool AreBothBoardsEmptyInPosition(int x, int y) const;
+
+	bool AreBothBoardsEmptyInPosition(const Point& pos) const;
+
+	void FillAdjacentLegalPositions(const PointImpl & pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
+
+	bool isThreatenedByNeighbourhood(const Piece& piece, const std::vector<unique_ptr<PointImpl>>& adjacentLegalPositions, int threateningPlayer) const;
+
+	void updateStrategyAccordingToFight(const FightInfo& fight);
+
+	void findOpponentFlag();
+
 
 	//-----------------------------------------------------------
 	// getInitialPositions helper functions
@@ -48,21 +66,25 @@ private:
 	// Init the board of the player of this algorithm.
 	void initTheAlgorithmPlayerBoard(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 
+
 	//-----------------------------------------------------------
 	// notifyOnInitialBoard helper functions
 	//-----------------------------------------------------------
 	void ClearPlayersBoardsInPosition(const Point& pos);
 	void updateStrategyAccordingToBoard(const Board& b);
 
+
 	//-----------------------------------------------------------
 	// getMove helper functions
 	//-----------------------------------------------------------
-	unique_ptr<PointImpl> getEmptySquareToMoveTo(const PointImpl& pos);
+	unique_ptr<PointImpl> getEmptyThreatFreeSquareToMoveTo(const PointImpl& from);
 	unique_ptr<Move> getNormalMove();
+	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
+	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened) const;
+	unique_ptr<Move> conquerTheFlag();
 	//void movePieceOnInfoBoard(const Move& getMove);
 
-
-	void updateStrategyAccordingToFight(const FightInfo& fight);
+	
 
 //	void eraseJokerLocation(const Point& jokerPos);
 //
@@ -78,34 +100,11 @@ private:
 //
 //	PointImpl * runForYourLife(int xPos, int yPos);
 //
-	void findOpponentFlag();
 //
+
 //	unique_ptr<Move> saveAPiece();
 //
 //	unique_ptr<Move> eatOpponentPiece();
-
-	bool AreBothBoardsEmptyInPosition(int x, int y) const;
-	bool AreBothBoardsEmptyInPosition(const Point& pos) const;
-
-	//-----------------------------------------------------------
-	// conquerTheFlag helper functions
-	//-----------------------------------------------------------
-	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
-
-	unique_ptr<PointImpl> GetUnoccupiedPlace(bool condition1, PointImpl& option1, bool condition2, PointImpl& option2) const;
-
-	unique_ptr<PointImpl> GetUnoccupiedPlaceHorizotally(const PointImpl &moveFrom, const PointImpl &flagPos) const;
-
-	unique_ptr<PointImpl> GetUnoccupiedPlaceVertically(const PointImpl & moveFrom, const PointImpl & flagPos)const;
-
-	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened) const;
-
-	unique_ptr<Move> conquerTheFlag();
-
-//
-//	bool checkIsThreatened(int xPos, int yPos, int player);
-//
-//	bool returnThreatened(int xPos, int yPos, int newxPos, int newyPos, int opponent);
 //
 //	bool returnPointThreatening(int xpos, int ypos, int newxpos, int newypos);
 //
@@ -121,21 +120,6 @@ public:
 	virtual void notifyFightResult(const FightInfo& fightInfo) override; // called only if there was a fight
 	virtual unique_ptr<Move> getMove() override;
 	virtual unique_ptr<JokerChange> getJokerChange() override; // nullptr if no change is requested
-
-
-//
-//	virtual void notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights) override;
-//	
-//	
-//	virtual void notifyOnOpponentMove(const Move& move) override; // called only on opponent's move
-//	
-//	virtual void notifyFightResult(const FightInfo& fightInfo) override; // called only if there was a fight
-//	
-//	virtual unique_ptr<Move> getMove() override;
-//
-//	virtual unique_ptr<JokerChange> getJokerChange() override; // nullptr if no change is requested
-
-	
 };
 
 

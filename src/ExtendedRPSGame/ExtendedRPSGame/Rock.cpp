@@ -26,9 +26,9 @@ Piece::WinningPiece Rock::FightWithOtherPieceType(Piece& enemy)
 	}
 }
 
-bool Rock::IsStrongerThan(Piece* other) const
+bool Rock::IsStrongerThan(const Piece& other) const
 {
-	PieceFactory::PieceType otherPieceType = other->GetPieceType();
+	PieceFactory::PieceType otherPieceType = other.GetPieceType();
 	if ((otherPieceType == PieceFactory::PieceType::Flag) || (otherPieceType == PieceFactory::PieceType::Scissors))
 	{
 		return true;

@@ -83,7 +83,7 @@ public:
 
 	virtual char GetPieceChar() const = 0;
 	
-	virtual bool IsStrongerThan(Piece* other) const { return false; };
+	virtual bool IsStrongerThan(const Piece& other) const { return false; };
 
 	// Operator overloading for printing issues.
 	friend std::ostream& operator<<(std::ostream& out, const Piece& piece);
