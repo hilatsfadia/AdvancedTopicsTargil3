@@ -14,6 +14,7 @@
 #include "MoveImpl.h"
 #include "PiecePositionImpl.h"
 #include "StrategyPiece.h"
+
 #define NUM_OF_PLAYERS 2
 #define NUM_OF_ADJACENT_POSITIONS 4
 #define EMPTY_BOARD_LOCATION 0
@@ -32,7 +33,7 @@ private:
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
 
-	enum class MoveType { RunAway, Attack, Random };
+	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
 
 	//-----------------------------------------------------------
 	// General helper functions
@@ -88,7 +89,7 @@ private:
 	//-----------------------------------------------------------
 	unique_ptr<Move> getNormalMove();
 	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
-	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened) const;
+	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & from, const PointImpl & flagPos) const;
 	unique_ptr<Move> conquerTheFlag();
 	bool isRelevantDestination(const Piece& piece, const PointImpl& pos, MoveType moveType) const;
 	unique_ptr<PointImpl> getStrategyDestination(const Piece& piece, const PointImpl& from, MoveType moveType) const;

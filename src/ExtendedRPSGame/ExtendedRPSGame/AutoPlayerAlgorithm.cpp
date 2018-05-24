@@ -296,20 +296,16 @@ void AutoPlayerAlgorithm::getMovingPiecesInDistanceFromFlag(const PointImpl &fla
 	}
 }
 
-unique_ptr<PointImpl> AutoPlayerAlgorithm::getUnoccupiedPlaceTowardsFlag(const PointImpl& moveFrom, const PointImpl& flagPos, bool ifToCheckThreatened) const
+unique_ptr<PointImpl> AutoPlayerAlgorithm::getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl& flagPos) const
 {
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
-	FillAdjacentLegalPositions(moveFrom, adjacentLegalPositions);
-	const StrategyPiece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(moveFrom);
-	bool threatenedCheck;
+	FillAdjacentLegalPositions(from, adjacentLegalPositions);
+	const StrategyPiece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(from);
 
 	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
 	{
-		threatenedCheck = !ifToCheckThreatened || !isThreatenedInPosition(piece, *pos);
-		if (BoardImpl<StrategyPiece>::CheckIfValidPosition(*pos) 
-			&& AreBothBoardsEmptyInPosition(*pos)
-			&& pos->DistanceInStepsFrom(flagPos) < moveFrom.DistanceInStepsFrom(flagPos)
-			&& threatenedCheck)
+		if (isRelevantDestination(piece, *pos, AutoPlayerAlgorithm::MoveType::TowardsFlag) 
+			&& pos->DistanceInStepsFrom(flagPos) < from.DistanceInStepsFrom(flagPos))
 		{
 			return make_unique<PointImpl>(*pos);
 		}
@@ -342,7 +338,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag()
 			getMovingPiecesInDistanceFromFlag(flagPoint, d, posVector); //TODO:is it emptyed everytime?
 			//if (posVector.size() != 0) {
 				for (unique_ptr<PointImpl>& pos : posVector) {
-					moveTo = getUnoccupiedPlaceTowardsFlag(*pos, flagPoint, true);
+					moveTo = getUnoccupiedPlaceTowardsFlag(*pos, flagPoint);
 					if (moveTo != nullptr) {
 						return std::make_unique<MoveImpl>(*pos, *moveTo);
 					}
@@ -350,7 +346,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag()
 			//}
 		}
 	}
-
+	
 	// TODO: why is it needed
 	//PointImpl* moveClosest;
 	//for (PointImpl& flagPoint : mOpponentFlagLocations) {
@@ -476,7 +472,9 @@ bool AutoPlayerAlgorithm::isRelevantDestination(const Piece& piece, const PointI
 		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
 
 	switch (moveType){
-		case AutoPlayerAlgorithm::MoveType::RunAway:{
+		case AutoPlayerAlgorithm::MoveType::RunAway:
+		case AutoPlayerAlgorithm::MoveType::TowardsFlag:
+		case AutoPlayerAlgorithm::MoveType::Random: {
 			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
 			break;
 		}
@@ -484,11 +482,6 @@ bool AutoPlayerAlgorithm::isRelevantDestination(const Piece& piece, const PointI
 			isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(pos))
 				&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(pos)))
 				&& !isThreatenedInPosition(piece, pos));
-			break;
-		}
-		case AutoPlayerAlgorithm::MoveType::Random:{
-			isRelevantDest = isRelevantDest && AreBothBoardsEmptyInPosition(pos)
-				&& (!isThreatenedInPosition(piece, pos));
 			break;
 		}
 		default:{
