@@ -14,7 +14,7 @@
 #include "MoveImpl.h"
 #include "PiecePositionImpl.h"
 #include "StrategyPiece.h"
-
+#define NONE -1
 #define NUM_OF_PLAYERS 2
 #define NUM_OF_ADJACENT_POSITIONS 4
 #define EMPTY_BOARD_LOCATION 0
@@ -32,6 +32,7 @@ private:
 	int mNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
+	int lastMovedPieceID = NONE;
 
 	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
 
@@ -94,6 +95,7 @@ private:
 	bool isRelevantDestination(const Piece& piece, const PointImpl& pos, MoveType moveType) const;
 	unique_ptr<PointImpl> getStrategyDestination(const Piece& piece, const PointImpl& from, MoveType moveType) const;
 	bool isPieceToMove(const StrategyPiece& strategyPiece, AutoPlayerAlgorithm::MoveType moveType);
+	unique_ptr<Move> getStrategyMoveInRow(MoveType moveType, int row);
 	unique_ptr<Move> getStrategyMove(MoveType moveType);
 	//unique_ptr<PointImpl> conquerPiece(const Piece& threateningPiece, const PointImpl& from);
 	//unique_ptr<Move> eatOpponentPiece();

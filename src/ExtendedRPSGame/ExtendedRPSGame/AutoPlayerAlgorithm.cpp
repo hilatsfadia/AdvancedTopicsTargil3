@@ -14,6 +14,7 @@
 #include "JokerChangeImpl.h"
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 using std::make_unique;
 
@@ -230,7 +231,7 @@ void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const PointImpl& pos, std::
 	int xPos = pos.getX();
 	int yPos = pos.getY();
 	PointImpl options[NUM_OF_ADJACENT_POSITIONS] =
-	{ PointImpl(xPos + 1, yPos) , PointImpl(xPos, yPos + 1), PointImpl(xPos - 1, yPos) , PointImpl(xPos, yPos - 1) };
+	{ PointImpl(xPos, yPos + 1), PointImpl(xPos + 1, yPos), PointImpl(xPos - 1, yPos) , PointImpl(xPos, yPos - 1) };
 
 	for (int i = 0; i < NUM_OF_ADJACENT_POSITIONS; i++)
 	{
@@ -239,6 +240,8 @@ void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const PointImpl& pos, std::
 			vectorToFill.push_back(make_unique<PointImpl>(options[i]));
 		}
 	}
+
+	std::random_shuffle(std::begin(vectorToFill), std::end(vectorToFill));
 }
 
 unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
@@ -527,6 +530,7 @@ bool AutoPlayerAlgorithm::isPieceToMove(const StrategyPiece& strategyPiece, Auto
 		}
 		case AutoPlayerAlgorithm::MoveType::Random:
 		{
+			isRelevantPiece = isRelevantPiece && (strategyPiece.GetStrategyPieceID() != lastMovedPieceID);
 			break;
 		}
 		default:
@@ -539,27 +543,51 @@ bool AutoPlayerAlgorithm::isPieceToMove(const StrategyPiece& strategyPiece, Auto
 	return isRelevantPiece;
 }
 
-unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMove(AutoPlayerAlgorithm::MoveType moveType){
-	for (int row = 1; row <= M; row++)
+unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMoveInRow(AutoPlayerAlgorithm::MoveType moveType, int row)
+{
+	for (int col = 1; col <= N; col++)
 	{
-		for (int col = 1; col <= N; col++)
+		PointImpl posFrom(col, row);
+		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(posFrom))
 		{
-			PointImpl posFrom(col, row);
-			if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(posFrom))
+			StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
+
+			if (isPieceToMove(strategyPiece, moveType))
 			{
-				StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
+				unique_ptr<PointImpl> posTo = getStrategyDestination(strategyPiece, posFrom, moveType);
 
-				if (isPieceToMove(strategyPiece, moveType))
+				if (posTo != nullptr)
 				{
-					unique_ptr<PointImpl> posTo = getStrategyDestination(strategyPiece, posFrom, moveType);
-
-					if (posTo != nullptr) 
-					{
-						return std::make_unique<MoveImpl>(posFrom, *posTo);
-					}
+					lastMovedPieceID = strategyPiece.GetStrategyPieceID();
+					return std::make_unique<MoveImpl>(posFrom, *posTo);
 				}
 			}
-		}	
+		}
+	}
+
+	return nullptr;
+}
+
+unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMove(AutoPlayerAlgorithm::MoveType moveType){
+	if (mPlayer == 1)
+	{
+		for (int row = 1; row <= M; row++)
+		{
+			unique_ptr<Move> posTo = getStrategyMoveInRow(moveType, row);
+			if (posTo != nullptr){
+				return posTo;
+			}
+		}
+	}
+	else
+	{
+		for (int row = M; row >= 1; row--)
+		{
+			unique_ptr<Move> posTo = getStrategyMoveInRow(moveType, row);
+			if (posTo != nullptr){
+				return posTo;
+			}
+		}
 	}
 
 	return nullptr;

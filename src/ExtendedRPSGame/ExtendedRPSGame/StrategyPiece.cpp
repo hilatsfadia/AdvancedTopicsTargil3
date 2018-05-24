@@ -7,9 +7,17 @@
 #include "Joker.h"
 #include <memory>
 
+int StrategyPiece::mStrategyPiecesCounter = 1;
+
 StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
 {
-	UncoverPiece(std::move(uncoveredPiece));
+	if (uncoveredPiece != nullptr)
+	{
+		UncoverPiece(std::move(uncoveredPiece));
+	}
+
+	mStrategyPieceID = mStrategyPiecesCounter;
+	mStrategyPiecesCounter++;
 }
 
 PieceFactory::PieceType StrategyPiece::GetPieceType() const
@@ -107,28 +115,29 @@ char StrategyPiece::GetStrongerNotJoker(const Piece * piece) const
 	}
 }
 
-char StrategyPiece::GetStronger(const Piece* piece) const
-{
-	PieceFactory::PieceType type = piece->GetPieceType();
-
-	switch (type)
-	{
-		case (PieceFactory::PieceType::Joker):
-		{
-			const Joker* joker = dynamic_cast<const Joker*>(piece);
-			if (joker != nullptr)
-			{
-				return GetStrongerNotJoker(joker->GetActualPiece());
-			}
-
-			break;
-		}
-		default:
-		{
-			return GetStrongerNotJoker(piece);
-			break;
-		}
-	}
-
-	return COVERED_CHAR;
-}
+//
+//char StrategyPiece::GetStronger(const Piece* piece) const
+//{
+//	PieceFactory::PieceType type = piece->GetPieceType();
+//
+//	switch (type)
+//	{
+//		case (PieceFactory::PieceType::Joker):
+//		{
+//			const Joker* joker = dynamic_cast<const Joker*>(piece);
+//			if (joker != nullptr)
+//			{
+//				return GetStrongerNotJoker(joker->GetActualPiece());
+//			}
+//
+//			break;
+//		}
+//		default:
+//		{
+//			return GetStrongerNotJoker(piece);
+//			break;
+//		}
+//	}
+//
+//	return COVERED_CHAR;
+//}

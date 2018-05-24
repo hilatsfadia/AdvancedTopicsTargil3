@@ -9,6 +9,8 @@ class StrategyPiece :
 	public Piece
 {
 private:
+	static int mStrategyPiecesCounter;
+	int mStrategyPieceID;
 	unique_ptr<Piece> mUncoveredPiece = nullptr;
 	bool mIsThreatened = false;
 	bool mIsThreathening = false;
@@ -18,7 +20,7 @@ private:
 
 public:
 	StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
-	StrategyPiece(int ownerNum) : Piece(ownerNum) { }
+	StrategyPiece(int ownerNum) : StrategyPiece(ownerNum, nullptr) { }
 
 	// Gets this piece type.
 	// If this piece is still covered, gets PieceType::Unknown.
@@ -47,9 +49,11 @@ public:
 	bool GetIsThreathening() const { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
+	int GetStrategyPieceID() const { return mStrategyPieceID; }
+
 	virtual bool IsStrongerThan(const Piece& other) const;
 
-	char GetStronger(const Piece* piece) const;
+	//char GetStronger(const Piece* piece) const;
 };
 
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H
