@@ -32,6 +32,8 @@ private:
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
 
+	enum class MoveType { RunAway, Attack, Random };
+
 	//-----------------------------------------------------------
 	// General helper functions
 	//-----------------------------------------------------------
@@ -64,7 +66,8 @@ private:
 
 	// Init the initial positions for a specific piece type, starting from the given position.
 	// Updates the given position to the next position available 
-	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper = NON_JOKER_REP);
+	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, 
+		int count, char typeChar, char jokerReper = NON_JOKER_REP);
 
 	// Does the filling of the given vector with the positions.
 	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
@@ -83,28 +86,22 @@ private:
 	//-----------------------------------------------------------
 	// getMove helper functions
 	//-----------------------------------------------------------
-	unique_ptr<PointImpl> getEmptyThreatFreeSquareToMoveTo(const PointImpl& from);
 	unique_ptr<Move> getNormalMove();
 	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
 	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & moveFrom, const PointImpl & flagPos, bool ifToCheckThreatened) const;
 	unique_ptr<Move> conquerTheFlag();
+	bool isRelevantDestination(const Piece& piece, const PointImpl& pos, MoveType moveType) const;
+	unique_ptr<PointImpl> getStrategyDestination(const Piece& piece, const PointImpl& from, MoveType moveType) const;
+	bool isPieceToMove(const StrategyPiece& strategyPiece, AutoPlayerAlgorithm::MoveType moveType);
+	unique_ptr<Move> getStrategyMove(MoveType moveType);
+	//unique_ptr<PointImpl> conquerPiece(const Piece& threateningPiece, const PointImpl& from);
+	//unique_ptr<Move> eatOpponentPiece();
 	//void movePieceOnInfoBoard(const Move& getMove);
 
 	
-
 //	void eraseJokerLocation(const Point& jokerPos);
 //
 //	void updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos);
-//
-
-//	PointImpl * conquerPiece(int xPos, int yPos);
-//
-//	PointImpl * runForYourLife(int xPos, int yPos);
-//
-//
-//	unique_ptr<Move> saveAPiece();
-//
-//	unique_ptr<Move> eatOpponentPiece();
 //
 //	bool returnPointThreatening(int xpos, int ypos, int newxpos, int newypos);
 //

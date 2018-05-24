@@ -40,11 +40,11 @@ public:
 	void UncoverPiece(char uncoveredPieceChar);
 
 	// Returns true iff this piece is threatened by an enemy piece (one or more)
-	bool GetIsThreatened() { return mIsThreatened; }
+	bool GetIsThreatened() const { return mIsThreatened; }
 	void SetIsThreatened(bool isThreatend) { mIsThreatened = isThreatend; }
 
 	// Returns true iff this piece is threatening an enemy piece (one or more)
-	bool GetIsThreathening() { return mIsThreathening; }
+	bool GetIsThreathening() const { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
 	virtual bool IsStrongerThan(const Piece& other) const;
