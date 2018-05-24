@@ -74,6 +74,8 @@ void AutoPlayerAlgorithm::initPositionsVector(int player, std::vector<unique_ptr
 	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, R, ROCK_CHAR);
 	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, P, PAPER_CHAR);
 	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
+
+	//mPlayerNumMovablePieces = R + P + S;
 }
 
 void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
@@ -105,9 +107,6 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 	else {
 		mOpponent = 1;
 	}
-
-	mNumCoveredPieces = R + P + S + B + F + J;
-	mNumMovablePieces = 0;
 
 	initPositionsVector(player, vectorToFill);
 	initTheAlgorithmPlayerBoard(player, vectorToFill);
@@ -150,8 +149,21 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
 
 void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 {
+	if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceFactory::PieceType::Covered)
+	{
+		mOpponentNumCoveredPieces--;
+	}
+
 	//next exercise remember to add handling to more than one flag
 	int winner = fight.getWinner();
+
+	if ((winner == TIE) || (winner == mPlayer))
+	{
+		if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece())
+		{
+			mOpponentNumMovablePieces--;
+		}
+	}
 
 	if (winner == TIE) {
 		//if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
@@ -164,21 +176,26 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 		//	eraseJokerLocation(fight.getPosition());
 		//}
 		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition()); // already done by the supplied board?
+		bool oldIsMoving = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece();
+
+		// Uncover also if uncovered already to handle jokers.
 		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).UncoverPiece(fight.getPiece(winner));
+
+		// If uncovering reveled it as moving
+		if (!oldIsMoving && (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece()))
+		{
+			mOpponentNumMovablePieces++;
+		}
 	}
 	else // winner == mPlayer
 	{
 		mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(fight.getPosition());
 	}
-
-	if (winner == mOpponent || winner == TIE){
-		mNumCoveredPieces--;
-	} 
 }
 
 void AutoPlayerAlgorithm::findOpponentFlag() 
 {
-	if (mNumCoveredPieces == F || (mNumCoveredPieces - mNumMovablePieces == F)) 
+	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumMovablePieces <= F)) 
 	{ //TODO: double check that everyone is by default false
 		for (int row = 1; row <= M; row++)
 		{
@@ -188,11 +205,11 @@ void AutoPlayerAlgorithm::findOpponentFlag()
 				{
 					StrategyPiece& piece = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(col, row);
 
-					if ((piece.GetPieceType() == PieceFactory::PieceType::Unknown)
+					if ((piece.GetPieceType() == PieceFactory::PieceType::Covered)
 						&& (!piece.GetIsMovingPiece())) // TODO: ask why is it needed
 					{
 						piece.UncoverPiece(FLAG_CHAR);
-						mNumCoveredPieces--;
+						mOpponentNumCoveredPieces--;
 						mOpponentFlagLocations.push_back(PointImpl(col, row));
 					}
 				}
@@ -404,8 +421,8 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
 {
 	if (!mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).GetIsMovingPiece())
 	{
-		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).SetIsMovingPiece(true);
-		mNumMovablePieces++;
+		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).SetMovingPiece();
+		mOpponentNumMovablePieces++;
 	}
 
 	mPlayersStrategyBoards[mOpponent - 1].MovePieceWithoutChecks(move.getFrom(), move.getTo());
@@ -530,7 +547,7 @@ bool AutoPlayerAlgorithm::isPieceToMove(const StrategyPiece& strategyPiece, Auto
 		}
 		case AutoPlayerAlgorithm::MoveType::Random:
 		{
-			isRelevantPiece = isRelevantPiece && (strategyPiece.GetStrategyPieceID() != lastMovedPieceID);
+			//isRelevantPiece = isRelevantPiece && ((strategyPiece.GetStrategyPieceID() != lastMovedPieceID) || mPlayerNumMovablePieces <= 1);
 			break;
 		}
 		default:

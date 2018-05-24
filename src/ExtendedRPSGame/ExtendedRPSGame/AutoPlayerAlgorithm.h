@@ -28,8 +28,9 @@ private:
 	//bool mFlagPlaceKnown;
 	int mPlayer;
 	int mOpponent;
-	int mNumCoveredPieces;
-	int mNumMovablePieces;
+	int mOpponentNumCoveredPieces = R + P + S + B + F + J;
+	int mOpponentNumMovablePieces = 0;
+	//int mPlayerNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mJokerLocations;
 	int lastMovedPieceID = NONE;

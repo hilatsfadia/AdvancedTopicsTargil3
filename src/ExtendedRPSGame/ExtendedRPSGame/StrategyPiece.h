@@ -30,7 +30,7 @@ public:
 
 	char GetPieceChar() const override;
 
-	void SetIsMovingPiece(bool isMovingPiece) { mIsMovingPiece = isMovingPiece; }
+	void SetMovingPiece() { mIsMovingPiece = true; }
 
 	// Uncovers this piece by giving it the actual piece it represents.
 	void UncoverPiece(std::unique_ptr<Piece> uncoveredPiece);

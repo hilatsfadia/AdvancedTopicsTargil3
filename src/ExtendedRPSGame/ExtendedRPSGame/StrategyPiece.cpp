@@ -22,7 +22,7 @@ StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : P
 
 PieceFactory::PieceType StrategyPiece::GetPieceType() const
 {
-	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Unknown : mUncoveredPiece->GetPieceType());
+	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetPieceType());
 }
 
 bool StrategyPiece::GetIsMovingPiece() const
