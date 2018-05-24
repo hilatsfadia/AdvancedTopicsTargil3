@@ -544,7 +544,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMove(AutoPlayerAlgorithm::MoveT
 	{
 		for (int col = 1; col <= N; col++)
 		{
-			PointImpl posFrom(row, col);
+			PointImpl posFrom(col, row);
 			if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(posFrom))
 			{
 				StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
