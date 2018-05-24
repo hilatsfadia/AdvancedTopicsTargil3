@@ -51,7 +51,7 @@ public:
 	shared_ptr<Player> GetOwner() const { return mOwner; }
 
 	// Gets the owner number of this piece
-	int GetOwnerNum() { return mOwnerNum; }
+	int GetOwnerNum() const { return mOwnerNum; }
 
 	// When a piece wants to move to an occupied location by a piece of the same type.
 	// Deletes and removes both pieces from their owner.

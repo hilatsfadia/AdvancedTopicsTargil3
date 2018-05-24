@@ -42,11 +42,17 @@ private:
 
 	void FillAdjacentLegalPositions(const PointImpl & pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
 
-	bool isThreatenedByNeighbourhood(const Piece& piece, const PointImpl& pos, int threateningPlayer) const;
+	bool isThreatenedInPosition(const Piece& piece, const PointImpl& pos) const;
+
+	bool isThreateningInPosition(const Piece& piece, const PointImpl& pos) const;
 
 	void updateStrategyAccordingToFight(const FightInfo& fight);
 
 	void findOpponentFlag();
+
+	void updateThreatsForPlayerInPosition(int player, const PointImpl& pos);
+
+	void updateThreats();
 
 
 	//-----------------------------------------------------------
@@ -90,18 +96,12 @@ private:
 //
 //	void updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos);
 //
-//	void updateIsThreatened(int player);
-//
-//	void updateIsThreatening(int player);
-//
-//	bool checkIsThreatening(int xPos, int yPos, int player);
-//	
+
 //	PointImpl * conquerPiece(int xPos, int yPos);
 //
 //	PointImpl * runForYourLife(int xPos, int yPos);
 //
 //
-
 //	unique_ptr<Move> saveAPiece();
 //
 //	unique_ptr<Move> eatOpponentPiece();
@@ -109,8 +109,6 @@ private:
 //	bool returnPointThreatening(int xpos, int ypos, int newxpos, int newypos);
 //
 //	void getVectorThreateningPieces(PointImpl & pos, std::vector<PointImpl>& posVectorToFill);
-//
-//	//char getCharFromPieceType(PieceFactory::PieceType type);
 
 public:
 
