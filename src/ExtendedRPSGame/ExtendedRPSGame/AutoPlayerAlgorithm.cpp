@@ -100,6 +100,8 @@ void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, std::vector<un
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
+	srand(time(0));
+
 	mPlayer = player; //setting the players fields
 	if (mPlayer == 1) {
 		mOpponent = 2;
