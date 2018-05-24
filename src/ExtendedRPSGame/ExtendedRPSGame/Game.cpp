@@ -488,10 +488,10 @@ void Game::HandleMoves()
 	// One turn consists of two moves of the two players.
 	int countNoFightMoves = 0;
 	// TODO: delete!!!
-	int countMoves = 0;
+	int countMoves = 1;
 
 	// TODO: split to functions
-	while (countNoFightMoves <= MAX_MOVES)
+	while (countNoFightMoves < MAX_MOVES)
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
@@ -528,10 +528,11 @@ void Game::HandleMoves()
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
 
 			// TODO: delete!!!
+			logFile << "Count Move: " << countMoves << endl;
+			logFile << "\n" << endl;
 			mGameBoard.Print(logFile);
 			logFile << "###############################################" << endl;
-			logFile << "Count Move: " << countMoves << endl;
-			logFile << "\n\n\n" << endl;
+			logFile << "\n" << endl;
 			logFile.flush();
 
 			// Check if it was a winning /losing Move in which one player ate all the other's moving pieces.
