@@ -9,24 +9,7 @@ void Piece::LoseToPiece()
 	if (!this->mOwner->DecPieceCount(this->GetPieceType()))
 	{
 	}
-
-	// TODO: delete for move files
-	// As long as you're careful, its okay (not evil) for an object to commit suicide (delete this).
-	//delete this;
-	//return enemy;
 }
-
-//
-//Piece* Piece::WinPiece(Piece* enemy, PieceFactory::PieceType enemyPieceType)
-//{
-//	// TODO: throw exception
-//	if (!this->mOwner.DecPieceCount(enemyPieceType))
-//	{
-//	}
-//
-//	delete enemy;
-//	return this;
-//}
 
 void Piece::BothPiecesLosers(Piece& enemy)
 {
@@ -41,12 +24,6 @@ void Piece::BothPiecesLosers(Piece& enemy)
 	if (!enemy.mOwner->DecPieceCount(enemyPieceType))
 	{
 	}
-
-	// TODO: delete for move files
-	//delete enemy;
-	// As long as you're careful, its okay (not evil) for an object to commit suicide (delete this).
-	//delete this;
-	//return nullptr;
 }
 
 bool Piece::InitializeOwner(std::shared_ptr<Player> owner)

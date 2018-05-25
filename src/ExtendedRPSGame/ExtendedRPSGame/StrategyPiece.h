@@ -9,42 +9,54 @@ class StrategyPiece :
 	public Piece
 {
 private:
+	static int mStrategyPiecesCounter;
+	int mStrategyPieceID;
 	unique_ptr<Piece> mUncoveredPiece = nullptr;
 	bool mIsThreatened = false;
 	bool mIsThreathening = false;
 	bool mIsMovingPiece = false;
 
-	char GetStrongerNotJoker(const Piece* piece) const;
-
 public:
 	StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
-	StrategyPiece(int ownerNum) : Piece(ownerNum) { }
+	StrategyPiece(int ownerNum) : StrategyPiece(ownerNum, nullptr) { }
 
 	// Gets this piece type.
 	// If this piece is still covered, gets PieceType::Unknown.
 	PieceFactory::PieceType GetPieceType() const override;
+	PieceFactory::PieceType GetActualPieceType() const override;
 
 	bool GetIsMovingPiece() const override;
 
 	char GetPieceChar() const override;
+	char GetActualPieceChar() const override;
 
-	void SetIsMovingPiece(bool isMovingPiece) { mIsMovingPiece = isMovingPiece; }
+	void SetMovingPiece() { mIsMovingPiece = true; }
 
 	// Uncovers this piece by giving it the actual piece it represents.
 	void UncoverPiece(std::unique_ptr<Piece> uncoveredPiece);
+
+	// Uncover this piece by setting it's real piece.
+	// If this piece is already uncovered, check if it's indeed the given char. If not, update
+	// it to be the relevant joker (with a relevant representation).
+	// uncoveredPieceChar should be R, P, S, B or F (but NOT J)
 	void UncoverPiece(char uncoveredPieceChar);
 
 	// Returns true iff this piece is threatened by an enemy piece (one or more)
-	bool GetIsThreatened() { return mIsThreatened; }
+	bool GetIsThreatened() const { return mIsThreatened; }
 	void SetIsThreatened(bool isThreatend) { mIsThreatened = isThreatend; }
 
 	// Returns true iff this piece is threatening an enemy piece (one or more)
-	bool GetIsThreathening() { return mIsThreathening; }
+	bool GetIsThreathening() const { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
-	virtual bool IsStrongerThan(Piece* other) const;
+	int GetStrategyPieceID() const { return mStrategyPieceID; }
 
-	char GetStronger(const Piece* piece) const;
+	virtual bool IsStrongerThan(const StrategyPiece& other) const;
+
+	// TODO: maybe derived class
+	void ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType);
+
+	//char GetStronger(const Piece* piece) const;
 };
 
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H

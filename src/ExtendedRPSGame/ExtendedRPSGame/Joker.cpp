@@ -3,7 +3,7 @@
 #include "Piece.h"
 #include "Player.h"
 
-bool Joker::SetActualPieceType(unique_ptr<Piece> newPiece)
+bool Joker::SetActualPiece(unique_ptr<Piece> newPiece)
 {
 	PieceFactory::PieceType newPieceType = newPiece->GetPieceType();
 	if ((newPieceType != PieceFactory::PieceType::Rock) &&

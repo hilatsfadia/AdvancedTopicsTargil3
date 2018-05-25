@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "RPSPiece.h"
+#include "Joker.h"
 
 Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 {
@@ -40,4 +41,17 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 			return WinningPiece::Tie;
 		}
 	}
+}
+
+bool RPSPiece::IsStrongerThan(const Piece & other) const
+{
+	PieceFactory::PieceType otherPieceType = other.GetPieceType();
+
+	if (otherPieceType == PieceFactory::PieceType::Joker)
+	{
+		const Joker& otherJoker = dynamic_cast<const Joker&>(other);
+		return this->IsStrongerThan(*otherJoker.GetActualPiece()); // TODO: look
+	}
+
+	return false;
 }

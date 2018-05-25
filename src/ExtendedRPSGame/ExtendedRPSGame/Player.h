@@ -6,6 +6,14 @@
 #include "PieceFactory.h"
 #include "PlayerAlgorithm.h"
 
+// TODO: delete it!
+//#define R 1
+//#define P 0
+//#define S 0
+//#define B 0
+//#define J 0
+//#define F 1
+
 #define R 2
 #define P 5
 #define S 1

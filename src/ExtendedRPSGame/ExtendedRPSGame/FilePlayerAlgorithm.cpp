@@ -3,7 +3,6 @@
 #include "ParserInitFile.h"
 #include "MoveImpl.h"
 #include "JokerChangeImpl.h"
-#include <cstdio>
 #include "ParserMoveFile.h"
 #include "Parser.h"
 

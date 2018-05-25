@@ -26,13 +26,15 @@ Piece::WinningPiece Scissors::FightWithOtherPieceType(Piece& enemy)
 	}
 }
 
-bool Scissors::IsStrongerThan(Piece* other) const
+bool Scissors::IsStrongerThan(const Piece& other) const
 {
-	PieceFactory::PieceType otherPieceType = other->GetPieceType();
+	PieceFactory::PieceType otherPieceType = other.GetPieceType();
 	if ((otherPieceType == PieceFactory::PieceType::Flag) || (otherPieceType == PieceFactory::PieceType::Paper))
 	{
 		return true;
 	}
-
-	return false;
+	else
+	{
+		return RPSPiece::IsStrongerThan(other);
+	}
 }

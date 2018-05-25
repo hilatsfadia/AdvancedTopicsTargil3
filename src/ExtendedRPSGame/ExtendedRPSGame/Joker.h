@@ -26,20 +26,26 @@ protected:
 public:
 	Joker(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
 	Joker(int ownerNum) : Piece(ownerNum) {}
+	Joker(int ownerNum, std::unique_ptr<Piece> actualPiece) : Piece(ownerNum), mActualPiece(std::move(actualPiece)) {} // TODO: SetActualPiece
 
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Joker; }
+	PieceFactory::PieceType GetActualPieceType() const override { return mActualPiece->GetPieceType(); }
 
 	// Return true if the given new piece has the same owner as this joker,
 	// and it represents a piece the Joker wants to be, from: R P S B
 	// If so, delete old actual piece and replace it by the given new piece.
-	bool SetActualPieceType(unique_ptr<Piece> newPiece);
+	bool SetActualPiece(unique_ptr<Piece> newPiece);
 
 	bool GetIsMovingPiece() const override { return mActualPiece->GetIsMovingPiece(); }
 
 	char GetPieceChar() const override { return JOKER_CHAR; }
 
-	virtual bool IsStrongerThan(Piece* other) const { return mActualPiece->IsStrongerThan(other); };
+	char GetActualPieceChar() const override { return mActualPiece->GetPieceChar(); }
+
+	virtual bool IsStrongerThan(const Piece& other) const { return mActualPiece->IsStrongerThan(other); };
+
+	const Piece& PeekActualPiece() const { return *mActualPiece; }
 
 	// Return the actual piece that this joker represents at the moment
 	// TODO: delete it!

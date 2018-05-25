@@ -12,7 +12,7 @@ class Piece
 {
 protected:
 
-	// shared ptr because it is shared between it's pieces and the game.
+	// shared ptr because it is shared among it's pieces (as their owner) and the game.
 	shared_ptr<Player> mOwner;
 	int mOwnerNum;
 	
@@ -51,7 +51,7 @@ public:
 	shared_ptr<Player> GetOwner() const { return mOwner; }
 
 	// Gets the owner number of this piece
-	int GetOwnerNum() { return mOwnerNum; }
+	int GetOwnerNum() const { return mOwnerNum; }
 
 	// When a piece wants to move to an occupied location by a piece of the same type.
 	// Deletes and removes both pieces from their owner.
@@ -73,11 +73,23 @@ public:
 	// Gets this piece type. (Look at PieceFactory::PieceType enum).
 	virtual PieceFactory::PieceType GetPieceType() const = 0;
 
+	// Rock, Paper, Scissors, Bomb or Flag (but NOT Joker)
+	virtual PieceFactory::PieceType GetActualPieceType() const
+	{
+		return GetPieceType();
+	}
+
 	virtual bool GetIsMovingPiece() const = 0;
+
+	// R, P, S, B or F (but NOT J)
+	virtual char GetActualPieceChar() const 
+	{
+		return GetPieceChar();
+	}
 
 	virtual char GetPieceChar() const = 0;
 	
-	virtual bool IsStrongerThan(Piece* other) const { return false; };
+	virtual bool IsStrongerThan(const Piece& other) const { return false; };
 
 	// Operator overloading for printing issues.
 	friend std::ostream& operator<<(std::ostream& out, const Piece& piece);

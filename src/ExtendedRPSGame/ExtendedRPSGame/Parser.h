@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "Player.h"
-#include "BoardImpl.h"
 #include "PointImpl.h"
 #include "PiecePosition.h"
 #include <memory>
@@ -15,8 +14,6 @@ class Joker;
 class Parser
 {
 protected:
-	// The game for which the parser works.
-	Game* mGame;
 
 	// trim from start (in place)
 	static inline void Ltrim(std::string& s);
@@ -39,11 +36,6 @@ protected:
 	// Execute the line.
 	// Implemented in sons.
 	virtual bool ProcessLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum) { return true; }
-	//virtual bool ProcessLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum) = 0;
-
-	// Tries to split the line into tokens. 
-	// Calls processLineTokens while skipping empty lines.
-	//bool ProcessLine(Player& player, const std::string& line, int lineNum, const char* templateBadFormatMessage, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 
 	// Returns true if and only if the state of inFile is not bad. If bad, prints
 	// relevant message and updates the problematic line number.

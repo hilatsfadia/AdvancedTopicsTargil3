@@ -5,18 +5,29 @@
 #include "Paper.h"
 #include "Scissors.h"
 #include "Joker.h"
+#include <memory>
+
+int StrategyPiece::mStrategyPiecesCounter = 1;
 
 StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
 {
 	if (uncoveredPiece != nullptr)
 	{
-		mUncoveredPiece = std::move(uncoveredPiece);
+		UncoverPiece(std::move(uncoveredPiece));
 	}
+
+	mStrategyPieceID = mStrategyPiecesCounter;
+	mStrategyPiecesCounter++;
 }
 
 PieceFactory::PieceType StrategyPiece::GetPieceType() const
 {
-	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Unknown : mUncoveredPiece->GetPieceType());
+	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetPieceType());
+}
+
+PieceFactory::PieceType StrategyPiece::GetActualPieceType() const
+{
+	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetActualPieceType());
 }
 
 bool StrategyPiece::GetIsMovingPiece() const
@@ -34,81 +45,110 @@ char StrategyPiece::GetPieceChar() const
 	return ((mUncoveredPiece == nullptr) ? COVERED_CHAR : mUncoveredPiece->GetPieceChar());
 }
 
+char StrategyPiece::GetActualPieceChar() const
+{
+	return ((mUncoveredPiece == nullptr) ? COVERED_CHAR : mUncoveredPiece->GetActualPieceChar());
+}
+
 void StrategyPiece::UncoverPiece(std::unique_ptr<Piece> uncoveredPiece)
 {
-	mUncoveredPiece = std::move(uncoveredPiece);
-
-	if (mUncoveredPiece != nullptr)
+	if (uncoveredPiece != nullptr)
 	{
+		mUncoveredPiece = std::move(uncoveredPiece);
 		mIsMovingPiece = mUncoveredPiece->GetIsMovingPiece();
 	}
 }
 
 void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
 {
-	UncoverPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
-}
-
-bool StrategyPiece::IsStrongerThan(Piece* other) const
-{
 	if (mUncoveredPiece != nullptr)
 	{
-		return mUncoveredPiece->IsStrongerThan(other);
+		if (mUncoveredPiece->GetPieceChar() != uncoveredPieceChar) // If this piece should be a joker
+		{
+			// TODO: maybe not needed
+			if (mUncoveredPiece->GetPieceType() == PieceFactory::PieceType::Joker)
+			{
+				Joker& joker = dynamic_cast<Joker&>(*mUncoveredPiece);
+				if (joker.PeekActualPiece().GetPieceChar() != uncoveredPieceChar)
+				{
+					joker.SetActualPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
+					mIsMovingPiece = mUncoveredPiece->GetIsMovingPiece();
+				}
+			}
+			else
+			{
+				UncoverPiece(std::make_unique<Joker>(mOwnerNum, PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum)));
+			}
+		}
+	}
+	else
+	{
+		UncoverPiece(PieceFactory::GetPieceFromChar(uncoveredPieceChar, mOwnerNum));
+	}
+}
+
+bool StrategyPiece::IsStrongerThan(const StrategyPiece& other) const
+{
+	if ((mUncoveredPiece != nullptr) && (other.mUncoveredPiece != nullptr))
+	{
+		return mUncoveredPiece->IsStrongerThan(*other.mUncoveredPiece);
 	}
 
 	return false;
 }
 
-char StrategyPiece::GetStrongerNotJoker(const Piece * piece) const
+void StrategyPiece::ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType)
 {
-	PieceFactory::PieceType pieceType = piece->GetPieceType();
-
-	switch (pieceType)
+	if (this->GetPieceType() == PieceFactory::PieceType::Joker)
 	{
-		case (PieceFactory::PieceType::Paper):
+		switch (enemyPieceType)
 		{
-			return SCISSORS_CHAR;
-			break;
-		}
-		case (PieceFactory::PieceType::Scissors):
-		{
-			return ROCK_CHAR;
-			break;
-		}
-		case (PieceFactory::PieceType::Rock):
-		{
-			return PAPER_CHAR;
-			break;
-		}
-		default:
-		{
-			return COVERED_CHAR;
-		}
-	}
-}
-
-char StrategyPiece::GetStronger(const Piece* piece) const
-{
-	PieceFactory::PieceType type = piece->GetPieceType();
-
-	switch (type)
-	{
-		case (PieceFactory::PieceType::Joker):
-		{
-			const Joker* joker = dynamic_cast<const Joker*>(piece);
-			if (joker != nullptr)
+			case (PieceFactory::PieceType::Paper):
 			{
-				return GetStrongerNotJoker(joker->GetActualPiece());
+				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Scissors>(mOwnerNum));
+				break;
 			}
-
-			break;
-		}
-		default:
-		{
-			return GetStrongerNotJoker(piece);
-			break;
+			case (PieceFactory::PieceType::Scissors):
+			{
+				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Rock>(mOwnerNum));
+				break;
+			}
+			case (PieceFactory::PieceType::Rock):
+			{
+				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Paper>(mOwnerNum));
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
-
-	return COVERED_CHAR;
 }
+
+//
+//char StrategyPiece::GetStronger(const Piece* piece) const
+//{
+//	PieceFactory::PieceType type = piece->GetPieceType();
+//
+//	switch (type)
+//	{
+//		case (PieceFactory::PieceType::Joker):
+//		{
+//			const Joker* joker = dynamic_cast<const Joker*>(piece);
+//			if (joker != nullptr)
+//			{
+//				return GetStrongerNotJoker(joker->GetActualPiece());
+//			}
+//
+//			break;
+//		}
+//		default:
+//		{
+//			return GetStrongerNotJoker(piece);
+//			break;
+//		}
+//	}
+//
+//	return COVERED_CHAR;
+//}

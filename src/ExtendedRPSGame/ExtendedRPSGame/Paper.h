@@ -25,7 +25,7 @@ public:
 
 	char GetPieceChar() const override { return PAPER_CHAR; }
 
-	virtual bool IsStrongerThan(Piece* other) const override;
+	virtual bool IsStrongerThan(const Piece& other) const override;
 };
 
 #endif //ADTO_TARGIL1_PAPER_H

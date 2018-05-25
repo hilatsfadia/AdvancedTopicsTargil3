@@ -2,7 +2,6 @@
 #include "Game.h"
 #include <string>
 #include <fstream>
-#include <iterator>
 #include <iostream>
 #include "PieceFactory.h"
 #include "Piece.h"
@@ -12,6 +11,8 @@
 #include "Joker.h"
 #include "FightInfoImpl.h"
 #include "PiecePositionImpl.h"
+#include "PlayerAlgorithm.h"
+#include "Player.h"
 
 #define MAX_MOVES 100
 
@@ -222,7 +223,7 @@ Game::~Game()
 {
 }
 
-bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
+bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board)
 {
 	unique_ptr<Piece> piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
@@ -239,7 +240,7 @@ bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pie
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(std::move(piece), piecePos->getPosition());
+	return board.PutPieceOnSinglePlayerBoard(std::move(piece), piecePos->getPosition());
 }
 
 bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
@@ -247,12 +248,12 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	unique_ptr<Piece> actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
 	if (actualPiece == nullptr)
 	{
-		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
+		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;
 	}
 
 	// If not a valid PIECE for a Joker
-	if (!joker->SetActualPieceType(std::move(actualPiece)))
+	if (!joker->SetActualPiece(std::move(actualPiece)))
 	{
 		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;
@@ -278,7 +279,7 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 	return true;
 }
 
-bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl& board)
+bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board)
 {
 	// actualPiece shouldn't have an owner! because we don't want to 
 	// count it as one of the player's pieces.
@@ -292,10 +293,10 @@ bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pieceP
 
 	//checks if X coordinate and/or Y coordinate of one or more PIECE is not in range
 	//Already printed error if any.
-	return board.PutPieceOnTempPlayerBoard(std::move(joker), piecePos->getPosition());
+	return board.PutPieceOnSinglePlayerBoard(std::move(joker), piecePos->getPosition());
 }
 
-bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl& board)
+bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl<Piece>& board)
 {
 	for (std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
 	{
@@ -327,7 +328,7 @@ void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, c
 }
 
 bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
-	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl& tempPlayer1Board, BoardImpl& tempPlayer2Board) {
+	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board) {
 
 	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(0, player1PiecePositions, tempPlayer1Board) ||
 		(!mPlayersVec[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
@@ -371,7 +372,7 @@ bool Game::HandlePositioning()
 	// Puts the pieces on two temp boards, as suggested in class,
 	// in order to avoid missing an illegal case where one player places two weak pieces in
 	// the same location where the other player has strong piece.
-	BoardImpl tempPlayersBoards[NUM_OF_PLAYERS];
+	BoardImpl<Piece> tempPlayersBoards[NUM_OF_PLAYERS];
 
 	if (!PutPiecePositionsOnBoard(playersPiecePositions[0], playersPiecePositions[1], tempPlayersBoards[0], tempPlayersBoards[1]))
 	{
@@ -487,9 +488,11 @@ void Game::HandleMoves()
 {
 	// One turn consists of two moves of the two players.
 	int countNoFightMoves = 0;
+	// TODO: delete!!!
+	int countMoves = 1;
 
 	// TODO: split to functions
-	while (countNoFightMoves <= MAX_MOVES)
+	while (countNoFightMoves < MAX_MOVES)
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
@@ -513,6 +516,14 @@ void Game::HandleMoves()
 				countNoFightMoves++;
 			}
 
+			// TODO: delete!!!
+			logFile << "Count Move: " << countMoves << endl;
+			logFile << "\n" << endl;
+			mGameBoard.Print(logFile);
+			logFile << "###############################################" << endl;
+			logFile << "\n" << endl;
+			logFile.flush();
+
 			unique_ptr<JokerChange> currJokerChange = mAlgorithmsVec[i]->getJokerChange();
 
 			if (currJokerChange != nullptr) // if a change is requested
@@ -525,6 +536,14 @@ void Game::HandleMoves()
 
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
 
+			//// TODO: delete!!!
+			//logFile << "Count Move: " << countMoves << endl;
+			//logFile << "\n" << endl;
+			//mGameBoard.Print(logFile);
+			//logFile << "###############################################" << endl;
+			//logFile << "\n" << endl;
+			//logFile.flush();
+
 			// Check if it was a winning /losing Move in which one player ate all the other's moving pieces.
 			// As written in the forum, Joker change can fix no moving pieces situation?
 			if (ReportAllMovingPiecesEaten())
@@ -532,6 +551,8 @@ void Game::HandleMoves()
 				return;
 			}
 		}
+
+		countMoves++;
 	}
 
 	ReportGameOver(Winner::Tie, TIE_NO_FIGHTS);
@@ -543,6 +564,13 @@ void Game::RunGame()
 	{
 		return;
 	}
+
+	// TODO: delete!!!
+	logFile.open("log.txt");
+	mGameBoard.Print(logFile);
+	logFile << "###############################################" << endl;
+	logFile << "\n\n\n" << endl;
+	logFile.flush();
 
 	if (ReportGameOverAfterInitBoard())
 	{

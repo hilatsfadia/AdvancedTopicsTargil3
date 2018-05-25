@@ -14,6 +14,7 @@ public:
 
 	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
 	virtual ~RPSPiece() {}
+	virtual bool IsStrongerThan(const Piece& other) const override;
 };
 
 #endif //ADTO_TARGIL1_RPS_PIECE_H
