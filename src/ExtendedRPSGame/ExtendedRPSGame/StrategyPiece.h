@@ -16,8 +16,6 @@ private:
 	bool mIsThreathening = false;
 	bool mIsMovingPiece = false;
 
-	char GetStrongerNotJoker(const Piece* piece) const;
-
 public:
 	StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
 	StrategyPiece(int ownerNum) : StrategyPiece(ownerNum, nullptr) { }
@@ -25,6 +23,7 @@ public:
 	// Gets this piece type.
 	// If this piece is still covered, gets PieceType::Unknown.
 	PieceFactory::PieceType GetPieceType() const override;
+	PieceFactory::PieceType GetActualPieceType() const override;
 
 	bool GetIsMovingPiece() const override;
 
@@ -51,7 +50,10 @@ public:
 
 	int GetStrategyPieceID() const { return mStrategyPieceID; }
 
-	virtual bool IsStrongerThan(const Piece& other) const;
+	virtual bool IsStrongerThan(const StrategyPiece& other) const;
+
+	// TODO: maybe derived class
+	void ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType);
 
 	//char GetStronger(const Piece* piece) const;
 };

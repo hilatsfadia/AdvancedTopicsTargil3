@@ -11,6 +11,7 @@ public:
 
 public:
     PointImpl() : x(1), y(1) {}
+	PointImpl(const Point& point) : PointImpl(point.getX(), point.getY()) {}
     PointImpl(int x, int y) : x(x), y(y) {}
 
     virtual int getX() const { return this->x; }
@@ -18,7 +19,11 @@ public:
 	void setX(int x) { this->x = x; }
 	void setY(int y) { this->y = y; }
 
-	friend inline bool operator==(const PointImpl& lhs, const PointImpl& rhs);
+	friend bool operator==(const PointImpl& lhs, const PointImpl& rhs)
+	{
+		return ((lhs.getX() == rhs.getX()) && (lhs.getY() == rhs.getY()));
+	}
+
 	friend inline bool operator!=(const PointImpl& lhs, const PointImpl& rhs) { return !(lhs == rhs); }
 
 	// The L1 distance

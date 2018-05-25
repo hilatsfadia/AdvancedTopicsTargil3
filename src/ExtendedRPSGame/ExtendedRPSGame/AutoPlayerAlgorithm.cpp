@@ -31,6 +31,44 @@ void AutoPlayerAlgorithm::UpdateLineNumber(int & yPos, bool isToMoveForward)
 	}
 }
 
+//
+//void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper)
+//{
+//	unique_ptr<Piece> uncoveredPiece = nullptr;
+//
+//	for (int i = 0; i < count; i++) {
+//		PointImpl currPos(xPos, yPos);
+//
+//		if (typeChar == JOKER_CHAR) {
+//			mPlayerJokerLocations.push_back(currPos);
+//			unique_ptr<Joker> jokerPiece = make_unique<Joker>(mPlayer);
+//			jokerPiece->SetActualPiece(PieceFactory::GetPieceFromChar(jokerReper, mPlayer));
+//			uncoveredPiece = std::move(jokerPiece);
+//		}
+//		else {
+//			uncoveredPiece = PieceFactory::GetPieceFromChar(typeChar, mPlayer);
+//		}
+//
+//		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer, std::move(uncoveredPiece));
+//		mPlayersStrategyBoards[mPlayer - 1].PutPieceInPosition(currPos, std::move(strategyPiece));
+//
+//		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(currPos, typeChar, jokerReper));
+//
+//		if (xPos == N) {
+//			xPos = 1;
+//			UpdateLineNumber(yPos, isToMoveForward);
+//		}
+//		else
+//		{
+//			xPos++;
+//		}
+//	}
+//	//if (yPos != M) {
+//	//	yPos++;
+//	//	xPos = 1;
+//	//}
+//}
+
 void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper)
 {
 	for (int i = 0; i < count; i++) {
@@ -87,6 +125,7 @@ void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, std::vector<un
 			unique_ptr<Joker> jokerPiece = make_unique<Joker>(mPlayer);
 			jokerPiece->SetActualPiece(PieceFactory::GetPieceFromChar(piecePos->getJokerRep(), mPlayer));
 			uncoveredPiece = std::move(jokerPiece);
+			mPlayerJokerLocations.push_back(piecePos->getPosition());
 		}
 		else
 		{
@@ -135,6 +174,11 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
 			{
 				if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos))
 				{
+					if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(pos).GetPieceType() == PieceFactory::PieceType::Joker)
+					{
+						eraseJokerLocation(pos);
+					}
+
 					mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
 				}
 			}
@@ -153,32 +197,30 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
 
 void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 {
-	if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceFactory::PieceType::Covered)
-	{
-		mOpponentNumCoveredPieces--;
-	}
-
 	//next exercise remember to add handling to more than one flag
 	int winner = fight.getWinner();
 
 	if ((winner == TIE) || (winner == mPlayer))
 	{
-		if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece())
+		// TODO: look
+		// It can be empty due to not initialized in notifyOnInitialBoard
+		if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(fight.getPosition()))
 		{
-			mOpponentNumMovablePieces--;
+			if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceFactory::PieceType::Covered)
+			{
+				mOpponentNumCoveredPieces--;
+			}
+			if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece())
+			{
+				mOpponentNumMovablePieces--;
+			}
 		}
 	}
 
 	if (winner == TIE) {
-		//if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
-		//	eraseJokerLocation(fight.getPosition());
-		//}
 		ClearPlayersBoardsInPosition(fight.getPosition());
 	}
 	else if (winner == mOpponent) {
-		//if (mGameBoardInfo.GetBoardInPosition(fight.getPosition()).GetPiece()->GetPieceChar() == JOKER_CHAR) {
-		//	eraseJokerLocation(fight.getPosition());
-		//}
 		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition()); // already done by the supplied board?
 		bool oldIsMoving = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece();
 
@@ -247,7 +289,7 @@ bool AutoPlayerAlgorithm::AreBothBoardsEmptyInPosition(const Point& pos) const
 	return AreBothBoardsEmptyInPosition(pos.getX(), pos.getY());
 }
 
-void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const PointImpl& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const
+void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const
 {
 	int xPos = pos.getX();
 	int yPos = pos.getY();
@@ -264,21 +306,7 @@ void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const PointImpl& pos, std::
 
 	std::random_shuffle(std::begin(vectorToFill), std::end(vectorToFill));
 }
-//
-//unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
-//	unique_ptr<Move> move = getStrategyMove(AutoPlayerAlgorithm::MoveType::RunAway);
-//	if (move != nullptr) {
-//		return move;
-//	}
-//
-//	move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Attack);
-//	if (move != nullptr) {
-//		return move;
-//	}
-//
-//	return getStrategyMove(AutoPlayerAlgorithm::MoveType::Random);
-//}
-//
+
 //void AutoPlayerAlgorithm::movePieceOnInfoBoard(const Move& move) {
 //	// TODO: delete!
 //	//BoardImpl::BoardSquare& boardSquare = mGameBoardInfo.GetBoardInPosition(move.getFrom());
@@ -405,9 +433,11 @@ unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 			}
 		}
 	}
-	//if (mGameBoardInfo.GetBoardInPosition(move->getFrom()).GetPiece()->GetPieceType() == PieceFactory::PieceType::Joker) {
-	//	updateJokerLocation(move->getFrom(), move->getTo());
-	//}
+
+	if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(move->getFrom()).GetPieceType() == PieceFactory::PieceType::Joker) {
+		updateJokerLocation(move->getFrom(), move->getTo());
+	}
+
 	//movePieceOnInfoBoard(*move);
 	mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
 	
@@ -415,11 +445,11 @@ unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 
 	return move;
 }
-
-unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
-{
-	return nullptr;
-}
+//
+//unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
+//{
+//	return nullptr;
+//}
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
 {
@@ -443,28 +473,22 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo)
 	updateThreats();
 }
 
-//void AutoPlayerAlgorithm::eraseJokerLocation(const Point& jokerPos) {
-//	std::vector<PointImpl>::iterator itr = mJokerLocations.begin();
-//	for (std::vector<PointImpl>::iterator itr = mJokerLocations.begin(); itr != mJokerLocations.end(); ) {
-//		if (jokerPos.getX() == itr->getX()
-//			&& jokerPos.getY() == itr->getY()) { //TODO:impl ==
-//			itr = mJokerLocations.erase(itr);
-//			break;
-//		}
-//
-//		++itr;
-//	}
-//}
-//
-//void AutoPlayerAlgorithm::updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos) {
-//	for (PointImpl jokerPos : mJokerLocations) {
-//		if (jokerPos.getX() == oldJokerPos.getX()
-//			&& jokerPos.getY() == oldJokerPos.getY()) { 
-//			jokerPos.setX(newJokerPos.getX());
-//			jokerPos.setY(newJokerPos.getY());
-//		}
-//	}
-//}
+void AutoPlayerAlgorithm::eraseJokerLocation(const Point& jokerPos) {
+	for (std::vector<PointImpl>::iterator itr = mPlayerJokerLocations.begin(); itr != mPlayerJokerLocations.end(); ) {
+		if (jokerPos.getX() == itr->getX()
+			&& jokerPos.getY() == itr->getY()) { //TODO:impl ==
+			itr = mPlayerJokerLocations.erase(itr);
+			break;
+		}
+
+		++itr;
+	}
+}
+
+void AutoPlayerAlgorithm::updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos) {
+	eraseJokerLocation(oldJokerPos);
+	mPlayerJokerLocations.push_back(newJokerPos);
+}
 
 void AutoPlayerAlgorithm::updateThreatsForPlayerInPosition(int player, const PointImpl& pos)
 {
@@ -490,7 +514,7 @@ void AutoPlayerAlgorithm::updateThreats()
 	}
 }
 
-bool AutoPlayerAlgorithm::isRelevantDestination(const Piece& piece, const PointImpl& pos, MoveType moveType) const{
+bool AutoPlayerAlgorithm::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const{
 	// Important! don't go to an invalid place or a place with other piece of the same player
 	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(pos) &&
 		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
@@ -517,7 +541,7 @@ bool AutoPlayerAlgorithm::isRelevantDestination(const Piece& piece, const PointI
 	return isRelevantDest;
 }
 
-unique_ptr<PointImpl> AutoPlayerAlgorithm::getStrategyDestination(const Piece& piece, const PointImpl& from, MoveType moveType) const
+unique_ptr<PointImpl> AutoPlayerAlgorithm::getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const
 {
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(from, adjacentLegalPositions);
@@ -614,56 +638,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMove(AutoPlayerAlgorithm::MoveT
 	return nullptr;
 }
 
-//
-//// TODO: delete it
-//unique_ptr<PointImpl> AutoPlayerAlgorithm::conquerPiece(const Piece& threateningPiece, const PointImpl& from)
-//{
-//	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
-//	FillAdjacentLegalPositions(from, adjacentLegalPositions);
-//	int currX, currY;
-//
-//	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
-//	{
-//		currX = pos->getX();
-//		currY = pos->getY();
-//		if ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(*pos))
-//			&& (threateningPiece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(*pos)))
-//			&& !isThreatenedInPosition(threateningPiece, *pos))
-//		{
-//			return make_unique<PointImpl>(currX, currY);
-//		}
-//	}
-//
-//	return nullptr; 
-//}
-//
-//// TODO: delete it
-//unique_ptr<Move> AutoPlayerAlgorithm::eatOpponentPiece() {
-//	for (int row = 1; row <= M; row++)
-//	{
-//		for (int col = 1; col <= N; col++)
-//		{
-//			PointImpl posFrom(row, col);
-//			if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(posFrom))
-//			{
-//				StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
-//				if (strategyPiece.GetIsMovingPiece() && strategyPiece.GetIsThreathening()) 
-//				{
-//					unique_ptr<PointImpl> posTo = conquerPiece(strategyPiece, posFrom);
-//
-//					if (posTo != nullptr)
-//					{
-//						return std::make_unique<MoveImpl>(posFrom, PointImpl(posTo->getX(), posTo->getY()));
-//					}
-//				}
-//			}
-//		}
-//
-//	}
-//	return nullptr;
-//}
-
-bool AutoPlayerAlgorithm::isThreatenedInPosition(const Piece& piece, const PointImpl& pos) const
+bool AutoPlayerAlgorithm::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const
 {
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
@@ -689,7 +664,7 @@ bool AutoPlayerAlgorithm::isThreatenedInPosition(const Piece& piece, const Point
 }
 
 // TODO: merge functions
-bool AutoPlayerAlgorithm::isThreateningInPosition(const Piece& piece, const PointImpl& pos) const
+bool AutoPlayerAlgorithm::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const
 {
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
@@ -718,66 +693,48 @@ bool AutoPlayerAlgorithm::isThreateningInPosition(const Piece& piece, const Poin
 	return false;
 }
 
-//unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
-//{
-//	char newRep;
-//	for (PointImpl jokerPos : mJokerLocations) {
-//		Piece* piece = mGameBoardInfo.GetBoardInPosition(jokerPos).GetPiece();
-//		StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(piece);
-//		if (strategyPiece->GetIsThreatened()) {
-//			std::vector<PointImpl> posVector;
-//			getVectorThreateningPieces(jokerPos, posVector);
-//			if (posVector.size() != 0) {
-//				for (PointImpl &pos : posVector) {
-//					newRep = strategyPiece->GetStronger(mGameBoardInfo.GetBoardInPosition(pos).GetPiece());
-//					if (newRep != COVERED_CHAR) {
-//						Joker* joker = new Joker(mPlayer);
-//						joker->SetActualPieceType(PieceFactory::GetPieceFromChar(newRep, mOpponent));
-//						mGameBoardInfo.GetBoardInPosition(jokerPos).ChangeSquarePiece(new StrategyPiece(mPlayer, joker));
-//
-//						updateIsThreatened(mPlayer);
-//						updateIsThreatened(mOpponent);
-//						updateIsThreatening(mPlayer);
-//						updateIsThreatening(mOpponent);
-//						return std::make_unique<JokerChangeImpl>(jokerPos, newRep); //TODO: piece->getStrongerPiece())
-//					}
-//				}
-//			}
-//				
-//
-//		}
-//	}
-//	return nullptr;
-//}
-//
-//bool AutoPlayerAlgorithm::returnPointThreatening(int xpos, int ypos, int newxpos, int newypos) {
-//	if (mGameBoardInfo.GetBoardInPosition(newxpos, newypos).IsEmpty() == false) {
-//		Piece* piece = mGameBoardInfo.GetBoardInPosition(newxpos, newypos).GetPiece();
-//		StrategyPiece* strategyPiece = dynamic_cast<StrategyPiece*>(piece);
-//		
-//		if (piece->GetOwnerNum() == mOpponent
-//			&& strategyPiece->GetIsMovingPiece() == true
-//			&& piece->IsStrongerThan(mGameBoardInfo.GetBoardInPosition(xpos, ypos).GetPiece())) //todo: impl operator
-//		{
-//			return true;
-//		}
-//	}
-//	return false;
-//}
-//
-//void AutoPlayerAlgorithm::getVectorThreateningPieces(PointImpl &pos , std::vector<PointImpl>& posVectorToFill) {
-//	int xPos = pos.getX();
-//	int yPos = pos.getY();
-//	if (returnPointThreatening(xPos, yPos, xPos + 1, yPos)) {	
-//		posVectorToFill.push_back(PointImpl(xPos + 1, yPos));
-//	}
-//	if (returnPointThreatening(xPos, yPos, xPos - 1, yPos)) {
-//		posVectorToFill.push_back(PointImpl(xPos - 1, yPos));
-//	}
-//	if (returnPointThreatening(xPos, yPos, xPos, yPos + 1)) {
-//		posVectorToFill.push_back(PointImpl(xPos, yPos + 1));
-//	}
-//	if (returnPointThreatening(xPos, yPos, xPos, yPos - 1)) {
-//		posVectorToFill.push_back(PointImpl(xPos, yPos - 1));
-//	}
-//}
+unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
+{
+	unique_ptr<JokerChange> jokerChange = nullptr;
+	for (const Point& jokerPos : mPlayerJokerLocations) {
+		StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(jokerPos);
+
+		if (strategyPiece.GetIsThreatened()) {
+			jokerChange = changeThreatenedJoker(jokerPos);
+			updateThreats();
+		}
+	}
+
+	return jokerChange;
+}
+
+unique_ptr<JokerChange> AutoPlayerAlgorithm::changeThreatenedJoker(const Point& threatenedJokerPos) {
+	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
+	FillAdjacentLegalPositions(threatenedJokerPos, adjacentLegalPositions);
+	StrategyPiece& threatenedPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(threatenedJokerPos);
+
+	for (const unique_ptr<PointImpl>& threateningPos : adjacentLegalPositions)
+	{
+		if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(*threateningPos))
+		{
+			const StrategyPiece& threateningPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(*threateningPos);
+			if (threateningPiece.GetPieceType() != PieceFactory::PieceType::Joker)
+			{
+				if (threateningPiece.GetIsMovingPiece() && threateningPiece.IsStrongerThan(threatenedPiece))
+				{
+					threatenedPiece.ChangeJokerToStronger(threateningPiece.GetPieceType());
+					// TODO: maybe do it smarter
+				}
+			}
+			else
+			{
+				threatenedPiece.ChangeJokerToStronger(threateningPiece.GetActualPieceType());
+				// TODO: maybe do it smarter
+			}
+
+			return std::make_unique<JokerChangeImpl>(threatenedJokerPos, threatenedPiece.GetActualPieceChar());
+		}
+	}
+
+	return nullptr;
+}

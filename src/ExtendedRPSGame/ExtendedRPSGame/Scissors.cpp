@@ -33,6 +33,8 @@ bool Scissors::IsStrongerThan(const Piece& other) const
 	{
 		return true;
 	}
-
-	return false;
+	else
+	{
+		return RPSPiece::IsStrongerThan(other);
+	}
 }

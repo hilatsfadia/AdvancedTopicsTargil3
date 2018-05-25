@@ -73,6 +73,12 @@ public:
 	// Gets this piece type. (Look at PieceFactory::PieceType enum).
 	virtual PieceFactory::PieceType GetPieceType() const = 0;
 
+	// Rock, Paper, Scissors, Bomb or Flag (but NOT Joker)
+	virtual PieceFactory::PieceType GetActualPieceType() const
+	{
+		return GetPieceType();
+	}
+
 	virtual bool GetIsMovingPiece() const = 0;
 
 	// R, P, S, B or F (but NOT J)

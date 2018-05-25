@@ -32,7 +32,7 @@ private:
 	int mOpponentNumMovablePieces = 0;
 	//int mPlayerNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
-	std::vector<PointImpl> mJokerLocations;
+	std::vector<PointImpl> mPlayerJokerLocations;
 	int lastMovedPieceID = NONE;
 
 	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
@@ -45,11 +45,11 @@ private:
 
 	bool AreBothBoardsEmptyInPosition(const Point& pos) const;
 
-	void FillAdjacentLegalPositions(const PointImpl & pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
+	void FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
 
-	bool isThreatenedInPosition(const Piece& piece, const PointImpl& pos) const;
+	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
 
-	bool isThreateningInPosition(const Piece& piece, const PointImpl& pos) const;
+	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
 
 	void updateStrategyAccordingToFight(const FightInfo& fight);
 
@@ -58,6 +58,10 @@ private:
 	void updateThreatsForPlayerInPosition(int player, const PointImpl& pos);
 
 	void updateThreats();
+
+	void eraseJokerLocation(const Point& jokerPos);
+
+	void updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos);
 
 
 	//-----------------------------------------------------------
@@ -93,8 +97,8 @@ private:
 	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
 	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & from, const PointImpl & flagPos) const;
 	unique_ptr<Move> conquerTheFlag();
-	bool isRelevantDestination(const Piece& piece, const PointImpl& pos, MoveType moveType) const;
-	unique_ptr<PointImpl> getStrategyDestination(const Piece& piece, const PointImpl& from, MoveType moveType) const;
+	bool isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const;
+	unique_ptr<PointImpl> getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const;
 	bool isPieceToMove(const StrategyPiece& strategyPiece, AutoPlayerAlgorithm::MoveType moveType);
 	unique_ptr<Move> getStrategyMoveInRow(MoveType moveType, int row);
 	unique_ptr<Move> getStrategyMove(MoveType moveType);
@@ -102,14 +106,11 @@ private:
 	//unique_ptr<Move> eatOpponentPiece();
 	//void movePieceOnInfoBoard(const Move& getMove);
 
-	
-//	void eraseJokerLocation(const Point& jokerPos);
-//
-//	void updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos);
-//
-//	bool returnPointThreatening(int xpos, int ypos, int newxpos, int newypos);
-//
-//	void getVectorThreateningPieces(PointImpl & pos, std::vector<PointImpl>& posVectorToFill);
+
+	//-----------------------------------------------------------
+	// getJokerChange helper functions
+	//-----------------------------------------------------------
+	unique_ptr<JokerChange> changeThreatenedJoker(const Point& pos);
 
 public:
 

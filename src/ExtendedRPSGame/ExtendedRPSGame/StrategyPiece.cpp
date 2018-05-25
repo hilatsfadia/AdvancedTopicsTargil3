@@ -25,6 +25,11 @@ PieceFactory::PieceType StrategyPiece::GetPieceType() const
 	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetPieceType());
 }
 
+PieceFactory::PieceType StrategyPiece::GetActualPieceType() const
+{
+	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetActualPieceType());
+}
+
 bool StrategyPiece::GetIsMovingPiece() const
 {
 	if (mUncoveredPiece != nullptr)
@@ -77,40 +82,41 @@ void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
 	}
 }
 
-bool StrategyPiece::IsStrongerThan(const Piece& other) const
+bool StrategyPiece::IsStrongerThan(const StrategyPiece& other) const
 {
-	if (mUncoveredPiece != nullptr)
+	if ((mUncoveredPiece != nullptr) && (other.mUncoveredPiece != nullptr))
 	{
-		return mUncoveredPiece->IsStrongerThan(other);
+		return mUncoveredPiece->IsStrongerThan(*other.mUncoveredPiece);
 	}
 
 	return false;
 }
 
-char StrategyPiece::GetStrongerNotJoker(const Piece * piece) const
+void StrategyPiece::ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType)
 {
-	PieceFactory::PieceType pieceType = piece->GetPieceType();
-
-	switch (pieceType)
+	if (this->GetPieceType() == PieceFactory::PieceType::Joker)
 	{
-		case (PieceFactory::PieceType::Paper):
+		switch (enemyPieceType)
 		{
-			return SCISSORS_CHAR;
-			break;
-		}
-		case (PieceFactory::PieceType::Scissors):
-		{
-			return ROCK_CHAR;
-			break;
-		}
-		case (PieceFactory::PieceType::Rock):
-		{
-			return PAPER_CHAR;
-			break;
-		}
-		default:
-		{
-			return COVERED_CHAR;
+			case (PieceFactory::PieceType::Paper):
+			{
+				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Scissors>(mOwnerNum));
+				break;
+			}
+			case (PieceFactory::PieceType::Scissors):
+			{
+				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Rock>(mOwnerNum));
+				break;
+			}
+			case (PieceFactory::PieceType::Rock):
+			{
+				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Paper>(mOwnerNum));
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 }
