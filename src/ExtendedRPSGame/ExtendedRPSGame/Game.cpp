@@ -18,94 +18,6 @@
 
 using namespace std;
 
-//
-//bool Game::HandleBadPositionFilesMessageWithWinner(int lineNum1, int lineNum2)
-//{
-//	mWinner = Winner::Tie;
-//	char tmp_game_over_message[MESSAGE_MAX_LEN];
-//	sprintf_s(tmp_game_over_message, BAD_POS_BOTH_PLAYERS, lineNum1, lineNum2);
-//	this->mGameOverMessage = tmp_game_over_message;
-//	return false;
-//}
-//
-//void Game::Play()
-//{
-//	ParserMoveFile moveFileParser(this);
-//	std::vector<std::string> playersFilesNames;
-//	for (int i = 0; i < NUM_OF_PLAYERS; i++)
-//	{
-//		playersFilesNames.push_back(GetMovesFileName(i + 1));
-//	}
-//
-//	moveFileParser.ParsePlayersMoveFiles(mPlayers, NUM_OF_PLAYERS, playersFilesNames);
-//
-//	// In case input file is missing or cannot be opened, the program shall not start the game, no output file
-//	// should be created.
-//	// Already printed error.
-//	if (isInputFileCannotBeOpened)
-//	{
-//		return;
-//	}
-//
-//	// If both Moves file are done without a winner there is no winner 
-//	// and the appropriate reason is selected
-//	if (mWinner == Game::Winner::None)
-//	{
-//		this->mGameOverMessage = TIE_NO_WINNER;
-//		mWinner = Game::Winner::Tie;
-//	}
-//
-//	MakeOutputFile();
-//}
-//
-//bool Game::InitGame() {
-//	// In case input file is missing or cannot be opened, the program shall not start the game, no output file
-//	// should be created.
-//	// Already printed error.
-//	if (!ParseInitFiles())
-//	{
-//		return false;
-//	}
-//
-//	if (mWinner != Game::Winner::None)
-//	{
-//		// There was a bas positions file
-//		MakeOutputFile();
-//		return false;
-//	}
-//
-//	GetWinnerAfterInitBoard();
-//	if (mWinner != Game::Winner::None)
-//	{
-//		MakeOutputFile();
-//		return false;
-//	}
-//
-//	return true;
-//}
-//
-//bool Game::ReportGameOverAfterMove()
-//{
-//	bool isGameOver = true;
-//
-//	if (mPlayersVec[0]->GetFlagsCount() == 0)
-//	{
-//		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
-//	}
-//	else if (mPlayersVec[1]->GetFlagsCount() == 0)
-//	{
-//		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
-//	}
-//	else
-//	{
-//		isGameOver = false;
-//	}
-//
-//	return isGameOver;
-//
-//	// TODO: ask Don't check moving pieces, because it is checked before move?
-//}
-
 Game::Winner Game::GetWinner(int loserNum) const
 {
 	if (loserNum == 1)
@@ -173,22 +85,6 @@ bool Game::ReportGameOverAfterInitBoard()
 	return isGameOver;
 }
 
-//
-////void Game::PrintUsageMessage()
-////{
-////	std::ostringstream stringStream;
-////	stringStream << "Usage of the program must include in the running directory, those file: ";
-////	for (int i = 1; i <= NUM_OF_PLAYERS; i++)
-////	{
-////		stringStream << GetInputFileName(i);
-////		stringStream << ", ";
-////		stringStream << GetMovesFileName(i);
-////		stringStream << ", ";
-////	}
-////
-////	cout << stringStream.str() << endl;
-////}
-
 void Game::MakeOutputFile(const std::string& gameOverMessage, bool ifToPrintBoard)
 {
     ofstream outFile(OUTPUT_FILE_NAME);
@@ -228,13 +124,15 @@ bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pie
 	unique_ptr<Piece> piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
 	{
-		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
+		// Written in the forum to put in comment
+		//cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
 		return false;
 	}
 
 	if (!piece->InitializeOwner(mPlayersVec[playerNum]))
 	{
-		cout << "A PIECE type appears in file more than its number" << endl;
+		// Written in the forum to put in comment
+		//cout << "A PIECE type appears in file more than its number" << endl;
 		return false;
 	}
 
@@ -248,14 +146,16 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	unique_ptr<Piece> actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
 	if (actualPiece == nullptr)
 	{
-		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
+		// Written in the forum to put in comment
+		//cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;
 	}
 
 	// If not a valid PIECE for a Joker
 	if (!joker->SetActualPiece(std::move(actualPiece)))
 	{
-		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
+		// Written in the forum to put in comment
+		//cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;
 	}
 
@@ -266,7 +166,8 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 {
 	if (!joker->InitializeOwner(mPlayersVec[playerNum]))
 	{
-		std::cout << "A PIECE type appears in file more than its number" << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "A PIECE type appears in file more than its number" << std::endl;
 		return false;
 	}
 
@@ -401,7 +302,8 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	// TODO: check if need to cout
 	if (jokerPiece == nullptr)
 	{
-		std::cout << "The joker change is illegal because given position is illegal." << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "The joker change is illegal because given position is illegal." << std::endl;
 		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
@@ -410,7 +312,8 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 
 	if (joker == nullptr)
 	{
-		cout << "Joker position doesn't have a piece other than a joker" << endl;
+		// Written in the forum to put in comment
+		//cout << "Joker position doesn't have a piece other than a joker" << endl;
 		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}

@@ -36,14 +36,14 @@ unique_ptr<JokerChange> ParserMoveFile::ParseCurrJokerChange()
 
 	if (currMoveLineTokens[J_TOKEN_NUM] != "J:")
 	{
-		cout << "The token for joker should be J:" << endl;
+		cout << "Moves file: " << "The token for joker should be J:" << endl;
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
 		return INVALID_JOKER_CHANGE;
 	}
 
 	if (currMoveLineTokens[NEW_REP_TOKEN_NUM].length() != 1)
 	{
-		cout << "<NEW_REP> has to be a character" << endl;
+		cout << "Moves file: " << "<NEW_REP> has to be a character" << endl;
 		// TODO: mGame->SetBadInputFileMessageWithWinner(playerNum, mGame->GetWinner(playerNum), lineNum, BAD_MOVE_PLAYER);
 		return INVALID_JOKER_CHANGE;
 	}
@@ -64,7 +64,7 @@ unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens()
 {
 	if ((currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
 	{
-		cout << "number of tokens has to be " << MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER
+		cout << "Moves file: " << "number of tokens in each line has to be " << MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER
 			<< " or " << MOVE_LINE_TOKENS_COUNT_WITH_JOKER << endl;
 		return nullptr;
 	}

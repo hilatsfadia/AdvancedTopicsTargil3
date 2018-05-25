@@ -26,13 +26,13 @@ bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>
 
 	if (tokens[J_TOKEN_NUM][0] != JOKER_CHAR)
 	{
-		cout << "First char of joker must be 'J'. " << endl;
+		cout << "Init file: " << "First char of joker must be 'J'. " << endl;
 		return false;
 	}
 
 	if (tokens[PIECE_CHAR_TOKEN_WITH_JOKER_NUM].length() != 1)
 	{
-		cout << "<PIECE_CHAR> of joker given in positions file is not a character. " << endl;
+		cout << "Init file: " << "<PIECE_CHAR> of joker given in positions file is not a character. " << endl;
 		return false;
 	}
 
@@ -45,7 +45,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 {
 	if ((tokens.size() != INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != INIT_LINE_TOKENS_COUNT_WITH_JOKER))
 	{
-		cout << "number of tokens has to be " << INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER 
+		cout << "Init file: " << "number of tokens has to be " << INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER
 			<< " or " << INIT_LINE_TOKENS_COUNT_WITH_JOKER << endl;
 		return false;
 	}
@@ -59,7 +59,7 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 
 	if (tokens[0].length() != 1)
 	{
-		cout << "First token given in positions file is not a character. " <<
+		cout << "Init file: " << "First token given in positions file is not a character. " <<
 			"It should be <PIECE_CHAR> or J" << endl;
 		return false;
 	}

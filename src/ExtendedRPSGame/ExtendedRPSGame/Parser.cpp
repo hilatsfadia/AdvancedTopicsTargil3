@@ -100,8 +100,8 @@ unique_ptr<PointImpl> Parser::GetPositionFromChars(const std::string & posx, con
 void Parser::PrintUsageMessage(int playerNum)
 {
 	cout << "Usage of the program must include in the running directory, those file: " +
-		GetPositionsFileName(1) + ", " + GetPositionsFileName(2) + ", " +
-		GetMovesFileName(1) + ", " + GetMovesFileName(2) << endl;
+		GetPositionsFileName(1) + ", " + GetPositionsFileName(2) + " for player 1 if it's a file player, " +
+		GetMovesFileName(1) + ", " + GetMovesFileName(2) << " for player 2 if it's a file player" << endl;
 }
 
 // TODO: sprintf

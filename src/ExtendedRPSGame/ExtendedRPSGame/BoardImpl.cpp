@@ -12,7 +12,8 @@ bool BoardImpl<T>::PutPieceOnSinglePlayerBoard(unique_ptr<T> piece, const Point&
 	{
 		// TODO: ask
 		// Shouldn't be nullptr.
-		std::cout << "Position is out of range" << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "Position is out of range" << std::endl;
 		return false;
 	}
 
@@ -29,7 +30,8 @@ bool BoardImpl<T>::PutPieceOnSinglePlayerBoard(unique_ptr<T> piece, const Point&
 
 		//if (boardSquare.GetPiece()->GetOwner() == piece->GetOwner())
 		//{
-		std::cout << "Two PIECEs of same player are positioned on same location" << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "Two PIECEs of same player are positioned on same location" << std::endl;
 		return false;
 		//}
 
@@ -117,7 +119,8 @@ T* BoardImpl<T>::GetPieceOfPlayer(const Point& position, int playerNum)
 
 	if (boardSquareSource.IsEmpty())
 	{
-		std::cout << "The moving is illegal because the source position is empty." << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "The moving is illegal because the source position is empty." << std::endl;
 		return nullptr;
 	}
 
@@ -126,7 +129,8 @@ T* BoardImpl<T>::GetPieceOfPlayer(const Point& position, int playerNum)
 	// Piece position that doesn't have a piece owned by this player
 	if (pieceSource->GetOwner()->GetPlayerNum() != playerNum)
 	{
-		std::cout << "The relevant piece is of the other player." << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "The relevant piece is of the other player." << std::endl;
 		return nullptr;
 	}
 
@@ -153,19 +157,22 @@ bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const P
 
 	if (pieceAttacker == nullptr)
 	{
-		std::cout << "The moving is illegal because given source position is illegal." << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "The moving is illegal because given source position is illegal." << std::endl;
 		return false;
 	}
 
 	if (!IsLegalMoveDestination(posFrom, posTo))
 	{
-		std::cout << "The moving is illegal because given destination position is illegal." << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "The moving is illegal because given destination position is illegal." << std::endl;
 		return false;
 	}
 
 	if (!pieceAttacker->GetIsMovingPiece())
 	{
-		std::cout << "The moving is illegal because the relevant piece cannot move." << std::endl;
+		// Written in the forum to put in comment
+		//std::cout << "The moving is illegal because the relevant piece cannot move." << std::endl;
 		return false;
 	}
 
@@ -179,7 +186,8 @@ bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const P
 
 		if (pieceAttacker->GetOwner() == pieceAttackee.GetOwner())
 		{
-			std::cout << "The moving is illegal because the destination has a piece of the same player" << std::endl;
+			// Written in the forum to put in comment
+			//std::cout << "The moving is illegal because the destination has a piece of the same player" << std::endl;
 			return false;
 		}
 
