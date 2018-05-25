@@ -29,8 +29,6 @@ public:
 	// Gets this piece type.
 	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Scissors; }
 
-	bool GetIsMovingPiece() const override { return true; }
-
 	char GetPieceChar() const override { return SCISSORS_CHAR; }
 
 	virtual bool IsStrongerThan(const Piece& other) const override;

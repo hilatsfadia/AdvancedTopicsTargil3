@@ -38,6 +38,7 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 		}
 		default:
 		{
+			// To be changed in inherired classes
 			return WinningPiece::Tie;
 		}
 	}

@@ -22,6 +22,7 @@ public:
 	RPSPiece(int ownerNum) : Piece(ownerNum) {}
 	virtual ~RPSPiece() {}
 
+	bool GetIsMovingPiece() const override { return true; }
 	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
 	virtual bool IsStrongerThan(const Piece& other) const override;
 };

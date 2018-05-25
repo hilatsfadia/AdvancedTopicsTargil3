@@ -87,9 +87,9 @@ private:
 		}
 	};
 
-	const int mRows = M;
-	const int mColumns = N;
-	BoardSquare<T> board[M][N];
+	const int mRows = N;
+	const int mColumns = M;
+	BoardSquare<T> board[N][M];
 
 	// Get Board in the given position, when axis values start from 1.
 	// Assumes position is legal.
