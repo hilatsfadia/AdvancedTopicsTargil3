@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "BoardImpl.h"
-#include <cctype>
 #include <iostream>
 #include "Player.h"
 #include "FightInfoImpl.h"

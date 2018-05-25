@@ -6,13 +6,13 @@
 #include <vector>
 //#include <array>
 #include <string>
-#include "Player.h"
 #include "BoardImpl.h"
-#include "PlayerAlgorithm.h"
 // TODO delete!!!
 #include <fstream>
 
 class Joker;
+class PlayerAlgorithm;
+class Player;
 
 #define OUTPUT_FILE_NAME "rps.output"
 #define NUM_OF_PLAYERS 2

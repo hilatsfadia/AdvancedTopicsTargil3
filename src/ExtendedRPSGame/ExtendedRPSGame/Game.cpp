@@ -2,7 +2,6 @@
 #include "Game.h"
 #include <string>
 #include <fstream>
-#include <iterator>
 #include <iostream>
 #include "PieceFactory.h"
 #include "Piece.h"
@@ -12,6 +11,8 @@
 #include "Joker.h"
 #include "FightInfoImpl.h"
 #include "PiecePositionImpl.h"
+#include "PlayerAlgorithm.h"
+#include "Player.h"
 
 #define MAX_MOVES 100
 

@@ -1,8 +1,6 @@
 #ifndef ADTO_TARGIL1_BOARD_H
 #define ADTO_TARGIL1_BOARD_H
 
-#include <stdio.h>
-#include <vector>
 #include "Piece.h"
 #include "Board.h"
 #include "PointImpl.h"
@@ -10,6 +8,7 @@
 #include <memory>
 
 class Move;
+class Piece;
 
 #define BAD_INPUT_MSG "ERROR: The file has bad input. The problem: %s"
 #define MISSING_FILE_MSG "ERROR: The input file is missing. Please input a file to continue"
