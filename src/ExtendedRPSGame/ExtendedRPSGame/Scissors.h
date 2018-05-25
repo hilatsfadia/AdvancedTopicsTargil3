@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_SCISSORS_H
 #define ADTO_TARGIL1_SCISSORS_H
 
+//--------------------------
+// Scissors Interface
+//--------------------------
+
+// Creates and handles all instances of piece of type scissors. 
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "RPSPiece.h"
 
 #define SCISSORS_CHAR 'S'

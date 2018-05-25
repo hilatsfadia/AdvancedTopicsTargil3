@@ -4,13 +4,11 @@
 //--------------------------
 // FightInfo Interface
 //--------------------------
-// abstract class FightInfo should be the base class for your "FightInfo" implementation
-// sent from "Game" to PlayerAlgorithm in 2 flows:
-// "Game" -> PlayerAlgorithm : notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights);
-// "Game" -> PlayerAlgorithm : notifyFightResult(const FightInfo& fightInfo);
-// Note that "Game" is in parantheses because this is your class and you can choose its name
 
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+// Abstract class. Manages a struct that holds all the information of a current 
+// fight which was conducted on the board.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 //--------------------------
 // forward declaration

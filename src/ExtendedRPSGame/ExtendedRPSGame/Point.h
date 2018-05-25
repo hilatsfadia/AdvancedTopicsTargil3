@@ -4,8 +4,10 @@
 //--------------------------
 // Point Interface
 //--------------------------
-// abstract class Point should be the base class for your "Point" implementation
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+
+// Abstract class. Represents a certain coordinate on board. 
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 class Point {
 public:

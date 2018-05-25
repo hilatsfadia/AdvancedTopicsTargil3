@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_PARSER_H
 #define ADTO_TARGIL1_PARSER_H
 
+//--------------------------
+// Parser Interface
+//--------------------------
+
+// Handles main helper functions for parsing files.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include <string>
 #include <vector>
 #include "Player.h"

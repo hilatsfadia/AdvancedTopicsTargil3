@@ -4,12 +4,10 @@
 //--------------------------
 // JokerChange Interface
 //--------------------------
-// abstract class JokerChange should be the base class for your "JokerChange" implementation
-// returned from PlayerAlgorithm to "Game" in the flow:
-// "Game" -> PlayerAlgorithm : virtual unique_ptr<JokerChange> getJokerChange(); // nullptr if no change is requested
-// Note that "Game" is in parantheses because this is your class and you can choose its name
 
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+// Abstract class. Manages the return of a joker change move on the board for the player.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 //--------------------------
 // forward declaration

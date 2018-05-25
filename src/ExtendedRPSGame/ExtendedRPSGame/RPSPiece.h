@@ -1,6 +1,13 @@
 #ifndef ADTO_TARGIL1_RPS_PIECE_H
 #define ADTO_TARGIL1_RPS_PIECE_H
 
+//--------------------------
+// RPSPiece Interface
+//--------------------------
+
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Piece.h"
 #include <memory>
 

@@ -4,8 +4,11 @@
 //--------------------------
 // PlayerAlgorithm Interface
 //--------------------------
-// abstract class PlayerAlgorithm should be the base class for your "PlayerAlgorithm" implementations
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+
+// Abstract class. Creates an adjusted algorithm for the player whos 
+// playing the game (from file or auto).
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 //--------------------------
 #include <vector>

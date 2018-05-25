@@ -1,6 +1,15 @@
 #ifndef ADTO_TARGIL1_PARSER_INIT_FILE_H
 #define ADTO_TARGIL1_PARSER_INIT_FILE_H
 
+//--------------------------
+// ParserInitFile Interface
+//--------------------------
+
+// Handles the parsing of a positioning file that was given by the 
+// player, that instructs how to put his tools on the game board.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Parser.h"
 
 class ParserInitFile :

@@ -4,12 +4,10 @@
 //--------------------------
 // Board Interface
 //--------------------------
-// abstract class Board should be the base class for your "Board" implementation
-// sent from "Game" to PlayerAlgorithm in the flow:
-// "Game" -> PlayerAlgorithm : notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights);
-// Note that "Game" is in parantheses because this is your class and you can choose its name
 
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+// Abstract class. Generates and handles the board which the game is played upon.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 //--------------------------
 // forward declaration

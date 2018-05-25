@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_BOMB_H
 #define ADTO_TARGIL1_BOMB_H
 
+//--------------------------
+// Bomb Interface
+//--------------------------
+
+// Creates and handles all instances of piece of type bomb. Inherits type piece.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Piece.h"
 
 #define BOMB_CHAR 'B'

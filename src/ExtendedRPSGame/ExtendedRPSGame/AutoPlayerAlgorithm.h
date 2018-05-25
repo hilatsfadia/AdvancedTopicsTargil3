@@ -1,6 +1,15 @@
 #ifndef ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
 #define ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
 
+//--------------------------
+// AutoPlayerAlgorithm Interface
+//--------------------------
+
+// Creates an auto algorithm for the player. 
+// That is, generating the moves according to finding the best move possible.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include <vector>
 #include "PlayerAlgorithm.h"
 #include "BoardImpl.h"

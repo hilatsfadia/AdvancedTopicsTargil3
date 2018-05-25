@@ -1,6 +1,13 @@
 #ifndef ADVANCEDTOPICS_MASTER_PIECEPOSITIONIMPL_H
 #define ADVANCEDTOPICS_MASTER_PIECEPOSITIONIMPL_H
 
+//--------------------------
+// PiecePositionImpl Interface
+//--------------------------
+
+// Manages a certain position on board given to it.
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "PointImpl.h"
 #include "PiecePosition.h"
 

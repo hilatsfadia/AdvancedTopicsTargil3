@@ -1,6 +1,15 @@
 #ifndef ADTO_TARGIL1_GAME_H
 #define ADTO_TARGIL1_GAME_H
 
+//--------------------------
+// Game Interface
+//--------------------------
+
+// Functions as game manager.Manages the progress of the game, 
+// and creates the differents algorithms for the different players of the game.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>

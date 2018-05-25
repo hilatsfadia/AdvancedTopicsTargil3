@@ -1,6 +1,14 @@
 #ifndef ADVANCEDTOPICS_MASTER_POINTIMPL_H
 #define ADVANCEDTOPICS_MASTER_POINTIMPL_H
 
+//--------------------------
+// PointImpl Interface
+//--------------------------
+
+// Represents a certain coordinate on board.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Point.h"
 
 // Represents a position in the board.

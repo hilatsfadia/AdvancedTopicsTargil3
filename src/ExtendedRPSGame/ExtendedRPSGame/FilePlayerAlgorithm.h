@@ -1,6 +1,15 @@
 #ifndef ADVANCEDTOPICS_MASTER_FILEPLAYERALGORITHM_H
 #define ADVANCEDTOPICS_MASTER_FILEPLAYERALGORITHM_H
 
+//--------------------------
+// FilePlayerAlgorithm Interface
+//--------------------------
+
+// Creates a file algorithm for the player. That is generating moves according
+// to a moves file that had been provided to the algorithm.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "PlayerAlgorithm.h"
 #include "ParserMoveFile.h"
 #include <fstream>

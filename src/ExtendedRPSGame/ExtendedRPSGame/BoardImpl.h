@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_BOARD_H
 #define ADTO_TARGIL1_BOARD_H
 
+//--------------------------
+// BoardImpl Interface
+//--------------------------
+
+// Generates and handles the board which the game is played upon.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Piece.h"
 #include "Board.h"
 #include "PointImpl.h"

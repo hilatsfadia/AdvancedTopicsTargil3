@@ -1,6 +1,16 @@
 #ifndef ADTO_TARGIL1_PIECE_STRATEGY_H
 #define ADTO_TARGIL1_PIECE_STRATEGY_H
 
+//--------------------------
+// StrategyPiece Interface
+//--------------------------
+
+//Creates and manages an instance the represents a dummy piece on a dummy 
+// board, used to keep all the needed information about the flow of 
+// the game by a certain auto player algorithm.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Piece.h"
 #include "PieceFactory.h"
 #define COVERED_CHAR 'C'

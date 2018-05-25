@@ -1,6 +1,15 @@
 #ifndef ADTO_TARGIL1_PARSER_MOVE_FILE_H
 #define ADTO_TARGIL1_PARSER_MOVE_FILE_H
 
+//--------------------------
+// ParserMoveFile Interface
+//--------------------------
+
+// Handles the parsing of a moves file that was given by the player, 
+// that instructs how to move his tools on the game board, in the flow of the game.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "Parser.h"
 
 #define INVALID_JOKER_CHANGE make_unique<JokerChangeImpl>(PointImpl(-1, -1), '5')

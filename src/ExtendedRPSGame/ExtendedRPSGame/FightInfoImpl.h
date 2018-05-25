@@ -1,9 +1,15 @@
-//
-// Created by USER on 29/04/2018.
-//
 
 #ifndef ADVANCEDTOPICS_MASTER_FIGHTINFOIMPL_H
 #define ADVANCEDTOPICS_MASTER_FIGHTINFOIMPL_H
+
+//--------------------------
+// FightInfoImpl Interface
+//--------------------------
+
+// Manages a struct that holds all the information of a current 
+// fight which was conducted on the board.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 #include "FightInfo.h"
 #include "PointImpl.h"

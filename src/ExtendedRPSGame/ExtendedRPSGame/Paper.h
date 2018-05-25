@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_PAPER_H
 #define ADTO_TARGIL1_PAPER_H
 
+//--------------------------
+// Paper Interface
+//--------------------------
+
+// Creates and handles all instances of piece of type paper. 
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "RPSPiece.h"
 
 #define PAPER_CHAR 'P'

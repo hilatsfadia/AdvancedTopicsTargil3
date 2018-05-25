@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_ROCK_H
 #define ADTO_TARGIL1_ROCK_H
 
+//--------------------------
+// Rock Interface
+//--------------------------
+
+// Creates and handles all instances of piece of type rock. 
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "RPSPiece.h"
 
 #define ROCK_CHAR 'R'

@@ -1,6 +1,13 @@
 #ifndef ADTO_TARGIL1_PIECE_FACTORY_H
 #define ADTO_TARGIL1_PIECE_FACTORY_H
 
+//--------------------------
+// PieceFactory Interface
+//--------------------------
+
+// A class that creates new instances of type piece.
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include <memory>
 
 class Piece;

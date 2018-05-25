@@ -4,13 +4,10 @@
 //--------------------------
 // PiecePosition Interface
 //--------------------------
-// abstract class PiecePosition should be the base class for your "PiecePosition" implementation
-// This interface is in use in the flow:
-// "Game" -> PlayerAlgorithm : getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
-// PlayerAlgorithm is responsible of filling the vector sent to it with the initial positions of all his pieces 
-// Note that "Game" is in parantheses because this is your class and you can choose its name
 
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+// Abstract class. Manages a certain position on board given to it.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 //--------------------------
 // forward declaration

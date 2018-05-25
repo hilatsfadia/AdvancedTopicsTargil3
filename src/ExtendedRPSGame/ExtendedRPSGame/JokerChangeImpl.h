@@ -1,6 +1,14 @@
 #ifndef ADVANCEDTOPICS_MASTER_JOKERCHANGEIMPL_H
 #define ADVANCEDTOPICS_MASTER_JOKERCHANGEIMPL_H
 
+//--------------------------
+// JokerChangeImpl Interface
+//--------------------------
+
+// Manages the return of a joker change move on the board for the player.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include "PointImpl.h"
 #include "JokerChange.h"
 

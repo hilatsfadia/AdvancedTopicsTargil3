@@ -1,6 +1,14 @@
 #ifndef ADTO_TARGIL1_Player_H
 #define ADTO_TARGIL1_Player_H
 
+//--------------------------
+// Player Interface
+//--------------------------
+
+// Manages and creates a new player to play on board and handles all his pieces.
+
+// @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
+
 #include <map>
 #include <vector>
 #include "PieceFactory.h"
