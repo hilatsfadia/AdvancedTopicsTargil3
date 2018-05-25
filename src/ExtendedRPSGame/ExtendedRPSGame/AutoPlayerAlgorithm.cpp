@@ -525,7 +525,9 @@ bool AutoPlayerAlgorithm::isPieceToMove(const StrategyPiece& strategyPiece, Auto
 	{
 		case AutoPlayerAlgorithm::MoveType::RunAway:
 		{
-			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreatened();
+			// Joker doesn't run away, it can change it representation.
+			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreatened() 
+				&& (strategyPiece.GetPieceType() != PieceFactory::PieceType::Joker);
 			break;
 		}
 		case AutoPlayerAlgorithm::MoveType::Attack:
