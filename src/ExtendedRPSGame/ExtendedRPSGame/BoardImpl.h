@@ -35,11 +35,11 @@ template <typename T>
 class BoardImpl : public Board {
 private:
 	// The board consists of M * N objects of this type.
-	template <typename T>
+	template <typename L>
 	class BoardSquare {
 	private:
 		// The piece in this square if exists, otherwise nullptr.
-		unique_ptr<T> piece = nullptr;
+		unique_ptr<L> piece = nullptr;
 	public:
 		// If this square has no piece
 		bool IsEmpty() const
@@ -56,7 +56,7 @@ private:
 
 		// Put other piece in this square
 		// Steal its belongings.
-		void ChangeSquarePiece(unique_ptr<T> newPiece) {
+		void ChangeSquarePiece(unique_ptr<L> newPiece) {
 			// The assignment operator deletes the old pointer
 			// if existed.
 			piece = std::move(newPiece);
@@ -64,25 +64,25 @@ private:
 
 		// Get this square piece
 		// TODO: delete!
-		T* GetPiece() { return piece.get(); }
+		L* GetPiece() { return piece.get(); }
 
 		// Get this square piece
 		// TODO! change name!
-		T& PeekPiece() { return *piece; }
+		L& PeekPiece() { return *piece; }
 
 		// Get this square piece
 		// TODO: maybe weak_ptr?
-		const T& PeekPiece() const { return *piece; }
+		const L& PeekPiece() const { return *piece; }
 
 		// Init by other boardSquare
-		void StealPieceFromSquare(BoardSquare<T>& other)
+		void StealPieceFromSquare(BoardSquare<L>& other)
 		{
 			this->piece = std::move(other.piece);
 			other.ClearSquare();
 		}
 
 		// Operator overloading for printing issues.
-		friend std::ostream& operator<<(std::ostream& out, const BoardSquare<T>& boardSquare) {
+		friend std::ostream& operator<<(std::ostream& out, const BoardSquare<L>& boardSquare) {
 			return out << *boardSquare.piece;
 		}
 	};

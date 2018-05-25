@@ -1,6 +1,6 @@
 COMP = g++-5.3.0
 #put all your object files here
-OBJS = AutoPlayerAlgorithm.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorith.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
+OBJS = AutoPlayerAlgorithm.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
 #The executable filename DON'T CHANGE
 EXEC = ex2
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
@@ -27,7 +27,7 @@ Bomb.o:   Bomb.cpp Bomb.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
 FightInfoImpl.o: FightInfoImpl.cpp FightInfoImpl.h FightInfo.h \
  PointImpl.h Point.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
-FilePlayerAlgorith.o: FilePlayerAlgorithm.cpp FilePlayerAlgorithm.h \
+FilePlayerAlgorithm.o: FilePlayerAlgorithm.cpp FilePlayerAlgorithm.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h ParserMoveFile.h Parser.h Player.h PieceFactory.h \
  PointImpl.h ParserInitFile.h MoveImpl.h JokerChangeImpl.h

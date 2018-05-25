@@ -2,6 +2,7 @@
 #include "RPSPiece.h"
 #include "Joker.h"
 
+// To be changed in inherired classes
 Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 {
 	PieceFactory::PieceType enemyPieceType = enemy.GetPieceType();
@@ -38,7 +39,6 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 		}
 		default:
 		{
-			// To be changed in inherired classes
 			return WinningPiece::Tie;
 		}
 	}

@@ -39,15 +39,9 @@ protected:
 	// ignoring extra white spaces.
 	void GetTokensFromLine(const std::string& line, std::vector<std::string>& outTokens);
 
-	// Process the line tokens according to the information of what kind of file it is.
-	// Checks for tokens validity.
-	// Execute the line.
-	// Implemented in sons.
-	virtual bool ProcessLineTokens(Player& player, const std::vector<std::string>& tokens, int lineNum) { return true; }
-
 	// Returns true if and only if the state of inFile is not bad. If bad, prints
 	// relevant message and updates the problematic line number.
-	bool CheckReadOK(int player, std::ifstream& inFile, const std::string& playerfileName, int lineNum);
+	bool CheckReadOK(std::ifstream& inFile, const std::string& playerfileName);
 
 	// Gets the Point of the position from coordinates strings
 	static unique_ptr<PointImpl> GetPositionFromChars(const std::string& posy, const std::string& posx);

@@ -18,17 +18,17 @@ class ParserInitFile :
 protected:
 	// Put a joker piece in given position. 
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
-	bool processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	bool processJokerLine(const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 	
 	// Process a line tokens. 
 	// Checks for tokens validity.
 	// Execute the line.
-	bool ProcessLineTokens(int player, const std::vector<std::string>& tokens, int lineNum, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	bool ProcessLineTokens(const std::vector<std::string>& tokens, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 
 	// TODO:
 	// Tries to split the line into tokens. 
 	// Calls processLineTokens while skipping empty lines.
-	bool ProcessLine(int player, const std::string& line, int lineNum, const char* templateBadFormatMessage, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
+	bool ProcessLine(const std::string& line, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill);
 
 public:
 	// Handles the parsing of the entire positions file of one player.

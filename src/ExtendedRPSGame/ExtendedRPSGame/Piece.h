@@ -71,7 +71,7 @@ public:
 	// Returns the winning piece. If there is no winner, returns Tie.
 	//virtual Piece* FightWithOtherPieceType(Piece* enemy) = 0;
 	// TODO: look
-	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) { return WinningPiece::Tie; }
+	virtual WinningPiece FightWithOtherPieceType(Piece&) { return WinningPiece::Tie; }
 
 	// When a piece wants to move to an occupied location,
 	// the two pieces fight, and at most one of them stays alive.
@@ -97,7 +97,7 @@ public:
 
 	virtual char GetPieceChar() const = 0;
 	
-	virtual bool IsStrongerThan(const Piece& other) const { return false; };
+	virtual bool IsStrongerThan(const Piece&) const { return false; };
 
 	// Operator overloading for printing issues.
 	friend std::ostream& operator<<(std::ostream& out, const Piece& piece);

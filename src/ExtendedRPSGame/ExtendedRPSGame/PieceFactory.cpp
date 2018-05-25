@@ -51,8 +51,6 @@ unique_ptr<Piece> PieceFactory::GetPieceFromChar(char pieceChar, shared_ptr<Play
 
 unique_ptr<Piece> PieceFactory::GetPieceFromChar(char pieceChar, int ownerNum)
 {
-	Piece* toReturn = nullptr;
-
 	switch (pieceChar)
 	{
 		case ROCK_CHAR: {

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Flag.h"
 
-Piece::WinningPiece Flag::FightWithOtherPieceType(Piece& enemy)
+Piece::WinningPiece Flag::FightWithOtherPieceType(Piece&)
 {
 	LoseToPiece();
 	return WinningPiece::OtherObject;

@@ -20,7 +20,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+bool ParserInitFile::processJokerLine(const std::vector<std::string>& tokens, PointImpl& pos, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	//Piece* piece = nullptr;
 
@@ -41,7 +41,7 @@ bool ParserInitFile::processJokerLine(int player, const std::vector<std::string>
 	return true;
 }
 
-bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::string>& tokens, int lineNum, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+bool ParserInitFile::ProcessLineTokens(const std::vector<std::string>& tokens, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	if ((tokens.size() != INIT_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (tokens.size() != INIT_LINE_TOKENS_COUNT_WITH_JOKER))
 	{
@@ -73,13 +73,13 @@ bool ParserInitFile::ProcessLineTokens(int playerNum, const std::vector<std::str
 	{
 		// It's a joker line
 		// (tokens.size() == INIT_LINE_TOKENS_COUNT_WITH_JOKER)
-		return processJokerLine(playerNum, tokens, *pos, vectorToFill);
+		return processJokerLine(tokens, *pos, vectorToFill);
 	}
 
 	return true;
 }
 
-bool ParserInitFile::ProcessLine(int player, const std::string& line, int lineNum, const char* templateBadFormatMessage, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
+bool ParserInitFile::ProcessLine(const std::string& line, std::vector<std::unique_ptr<PiecePosition>>& vectorToFill)
 {
 	try
 	{
@@ -89,7 +89,7 @@ bool ParserInitFile::ProcessLine(int player, const std::string& line, int lineNu
 		// Skip empty lines
 		if (tokens.size() != 0)
 		{
-			return ProcessLineTokens(player, tokens, lineNum, vectorToFill);// Maybe Bad Format
+			return ProcessLineTokens(tokens, vectorToFill);// Maybe Bad Format
 																			// Already printed error if any.
 		}
 	}
@@ -126,7 +126,7 @@ void ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerI
 	bool isFileOK = true;
 	while ((std::getline(inFile, line)) && isFileOK)
 	{
-		if (!ProcessLine(player, line, lineNum, BAD_POS_PLAYER, vectorToFill))
+		if (!ProcessLine(line, vectorToFill))
 		{
 			vectorToFill.clear();
 			vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(-1, -1), '0'));
@@ -138,7 +138,7 @@ void ParserInitFile::ParsePlayerInitFile(int player, const std::string & playerI
 	}
 
 	// Already printed error if any.
-	if (!CheckReadOK(player, inFile, playerInputfileName, lineNum))
+	if (!CheckReadOK(inFile, playerInputfileName))
 	{
 		vectorToFill.clear();
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(-1, -1), '0'));
