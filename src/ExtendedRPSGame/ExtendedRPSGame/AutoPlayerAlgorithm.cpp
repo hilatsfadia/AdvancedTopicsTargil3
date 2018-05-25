@@ -100,7 +100,8 @@ void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, std::vector<un
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
-	srand(time(0));
+	srand((unsigned int)time(0));
+	//srand(static_cast<unsigned int>(time(0)));
 
 	mPlayer = player; //setting the players fields
 	if (mPlayer == 1) {
@@ -142,8 +143,9 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
 			if (b.getPlayer(pos) == mOpponent)
 			{
 				unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mOpponent); //uncovered piece
-				mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(pos); //delets the former piece in square
+				mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(pos); //delets the former piece in square. is it needed?
 				mPlayersStrategyBoards[mOpponent - 1].PutPieceInPosition(pos, std::move(strategyPiece));
+				mOpponentNumCoveredPieces++;
 			}
 		}
 	}
@@ -262,20 +264,20 @@ void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const PointImpl& pos, std::
 
 	std::random_shuffle(std::begin(vectorToFill), std::end(vectorToFill));
 }
-
-unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
-	unique_ptr<Move> move = getStrategyMove(AutoPlayerAlgorithm::MoveType::RunAway);
-	if (move != nullptr) {
-		return move;
-	}
-
-	move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Attack);
-	if (move != nullptr) {
-		return move;
-	}
-
-	return getStrategyMove(AutoPlayerAlgorithm::MoveType::Random);
-}
+//
+//unique_ptr<Move> AutoPlayerAlgorithm::getNormalMove() {
+//	unique_ptr<Move> move = getStrategyMove(AutoPlayerAlgorithm::MoveType::RunAway);
+//	if (move != nullptr) {
+//		return move;
+//	}
+//
+//	move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Attack);
+//	if (move != nullptr) {
+//		return move;
+//	}
+//
+//	return getStrategyMove(AutoPlayerAlgorithm::MoveType::Random);
+//}
 //
 //void AutoPlayerAlgorithm::movePieceOnInfoBoard(const Move& move) {
 //	// TODO: delete!
@@ -389,23 +391,23 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag()
 unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 {
 	//findFlag(); // Why is it needed here?
+	unique_ptr<Move> move = getStrategyMove(AutoPlayerAlgorithm::MoveType::RunAway);
+	if (move == nullptr) {
+		if (mOpponentFlagLocations.size() != 0) {
+			move = conquerTheFlag();	//why would it give nullptr?
+		}
 
-	unique_ptr<Move> move = nullptr;
+		if (move == nullptr) {
+			move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Attack);
 
-	if (mOpponentFlagLocations.size() != 0) 
-	{
-		move = conquerTheFlag();	//why would it give nullptr?
-	} 
-	
-	if (move == nullptr)
-	{
-		move = getNormalMove();
+			if (move == nullptr) {
+				move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Random);
+			}
+		}
 	}
-
 	//if (mGameBoardInfo.GetBoardInPosition(move->getFrom()).GetPiece()->GetPieceType() == PieceFactory::PieceType::Joker) {
 	//	updateJokerLocation(move->getFrom(), move->getTo());
 	//}
-
 	//movePieceOnInfoBoard(*move);
 	mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
 	

@@ -28,7 +28,7 @@ private:
 	//bool mFlagPlaceKnown;
 	int mPlayer;
 	int mOpponent;
-	int mOpponentNumCoveredPieces = R + P + S + B + F + J;
+	int mOpponentNumCoveredPieces;
 	int mOpponentNumMovablePieces = 0;
 	//int mPlayerNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
@@ -89,7 +89,7 @@ private:
 	//-----------------------------------------------------------
 	// getMove helper functions
 	//-----------------------------------------------------------
-	unique_ptr<Move> getNormalMove();
+	//unique_ptr<Move> getNormalMove();
 	void getMovingPiecesInDistanceFromFlag(const PointImpl & flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
 	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl & from, const PointImpl & flagPos) const;
 	unique_ptr<Move> conquerTheFlag();
