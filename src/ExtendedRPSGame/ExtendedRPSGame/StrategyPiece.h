@@ -28,6 +28,7 @@ public:
 	bool GetIsMovingPiece() const override;
 
 	char GetPieceChar() const override;
+	char GetActualPieceChar() const override;
 
 	void SetMovingPiece() { mIsMovingPiece = true; }
 

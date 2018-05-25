@@ -45,6 +45,11 @@ char StrategyPiece::GetPieceChar() const
 	return ((mUncoveredPiece == nullptr) ? COVERED_CHAR : mUncoveredPiece->GetPieceChar());
 }
 
+char StrategyPiece::GetActualPieceChar() const
+{
+	return ((mUncoveredPiece == nullptr) ? COVERED_CHAR : mUncoveredPiece->GetActualPieceChar());
+}
+
 void StrategyPiece::UncoverPiece(std::unique_ptr<Piece> uncoveredPiece)
 {
 	if (uncoveredPiece != nullptr)

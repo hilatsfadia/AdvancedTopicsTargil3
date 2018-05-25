@@ -247,7 +247,7 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	unique_ptr<Piece> actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
 	if (actualPiece == nullptr)
 	{
-		cout << "PIECE_CHAR in positions file should be one of: R P S B F" << endl;
+		cout << "PIECE_CHAR for joker can be: R P S B" << endl;
 		return false;
 	}
 
@@ -515,6 +515,14 @@ void Game::HandleMoves()
 				countNoFightMoves++;
 			}
 
+			// TODO: delete!!!
+			logFile << "Count Move: " << countMoves << endl;
+			logFile << "\n" << endl;
+			mGameBoard.Print(logFile);
+			logFile << "###############################################" << endl;
+			logFile << "\n" << endl;
+			logFile.flush();
+
 			unique_ptr<JokerChange> currJokerChange = mAlgorithmsVec[i]->getJokerChange();
 
 			if (currJokerChange != nullptr) // if a change is requested
@@ -527,13 +535,13 @@ void Game::HandleMoves()
 
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
 
-			// TODO: delete!!!
-			logFile << "Count Move: " << countMoves << endl;
-			logFile << "\n" << endl;
-			mGameBoard.Print(logFile);
-			logFile << "###############################################" << endl;
-			logFile << "\n" << endl;
-			logFile.flush();
+			//// TODO: delete!!!
+			//logFile << "Count Move: " << countMoves << endl;
+			//logFile << "\n" << endl;
+			//mGameBoard.Print(logFile);
+			//logFile << "###############################################" << endl;
+			//logFile << "\n" << endl;
+			//logFile.flush();
 
 			// Check if it was a winning /losing Move in which one player ate all the other's moving pieces.
 			// As written in the forum, Joker change can fix no moving pieces situation?
