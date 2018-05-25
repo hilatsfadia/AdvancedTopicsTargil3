@@ -44,17 +44,6 @@ bool Game::ReportAllMovingPiecesEaten()
 		ReportGameOver(Winner::Tie, PIECES_EATEN_BOTH_PLAYERS);
 		return true;
 	}
-	// TODO: maybe not needed. (already checked).
-	else if (noMovingPiecesPlayer1)
-	{
-		ReportGameOver(Winner::Player2, PIECES_EATEN_PLAYER);
-		return true;
-	}
-	else if (noMovingPiecesPlayer2)
-	{
-		ReportGameOver(Winner::Player1, PIECES_EATEN_PLAYER);
-		return true;
-	}
 
 	return false;
 }
@@ -221,11 +210,11 @@ bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePos
 	return true;
 }
 
-void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage)
+void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage, bool ifToPrintBoard)
 {
 	char tmp_game_over_message[MESSAGE_MAX_LEN];
 	sprintf_s(tmp_game_over_message, templateBadFormatMessage, loserNum);
-	ReportGameOver(winner, tmp_game_over_message, false);
+	ReportGameOver(winner, tmp_game_over_message, ifToPrintBoard);
 }
 
 bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
@@ -249,12 +238,12 @@ bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& play
 	// Position for one player is invalid
 	else if (isErrorInPlayer1Positioning)
 	{
-		SetBadInputFileMessageWithWinner(1, Winner::Player2, BAD_POS_PLAYER);
+		SetBadInputFileMessageWithWinner(1, Winner::Player2, BAD_POS_PLAYER, false);
 		return false;
 	}
 	else if (isErrorInPlayer2Positioning)
 	{
-		SetBadInputFileMessageWithWinner(2, Winner::Player1, BAD_POS_PLAYER);
+		SetBadInputFileMessageWithWinner(2, Winner::Player1, BAD_POS_PLAYER, false);
 		return false;
 	}
 
@@ -446,13 +435,6 @@ void Game::HandleMoves()
 			//logFile << "###############################################" << endl;
 			//logFile << "\n" << endl;
 			//logFile.flush();
-
-			// Check if it was a winning /losing Move in which one player ate all the other's moving pieces.
-			// As written in the forum, Joker change can fix no moving pieces situation?
-			if (ReportAllMovingPiecesEaten())
-			{
-				return;
-			}
 		}
 
 		countMoves++;

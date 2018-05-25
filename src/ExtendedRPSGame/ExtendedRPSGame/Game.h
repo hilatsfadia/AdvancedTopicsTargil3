@@ -65,7 +65,7 @@ private:
 	
 	// When one of the input files (position file or move file) has bad format,
 	// update message and winner.
-	void SetBadInputFileMessageWithWinner(int loserNum, Winner winner, const char* templateBadFormatMessage);
+	void SetBadInputFileMessageWithWinner(int loserNum, Winner winner, const char* templateBadFormatMessage, bool ifToPrintBoard = true);
 
 	//// When both of the position files has bad format,
 	//// update message and winner.
