@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "AutoPlayerAlgorithm.h"
-#include "PiecePositionImpl.h"
 #include "PointImpl.h"
 #include "PieceFactory.h"
 #include "Move.h"
@@ -11,10 +10,13 @@
 #include "Scissors.h"
 #include "Bomb.h"
 #include "Joker.h"
+#include "Player.h"
+#include "MoveImpl.h"
 #include "JokerChangeImpl.h"
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <iterator>
 
 using std::make_unique;
 
@@ -30,44 +32,6 @@ void AutoPlayerAlgorithm::UpdateLineNumber(int & yPos, bool isToMoveForward)
 		yPos--;
 	}
 }
-
-//
-//void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper)
-//{
-//	unique_ptr<Piece> uncoveredPiece = nullptr;
-//
-//	for (int i = 0; i < count; i++) {
-//		PointImpl currPos(xPos, yPos);
-//
-//		if (typeChar == JOKER_CHAR) {
-//			mPlayerJokerLocations.push_back(currPos);
-//			unique_ptr<Joker> jokerPiece = make_unique<Joker>(mPlayer);
-//			jokerPiece->SetActualPiece(PieceFactory::GetPieceFromChar(jokerReper, mPlayer));
-//			uncoveredPiece = std::move(jokerPiece);
-//		}
-//		else {
-//			uncoveredPiece = PieceFactory::GetPieceFromChar(typeChar, mPlayer);
-//		}
-//
-//		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer, std::move(uncoveredPiece));
-//		mPlayersStrategyBoards[mPlayer - 1].PutPieceInPosition(currPos, std::move(strategyPiece));
-//
-//		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(currPos, typeChar, jokerReper));
-//
-//		if (xPos == N) {
-//			xPos = 1;
-//			UpdateLineNumber(yPos, isToMoveForward);
-//		}
-//		else
-//		{
-//			xPos++;
-//		}
-//	}
-//	//if (yPos != M) {
-//	//	yPos++;
-//	//	xPos = 1;
-//	//}
-//}
 
 void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper)
 {
@@ -240,7 +204,7 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 	}
 }
 
-void AutoPlayerAlgorithm::findOpponentFlag() 
+void AutoPlayerAlgorithm::findOpponentFlags() 
 {
 	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumMovablePieces <= F)) 
 	{ //TODO: double check that everyone is by default false
@@ -274,7 +238,7 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 		updateStrategyAccordingToFight(*fight);
 	}
 
-	findOpponentFlag();
+	findOpponentFlags();
 
 	updateThreats();
 }
@@ -446,11 +410,6 @@ unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 
 	return move;
 }
-//
-//unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
-//{
-//	return nullptr;
-//}
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
 {
@@ -462,7 +421,7 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
 
 	mPlayersStrategyBoards[mOpponent - 1].MovePieceWithoutChecks(move.getFrom(), move.getTo());
 
-	findOpponentFlag();
+	findOpponentFlags();
 	updateThreats();
 }
 
@@ -470,7 +429,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo)
 {
 	updateStrategyAccordingToFight(fightInfo);
 	
-	findOpponentFlag();
+	findOpponentFlags();
 	updateThreats();
 }
 
@@ -719,15 +678,8 @@ unique_ptr<JokerChange> AutoPlayerAlgorithm::changeThreatenedJoker(const Point& 
 		if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(*threateningPos))
 		{
 			const StrategyPiece& threateningPiece = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(*threateningPos);
-			if (threateningPiece.GetPieceType() != PieceFactory::PieceType::Joker)
-			{
-				if (threateningPiece.GetIsMovingPiece() && threateningPiece.IsStrongerThan(threatenedPiece))
-				{
-					threatenedPiece.ChangeJokerToStronger(threateningPiece.GetPieceType());
-					// TODO: maybe do it smarter
-				}
-			}
-			else
+
+			if (threateningPiece.GetIsMovingPiece() && threateningPiece.IsStrongerThan(threatenedPiece))
 			{
 				threatenedPiece.ChangeJokerToStronger(threateningPiece.GetActualPieceType());
 				// TODO: maybe do it smarter
