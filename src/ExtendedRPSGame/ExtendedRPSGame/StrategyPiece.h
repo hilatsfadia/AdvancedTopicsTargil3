@@ -32,8 +32,8 @@ public:
 
 	// Gets this piece type.
 	// If this piece is still covered, gets PieceType::Unknown.
-	PieceFactory::PieceType GetPieceType() const override;
-	PieceFactory::PieceType GetActualPieceType() const override;
+	PieceType GetPieceType() const override;
+	PieceType GetActualPieceType() const override;
 
 	bool GetIsMovingPiece() const override;
 
@@ -64,7 +64,7 @@ public:
 	virtual bool IsStrongerThan(const StrategyPiece& other) const;
 
 	// TODO: maybe derived class
-	void ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType);
+	void ChangeJokerToStronger(PieceType enemyPieceType);
 };
 
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H

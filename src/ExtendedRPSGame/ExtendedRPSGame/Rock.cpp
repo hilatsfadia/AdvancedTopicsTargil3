@@ -3,17 +3,17 @@
 
 Piece::WinningPiece Rock::FightWithOtherPieceType(Piece& enemy)
 {
-	PieceFactory::PieceType enemyPieceType = enemy.GetPieceType();
+	PieceType enemyPieceType = enemy.GetPieceType();
 
 	switch (enemyPieceType)
 	{
-		case (PieceFactory::PieceType::Paper):
+		case (PieceType::Paper):
 		{
 			LoseToPiece();
 			return WinningPiece::OtherObject;
 			break;
 		}
-		case (PieceFactory::PieceType::Scissors):
+		case (PieceType::Scissors):
 		{
 			enemy.LoseToPiece();
 			return WinningPiece::CallingObject;
@@ -28,8 +28,8 @@ Piece::WinningPiece Rock::FightWithOtherPieceType(Piece& enemy)
 
 bool Rock::IsStrongerThan(const Piece& other) const
 {
-	PieceFactory::PieceType otherPieceType = other.GetPieceType();
-	if ((otherPieceType == PieceFactory::PieceType::Flag) || (otherPieceType == PieceFactory::PieceType::Scissors))
+	PieceType otherPieceType = other.GetPieceType();
+	if ((otherPieceType == PieceType::Flag) || (otherPieceType == PieceType::Scissors))
 	{
 		return true;
 	}

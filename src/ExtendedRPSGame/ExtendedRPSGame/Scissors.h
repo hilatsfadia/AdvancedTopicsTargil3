@@ -27,7 +27,7 @@ public:
 	Scissors(int ownerNum) : RPSPiece(ownerNum) {}
 
 	// Gets this piece type.
-	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Scissors; }
+	PieceType GetPieceType() const override { return PieceType::Scissors; }
 
 	char GetPieceChar() const override { return SCISSORS_CHAR; }
 

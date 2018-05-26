@@ -5,11 +5,11 @@
 
 bool Joker::SetActualPiece(unique_ptr<Piece> newPiece)
 {
-	PieceFactory::PieceType newPieceType = newPiece->GetPieceType();
-	if ((newPieceType != PieceFactory::PieceType::Rock) &&
-		(newPieceType != PieceFactory::PieceType::Paper) &&
-		(newPieceType != PieceFactory::PieceType::Scissors) &&
-		(newPieceType != PieceFactory::PieceType::Bomb))
+	PieceType newPieceType = newPiece->GetPieceType();
+	if ((newPieceType != PieceType::Rock) &&
+		(newPieceType != PieceType::Paper) &&
+		(newPieceType != PieceType::Scissors) &&
+		(newPieceType != PieceType::Bomb))
 	{
 		return false;
 	}

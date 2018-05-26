@@ -5,17 +5,17 @@
 // To be changed in inherired classes
 Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 {
-	PieceFactory::PieceType enemyPieceType = enemy.GetPieceType();
+	PieceType enemyPieceType = enemy.GetPieceType();
 
 	switch (enemyPieceType)
 	{
-		case (PieceFactory::PieceType::Bomb):
+		case (PieceType::Bomb):
 		{
 			BothPiecesLosers(enemy);
 			return WinningPiece::Tie;
 			break;
 		}
-		case (PieceFactory::PieceType::Joker):
+		case (PieceType::Joker):
 		{
 			if (enemy.Fight(*this) == WinningPiece::OtherObject)
 			{
@@ -31,7 +31,7 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 			}
 			break;
 		}
-		case (PieceFactory::PieceType::Flag):
+		case (PieceType::Flag):
 		{
 			enemy.LoseToPiece();
 			return WinningPiece::CallingObject;
@@ -46,9 +46,9 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 
 bool RPSPiece::IsStrongerThan(const Piece & other) const
 {
-	PieceFactory::PieceType otherPieceType = other.GetPieceType();
+	PieceType otherPieceType = other.GetPieceType();
 
-	if (otherPieceType == PieceFactory::PieceType::Joker)
+	if (otherPieceType == PieceType::Joker)
 	{
 		const Joker& otherJoker = dynamic_cast<const Joker&>(other);
 		return this->IsStrongerThan(*otherJoker.GetActualPiece()); // TODO: look

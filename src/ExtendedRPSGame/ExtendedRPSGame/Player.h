@@ -29,15 +29,18 @@
 #define J 2
 #define F 1
 
+// Type Alias
+using PieceType = PieceFactory::PieceType;
+
 class Player
 {
 	static int mPlayerCounter;
 
 	// Number of pieces of each type that the player holds.
-	std::map<PieceFactory::PieceType, int> mCountPieces;
+	std::map<PieceType, int> mCountPieces;
 
 	// Max number of pieces of each type that the player can hold.
-	static std::map<PieceFactory::PieceType, int> mMaxCountPieces;
+	static std::map<PieceType, int> mMaxCountPieces;
 
 	int mPlayerNum;
 	int mCountMovingPieces = 0;
@@ -54,30 +57,30 @@ public:
 	int GetPlayerNum() const { return mPlayerNum; }
 
 	// Gets the number of pieces this player has of the given type.
-	int GetPieceCount(PieceFactory::PieceType pieceType) const;
+	int GetPieceCount(PieceType pieceType) const;
 
 	// Removes one piece of the given type from this player.
 	// Returns true if this player had at least one piece 
 	// of the given type before removing.
-	bool DecPieceCount(PieceFactory::PieceType pieceType);
+	bool DecPieceCount(PieceType pieceType);
 
 	// Adds one piece of the given type from this player.
 	// Returns true if this player can hold one more piece
 	// of the given type before addition.
 	// Also, checks if the given type is flag, If so, updates if
 	// all flags were positioned.
-	bool IncPieceCountInInitialization(PieceFactory::PieceType pieceType);
+	bool IncPieceCountInInitialization(PieceType pieceType);
 
 	// Gets the number of players' pieces that can move.
 	int GetCountOfMovingPieces() const;
 
 	// Gets the number of flag this player has.
-	int GetFlagsCount() const { return GetPieceCount(PieceFactory::PieceType::Flag); };
+	int GetFlagsCount() const { return GetPieceCount(PieceType::Flag); };
 
 	bool DoesPosiotionedAllFlags() const { return mPositionedAllFlags; }
 
-	void AddToCountMovingPieces(PieceFactory::PieceType pieceType);
-	void RemoveFromCountMovingPieces(PieceFactory::PieceType pieceType);
+	void AddToCountMovingPieces(PieceType pieceType);
+	void RemoveFromCountMovingPieces(PieceType pieceType);
 
 	//PlayerAlgorithm* GetPlayerAlgorithm() { return mPlayerAlgorithm; }
 	//friend bool operator==(const Player& lhs, const Player& rhs);

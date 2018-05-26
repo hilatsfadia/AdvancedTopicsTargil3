@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 
-std::map<PieceFactory::PieceType, int> Player::mMaxCountPieces;
+std::map<PieceType, int> Player::mMaxCountPieces;
 int Player::mPlayerCounter = 1;
 
 Player::~Player()
@@ -12,19 +12,19 @@ Player::Player()
 {
 	mPlayerNum = mPlayerCounter;
 	mPlayerCounter++;
-	mCountPieces[PieceFactory::PieceType::Rock] = 0;
-	mCountPieces[PieceFactory::PieceType::Paper] = 0;
-	mCountPieces[PieceFactory::PieceType::Scissors] = 0;
-	mCountPieces[PieceFactory::PieceType::Bomb] = 0;
-	mCountPieces[PieceFactory::PieceType::Joker] = 0;
-	mCountPieces[PieceFactory::PieceType::Flag] = 0;
+	mCountPieces[PieceType::Rock] = 0;
+	mCountPieces[PieceType::Paper] = 0;
+	mCountPieces[PieceType::Scissors] = 0;
+	mCountPieces[PieceType::Bomb] = 0;
+	mCountPieces[PieceType::Joker] = 0;
+	mCountPieces[PieceType::Flag] = 0;
 
-	mMaxCountPieces[PieceFactory::PieceType::Rock] = R;
-	mMaxCountPieces[PieceFactory::PieceType::Paper] = P;
-	mMaxCountPieces[PieceFactory::PieceType::Scissors] = S;
-	mMaxCountPieces[PieceFactory::PieceType::Bomb] = B;
-	mMaxCountPieces[PieceFactory::PieceType::Joker] = J;
-	mMaxCountPieces[PieceFactory::PieceType::Flag] = F;
+	mMaxCountPieces[PieceType::Rock] = R;
+	mMaxCountPieces[PieceType::Paper] = P;
+	mMaxCountPieces[PieceType::Scissors] = S;
+	mMaxCountPieces[PieceType::Bomb] = B;
+	mMaxCountPieces[PieceType::Joker] = J;
+	mMaxCountPieces[PieceType::Flag] = F;
 }
 
 //
@@ -33,22 +33,22 @@ Player::Player()
 //	mPlayerNum = mPlayerCounter;
 //	mPlayerCounter++;
 //	mPlayerAlgorithm = playerAlgorithm;
-//	mCountPieces[PieceFactory::PieceType::Rock] = 0;
-//	mCountPieces[PieceFactory::PieceType::Paper] = 0;
-//	mCountPieces[PieceFactory::PieceType::Scissors] = 0;
-//	mCountPieces[PieceFactory::PieceType::Bomb] = 0;
-//	mCountPieces[PieceFactory::PieceType::Joker] = 0;
-//	mCountPieces[PieceFactory::PieceType::Flag] = 0;
+//	mCountPieces[PieceType::Rock] = 0;
+//	mCountPieces[PieceType::Paper] = 0;
+//	mCountPieces[PieceType::Scissors] = 0;
+//	mCountPieces[PieceType::Bomb] = 0;
+//	mCountPieces[PieceType::Joker] = 0;
+//	mCountPieces[PieceType::Flag] = 0;
 //
-//	mMaxCountPieces[PieceFactory::PieceType::Rock] = R;
-//	mMaxCountPieces[PieceFactory::PieceType::Paper] = P;
-//	mMaxCountPieces[PieceFactory::PieceType::Scissors] = S;
-//	mMaxCountPieces[PieceFactory::PieceType::Bomb] = B;
-//	mMaxCountPieces[PieceFactory::PieceType::Joker] = J;
-//	mMaxCountPieces[PieceFactory::PieceType::Flag] = F;
+//	mMaxCountPieces[PieceType::Rock] = R;
+//	mMaxCountPieces[PieceType::Paper] = P;
+//	mMaxCountPieces[PieceType::Scissors] = S;
+//	mMaxCountPieces[PieceType::Bomb] = B;
+//	mMaxCountPieces[PieceType::Joker] = J;
+//	mMaxCountPieces[PieceType::Flag] = F;
 //}
 
-int Player::GetPieceCount(PieceFactory::PieceType pieceType) const
+int Player::GetPieceCount(PieceType pieceType) const
 {
 	auto pieceCount = mCountPieces.find(pieceType);
 
@@ -59,7 +59,7 @@ int Player::GetPieceCount(PieceFactory::PieceType pieceType) const
 	return 0;
 }
 
-bool Player::DecPieceCount(PieceFactory::PieceType pieceType)
+bool Player::DecPieceCount(PieceType pieceType)
 {
 	if (mCountPieces[pieceType] == 0)
 	{
@@ -73,7 +73,7 @@ bool Player::DecPieceCount(PieceFactory::PieceType pieceType)
 	return true;
 }
 
-bool Player::IncPieceCountInInitialization(PieceFactory::PieceType pieceType)
+bool Player::IncPieceCountInInitialization(PieceType pieceType)
 {
 	if (mCountPieces[pieceType] == mMaxCountPieces[pieceType])
 	{
@@ -84,7 +84,7 @@ bool Player::IncPieceCountInInitialization(PieceFactory::PieceType pieceType)
 
 	AddToCountMovingPieces(pieceType);
 
-	if (pieceType == PieceFactory::PieceType::Flag)
+	if (pieceType == PieceType::Flag)
 	{
 		mPositionedAllFlags = (mCountPieces[pieceType] == mMaxCountPieces[pieceType]);
 	}
@@ -99,7 +99,7 @@ int Player::GetCountOfMovingPieces() const
 //
 //int Player::GetFlagsCount() const
 //{
-//	auto flagsCount = mCountPieces.find(PieceFactory::PieceType::Flag);
+//	auto flagsCount = mCountPieces.find(PieceType::Flag);
 //
 //	if (flagsCount != mCountPieces.end()) {
 //		return flagsCount->second;
@@ -108,21 +108,21 @@ int Player::GetCountOfMovingPieces() const
 //	return 0;
 //}
 
-void Player::AddToCountMovingPieces(PieceFactory::PieceType pieceType)
+void Player::AddToCountMovingPieces(PieceType pieceType)
 {
-	if ((pieceType == PieceFactory::PieceType::Rock) ||
-		(pieceType == PieceFactory::PieceType::Paper) ||
-		(pieceType == PieceFactory::PieceType::Scissors))
+	if ((pieceType == PieceType::Rock) ||
+		(pieceType == PieceType::Paper) ||
+		(pieceType == PieceType::Scissors))
 	{
 		mCountMovingPieces++;
 	}
 }
 
-void Player::RemoveFromCountMovingPieces(PieceFactory::PieceType pieceType)
+void Player::RemoveFromCountMovingPieces(PieceType pieceType)
 {
-	if ((pieceType == PieceFactory::PieceType::Rock) ||
-		(pieceType == PieceFactory::PieceType::Paper) ||
-		(pieceType == PieceFactory::PieceType::Scissors))
+	if ((pieceType == PieceType::Rock) ||
+		(pieceType == PieceType::Paper) ||
+		(pieceType == PieceType::Scissors))
 	{
 		mCountMovingPieces--;
 	}

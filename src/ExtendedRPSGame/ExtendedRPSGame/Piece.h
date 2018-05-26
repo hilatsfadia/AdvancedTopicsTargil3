@@ -15,6 +15,8 @@
 #include <memory>
 
 using std::shared_ptr;
+// Type Alias
+using PieceType = PieceFactory::PieceType;
 
 class Piece
 {
@@ -72,11 +74,11 @@ public:
 	// Returns the winning piece. If there is no winner, returns nullptr.
 	WinningPiece Fight(Piece& enemy);
 
-	// Gets this piece type. (Look at PieceFactory::PieceType enum).
-	virtual PieceFactory::PieceType GetPieceType() const = 0;
+	// Gets this piece type. (Look at PieceType enum).
+	virtual PieceType GetPieceType() const = 0;
 
 	// Rock, Paper, Scissors, Bomb or Flag (but NOT Joker)
-	virtual PieceFactory::PieceType GetActualPieceType() const
+	virtual PieceType GetActualPieceType() const
 	{
 		return GetPieceType();
 	}

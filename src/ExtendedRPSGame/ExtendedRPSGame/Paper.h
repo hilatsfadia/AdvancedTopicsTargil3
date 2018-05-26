@@ -27,7 +27,7 @@ public:
 	Paper(int ownerNum) : RPSPiece(ownerNum) {}
 
 	// Gets this piece type.
-	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Paper; }
+	PieceType GetPieceType() const override { return PieceType::Paper; }
 
 	char GetPieceChar() const override { return PAPER_CHAR; }
 

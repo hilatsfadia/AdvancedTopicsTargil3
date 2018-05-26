@@ -20,14 +20,14 @@ StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : P
 	mStrategyPiecesCounter++;
 }
 
-PieceFactory::PieceType StrategyPiece::GetPieceType() const
+PieceType StrategyPiece::GetPieceType() const
 {
-	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetPieceType());
+	return ((mUncoveredPiece == nullptr) ? PieceType::Covered : mUncoveredPiece->GetPieceType());
 }
 
-PieceFactory::PieceType StrategyPiece::GetActualPieceType() const
+PieceType StrategyPiece::GetActualPieceType() const
 {
-	return ((mUncoveredPiece == nullptr) ? PieceFactory::PieceType::Covered : mUncoveredPiece->GetActualPieceType());
+	return ((mUncoveredPiece == nullptr) ? PieceType::Covered : mUncoveredPiece->GetActualPieceType());
 }
 
 bool StrategyPiece::GetIsMovingPiece() const
@@ -66,7 +66,7 @@ void StrategyPiece::UncoverPiece(char uncoveredPieceChar)
 		if (mUncoveredPiece->GetPieceChar() != uncoveredPieceChar) // If this piece should be a joker
 		{
 			// TODO: maybe not needed
-			if (mUncoveredPiece->GetPieceType() == PieceFactory::PieceType::Joker)
+			if (mUncoveredPiece->GetPieceType() == PieceType::Joker)
 			{
 				Joker& joker = dynamic_cast<Joker&>(*mUncoveredPiece);
 				if (joker.PeekActualPiece().GetPieceChar() != uncoveredPieceChar)
@@ -97,23 +97,23 @@ bool StrategyPiece::IsStrongerThan(const StrategyPiece& other) const
 	return false;
 }
 
-void StrategyPiece::ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType)
+void StrategyPiece::ChangeJokerToStronger(PieceType enemyPieceType)
 {
-	if (this->GetPieceType() == PieceFactory::PieceType::Joker)
+	if (this->GetPieceType() == PieceType::Joker)
 	{
 		switch (enemyPieceType)
 		{
-			case (PieceFactory::PieceType::Paper):
+			case (PieceType::Paper):
 			{
 				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Scissors>(mOwnerNum));
 				break;
 			}
-			case (PieceFactory::PieceType::Scissors):
+			case (PieceType::Scissors):
 			{
 				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Rock>(mOwnerNum));
 				break;
 			}
-			case (PieceFactory::PieceType::Rock):
+			case (PieceType::Rock):
 			{
 				mUncoveredPiece = std::make_unique<Joker>(mOwnerNum, std::make_unique<Paper>(mOwnerNum));
 				break;

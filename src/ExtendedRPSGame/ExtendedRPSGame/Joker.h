@@ -37,8 +37,8 @@ public:
 	Joker(int ownerNum, std::unique_ptr<Piece> actualPiece) : Piece(ownerNum), mActualPiece(std::move(actualPiece)) {} // TODO: SetActualPiece
 
 	// Gets this piece type.
-	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Joker; }
-	PieceFactory::PieceType GetActualPieceType() const override { return mActualPiece->GetPieceType(); }
+	PieceType GetPieceType() const override { return PieceType::Joker; }
+	PieceType GetActualPieceType() const override { return mActualPiece->GetPieceType(); }
 
 	// Return true if the given new piece has the same owner as this joker,
 	// and it represents a piece the Joker wants to be, from: R P S B

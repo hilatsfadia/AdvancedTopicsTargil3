@@ -19,6 +19,8 @@
 #define NONE -1
 #define NUM_OF_PLAYERS 2
 #define NUM_OF_ADJACENT_POSITIONS 4
+#define FIRST_PLAYER_NUM 1
+#define SECOND_PLAYER_NUM 2
 #define TIE 0
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm

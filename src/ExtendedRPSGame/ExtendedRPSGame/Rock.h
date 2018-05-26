@@ -27,7 +27,7 @@ public:
 	Rock(int ownerNum) : RPSPiece(ownerNum) {}
 
 	// Gets this piece type.
-	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Rock; }
+	PieceType GetPieceType() const override { return PieceType::Rock; }
 
 	char GetPieceChar() const override { return ROCK_CHAR; }
 

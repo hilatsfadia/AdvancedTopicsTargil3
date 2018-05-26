@@ -27,7 +27,7 @@ public:
 	Flag(int ownerNum) : Piece(ownerNum) {}
 
 	// Gets this piece type.
-	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Flag; }
+	PieceType GetPieceType() const override { return PieceType::Flag; }
 
 	bool GetIsMovingPiece() const override { return false; }
 

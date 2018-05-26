@@ -13,7 +13,7 @@ void Piece::LoseToPiece()
 
 void Piece::BothPiecesLosers(Piece& enemy)
 {
-	PieceFactory::PieceType enemyPieceType = enemy.GetPieceType();
+	PieceType enemyPieceType = enemy.GetPieceType();
 
 	// TODO: throw exception
 	if (!this->mOwner->DecPieceCount(this->GetPieceType()))
@@ -29,7 +29,7 @@ void Piece::BothPiecesLosers(Piece& enemy)
 bool Piece::InitializeOwner(std::shared_ptr<Player> owner)
 { 
 	mOwnerNum = owner->GetPlayerNum();
-	PieceFactory::PieceType pieceType = GetPieceType();
+	PieceType pieceType = GetPieceType();
 	// A PIECE type appears in file more than its number
 	if (!owner->IncPieceCountInInitialization(pieceType))
 	{

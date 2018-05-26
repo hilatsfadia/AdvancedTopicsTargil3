@@ -28,7 +28,7 @@ public:
 	Bomb(int ownerNum) : Piece(ownerNum) {}
 
 	// Gets this piece type.
-	PieceFactory::PieceType GetPieceType() const override { return PieceFactory::PieceType::Bomb; }
+	PieceType GetPieceType() const override { return PieceType::Bomb; }
 
 	bool GetIsMovingPiece() const override { return false; }
 
