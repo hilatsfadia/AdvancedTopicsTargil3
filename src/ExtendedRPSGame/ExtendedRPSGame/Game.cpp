@@ -278,6 +278,7 @@ bool Game::HandlePositioning()
 bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum)
 {
 	if (!mGameBoard.CheckGetPieceOfPlayer(jokerChange.getJokerChangePosition(), playerNum)){
+		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 
