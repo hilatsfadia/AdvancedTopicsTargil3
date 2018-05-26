@@ -114,6 +114,9 @@ private:
 	// Change a joker of the given player according to the information in jokerChange.
 	bool ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum);
 
+	// Log the current board after move to file.
+	void LogAfterMove(int countMoves);
+
 public:
 
 	Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm);

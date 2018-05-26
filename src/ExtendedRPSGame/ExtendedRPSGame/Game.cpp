@@ -274,24 +274,23 @@ bool Game::HandlePositioning()
 	return true;
 }
 
+// Written in the forum to put printing to console in comment
 bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum)
 {
-	Piece* jokerPiece = mGameBoard.GetPieceOfPlayer(jokerChange.getJokerChangePosition(), playerNum);
+	if (!mGameBoard.CheckGetPieceOfPlayer(jokerChange.getJokerChangePosition(), playerNum)){
+		return false;
+	}
 
-	// TODO: check if need to cout
-	if (jokerPiece == nullptr)
-	{
-		// Written in the forum to put in comment
+	Piece* jokerPiece = mGameBoard.GetPiece(jokerChange.getJokerChangePosition());
+
+	if (jokerPiece == nullptr){
 		//std::cout << "The joker change is illegal because given position is illegal." << std::endl;
 		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 
 	Joker* joker = dynamic_cast<Joker*>(jokerPiece);
-
-	if (joker == nullptr)
-	{
-		// Written in the forum to put in comment
+	if (joker == nullptr){
 		//cout << "Joker position doesn't have a piece other than a joker" << endl;
 		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
@@ -299,18 +298,26 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	// Joker position that doesn't have a Joker owned by this player
 	//else if (joker->GetOwner()->GetPlayerNum() != playerNum)
 	//{
-	//	cout << "Joker position doesn't have a joker owned by this player" << endl;
 	//	SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 	//	return false;
 	//}
-	else if (!ChangeJokerActualType(joker, jokerChange.getJokerNewRep()))
-	{
+	else if (!ChangeJokerActualType(joker, jokerChange.getJokerNewRep())){
 		// Already printed error.
 		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 
 	return true;
+}
+
+void Game::LogAfterMove(int countMoves)
+{
+	logFile << "Count Move: " << countMoves << endl;
+	logFile << "\n" << endl;
+	mGameBoard.Print(logFile);
+	logFile << "###############################################" << endl;
+	logFile << "\n" << endl;
+	logFile.flush();
 }
 
 unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
@@ -359,68 +366,42 @@ void Game::NotifyOtherPlayer(int otherPlayerIndex, const FightInfoImpl& fightToF
 	}
 }
 
-void Game::HandleMoves()
-{
+void Game::HandleMoves(){
 	// One turn consists of two moves of the two players.
 	int countNoFightMoves = 0;
-	// TODO: delete!!!
-	int countMoves = 1;
+	int countMoves = 1;// TODO: delete!!!
 
-	// TODO: split to functions
 	while (countNoFightMoves < MAX_MOVES)
 	{
 		for (int i = 0; i < NUM_OF_PLAYERS; i++)
 		{
 			FightInfoImpl fightToFill;
-
 			unique_ptr<Move> currMove = CheckGetMove(i, fightToFill);
-
-			if (currMove == nullptr) // if Game is over
-			{
+			if (currMove == nullptr){ // if Game is over
 				return;
 			}
 
 			// Notify only of there was a fight
-			if (fightToFill.isInitialized()) // There was fight
-			{
+			if (fightToFill.isInitialized()){ // There was fight
 				mAlgorithmsVec[i]->notifyFightResult(fightToFill);
 				countNoFightMoves = 0;
 			}
-			else // There was no fight
-			{
+			else{ // There was no fight
 				countNoFightMoves++;
 			}
 
-			// TODO: delete!!!
-			logFile << "Count Move: " << countMoves << endl;
-			logFile << "\n" << endl;
-			mGameBoard.Print(logFile);
-			logFile << "###############################################" << endl;
-			logFile << "\n" << endl;
-			logFile.flush();
-
+			LogAfterMove(countMoves);// TODO: delete!!!
 			unique_ptr<JokerChange> currJokerChange = mAlgorithmsVec[i]->getJokerChange();
-
-			if (currJokerChange != nullptr) // if a change is requested
-			{
-				if (!ChangeJokerRepresentation(*currJokerChange, i + 1))
-				{
+			if (currJokerChange != nullptr){ // if a change is requested
+				if (!ChangeJokerRepresentation(*currJokerChange, i + 1)){
 					return;
 				}
 			}
 
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
-
-			//// TODO: delete!!!
-			//logFile << "Count Move: " << countMoves << endl;
-			//logFile << "\n" << endl;
-			//mGameBoard.Print(logFile);
-			//logFile << "###############################################" << endl;
-			//logFile << "\n" << endl;
-			//logFile.flush();
 		}
 
-		countMoves++;
+		countMoves++;// TODO: delete!!!
 	}
 
 	ReportGameOverToFile(Winner::Tie, TIE_NO_FIGHTS);

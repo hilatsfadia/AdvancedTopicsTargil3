@@ -64,7 +64,10 @@ private:
 
 		// Get this square piece
 		// TODO: delete!
-		L* GetPiece() { return piece.get(); }
+		L* GetPiece() {
+			if (piece == nullptr){ return nullptr; }
+			else{ return piece.get(); }
+		}
 
 		// Get this square piece
 		// TODO! change name!
@@ -133,11 +136,21 @@ public:
 	// to adjacent position vertically or horizontally.
 	bool IsLegalMoveDestination(const Point& posFrom, const Point& posTo) const;
 
-	// Returns the piece of the given player in the given location.
+	// Returns the piece in the given location.
 	// If there is no piece of the given player in the given location, returns nullptr.
-	T* GetPieceOfPlayer(const Point& position, int playerNum);
+	// call CheckGetPieceOfPlayer before!
+	T* GetPiece(const Point& position);
+	
+	// Checks if can get a piece of the given player in the given position
+	bool CheckGetPieceOfPlayer(const Point& position, int playerNum) const;
+	
+	// Checking that the move is legal.
+	bool ChecksIfMoveIsLegal(int playerNum, const Point& posFrom, const Point& posTo) const;
 
-	//bool IsJokerChangeLegal(const JokerChange& jokerChange);
+	// Put the winning piece in it's place. Remove the loser.
+	// Return the winner.
+	int HandleFight(BoardImpl<T>::BoardSquare<T>& boardSquareAttacker, 
+		BoardImpl<T>::BoardSquare<T>& boardSquareAttackee);
 
 	// Checks if the move is legal. If so, move the piece to the new position.
 	// Maybe requires fight.
