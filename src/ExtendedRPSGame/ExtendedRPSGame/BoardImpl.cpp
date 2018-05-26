@@ -56,7 +56,7 @@ void BoardImpl<T>::InitByTempBoards(BoardImpl<T>& player1Board, BoardImpl<T>& pl
 
 			if ((!player1BoardSquare.IsEmpty()) && (!player2BoardSquare.IsEmpty())){
 				WinningPiece winner = player1Piece.Fight(player2Piece);
-				vectorToFill.push_back(std::make_unique<FightInfoImpl>(PointImpl(col, row), player1Piece.GetPieceChar(), player2Piece.GetPieceChar(), (int)winner));
+				vectorToFill.push_back(std::make_unique<FightInfoImpl>(PointImpl(col, row), player1Piece.GetActualPieceChar(), player2Piece.GetActualPieceChar(), (int)winner));
 				switch (winner){
 					case (WinningPiece::CallingObject):{
 						boardSquare.StealPieceFromSquare(player1BoardSquare);
