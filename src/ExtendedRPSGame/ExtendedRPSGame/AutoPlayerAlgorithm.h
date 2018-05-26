@@ -133,7 +133,7 @@ private:
 	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType) const;
 
 	// Get a move according to the given MoveType in the given row
-	unique_ptr<Move> getStrategyMoveInRow(MoveType moveType, int row) const;
+	unique_ptr<Move> getStrategyMoveInPosition(MoveType moveType, int row, int col) const;
 
 	// Get a move according to the given MoveType in the player's board.
 	unique_ptr<Move> getStrategyMove(MoveType moveType) const;
