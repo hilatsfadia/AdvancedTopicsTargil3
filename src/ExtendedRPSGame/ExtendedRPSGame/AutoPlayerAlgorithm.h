@@ -33,7 +33,7 @@ private:
 	//int mPlayerNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mPlayerJokerLocations;
-	int lastMovedPieceID = NONE;
+	//int lastMovedPieceID = NONE;
 
 	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
 
@@ -81,18 +81,18 @@ private:
 	
 	// Updates the line number according to given isToMoveForward. 
 	// If true, inc pos, else, dec pos
-	void UpdateLineNumber(int& yPos, bool isToMoveForward);
+	void UpdateLineNumber(int& yPos, bool isToMoveForward) const;
 
 	// Init the initial positions for a specific piece type, starting from the given position.
 	// Updates the given position to the next position available 
 	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, 
-		int count, char typeChar, char jokerReper = NON_JOKER_REP);
+		int count, char typeChar, char jokerReper = NON_JOKER_REP) const;
 
-	// Does the filling of the given vector with the positions.
-	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+	// Does the filling of the given vector with the initial positions of the player.
+	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const;
 
 	// Init the board of the player of this algorithm.
-	void initTheAlgorithmPlayerBoard(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+	void initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill);
 
 
 	//-----------------------------------------------------------
@@ -111,13 +111,14 @@ private:
 	//-----------------------------------------------------------
 	
 	// Fill in the given vector all the pieces which are moving and in the given distance from the flag position
-	void getMovingPiecesInDistanceFromFlag(const PointImpl& flag_pos, int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill);
+	void getMovingPiecesInDistanceFromFlag(const PointImpl& flag_pos, 
+		int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill) const;
 
 	// Get a free place for the piece in the given location, which is closer to the flag position.
 	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl & flagPos) const;
 
 	// Return a move which is making a moving piece closer to a flag.
-	unique_ptr<Move> conquerTheFlag();
+	unique_ptr<Move> conquerTheFlag() const;
 
 	// Return true iff can move the given piece to the given position, according to the given MoveType.
 	bool isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const;
@@ -127,13 +128,13 @@ private:
 	unique_ptr<PointImpl> getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const;
 
 	// Return true iff the given piece has to be moved according to the given MoveType
-	bool isPieceToMove(const StrategyPiece& strategyPiece, AutoPlayerAlgorithm::MoveType moveType);
+	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType) const;
 
 	// Get a move according to the given MoveType in the given row
-	unique_ptr<Move> getStrategyMoveInRow(MoveType moveType, int row);
+	unique_ptr<Move> getStrategyMoveInRow(MoveType moveType, int row) const;
 
 	// Get a move according to the given MoveType in the player's board.
-	unique_ptr<Move> getStrategyMove(MoveType moveType);
+	unique_ptr<Move> getStrategyMove(MoveType moveType) const;
 
 	//void movePieceOnInfoBoard(const Move& getMove);
 

@@ -22,8 +22,9 @@ public:
 		mJokerChangePosition(jokerChangePos), mJokerNewRep(jokerNewRep){}
 	JokerChangeImpl(const Point& jokerChangePos, char jokerNewRep) : 
 		mJokerChangePosition(jokerChangePos.getX(), jokerChangePos.getY()), mJokerNewRep(jokerNewRep) {}
-	inline virtual const Point& getJokerChangePosition() const override { return mJokerChangePosition; }
-    virtual char getJokerNewRep() const override {return mJokerNewRep;} // R, P, S or B (but NOT J and NOT F)
+
+	virtual const Point& getJokerChangePosition() const override { return mJokerChangePosition; }
+    virtual char getJokerNewRep() const override { return mJokerNewRep; } // R, P, S or B (but NOT J and NOT F)
 };
 
 

@@ -24,6 +24,10 @@ private:
 
 public:
 	~FilePlayerAlgorithm();
+
+	//-----------------------------------------------------------
+	// PlayerAlgorithm methods
+	//-----------------------------------------------------------
     virtual void getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) override;
     virtual void notifyOnInitialBoard(const Board&, const std::vector<unique_ptr<FightInfo>>&) override {} //empty impl
     virtual void notifyOnOpponentMove(const Move&) override {} // called only on opponent's move - empty impl

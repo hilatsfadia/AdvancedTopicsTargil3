@@ -32,7 +32,7 @@ Game::Winner Game::GetWinner(int loserNum) const
 	return Game::Winner::None;
 }
 
-bool Game::ReportAllMovingPiecesEaten()
+bool Game::ReportAllMovingPiecesEaten() const
 {
 	bool noMovingPiecesPlayer1 = (mPlayersVec[0]->GetCountOfMovingPieces() == 0);
 	bool noMovingPiecesPlayer2 = (mPlayersVec[1]->GetCountOfMovingPieces() == 0);
@@ -41,14 +41,14 @@ bool Game::ReportAllMovingPiecesEaten()
 	if (noMovingPiecesPlayer1 && noMovingPiecesPlayer2)
 	{
 		// As Written in the forum
-		ReportGameOver(Winner::Tie, PIECES_EATEN_BOTH_PLAYERS);
+		ReportGameOverToFile(Winner::Tie, PIECES_EATEN_BOTH_PLAYERS);
 		return true;
 	}
 
 	return false;
 }
 
-bool Game::ReportGameOverAfterInitBoard()
+bool Game::ReportGameOverAfterInitBoard() const
 {
 	bool isGameOver = true;
 	bool noFlagsPlayer1 = (mPlayersVec[0]->GetFlagsCount() == 0);
@@ -56,15 +56,15 @@ bool Game::ReportGameOverAfterInitBoard()
 
 	if (noFlagsPlayer1 && noFlagsPlayer2)
 	{
-		ReportGameOver(Winner::Tie, TIE_FLAGS_EATEN);
+		ReportGameOverToFile(Winner::Tie, TIE_FLAGS_EATEN);
 	}
 	else if (noFlagsPlayer1)
 	{
-		ReportGameOver(Winner::Player2, FLAGS_CAPTURED);
+		ReportGameOverToFile(Winner::Player2, FLAGS_CAPTURED);
 	}
 	else if (noFlagsPlayer2)
 	{
-		ReportGameOver(Winner::Player1, FLAGS_CAPTURED);
+		ReportGameOverToFile(Winner::Player1, FLAGS_CAPTURED);
 	}
 	else if (!ReportAllMovingPiecesEaten())
 	{
@@ -74,10 +74,10 @@ bool Game::ReportGameOverAfterInitBoard()
 	return isGameOver;
 }
 
-void Game::MakeOutputFile(const std::string& gameOverMessage, bool ifToPrintBoard)
+void Game::ReportGameOverToFile(Winner winner, const std::string& gameOverMessage, bool ifToPrintBoard) const
 {
     ofstream outFile(OUTPUT_FILE_NAME);
-    outFile << "Winner: " << to_string((int)mWinner) << endl;
+    outFile << "Winner: " << to_string((int)winner) << endl;
     outFile << "Reason: " << gameOverMessage << endl;
 
 	if (ifToPrintBoard)
@@ -89,13 +89,6 @@ void Game::MakeOutputFile(const std::string& gameOverMessage, bool ifToPrintBoar
     outFile.close();
 }
 
-void Game::ReportGameOver(Winner winner, const std::string & gameOverMessage, bool ifToPrintBoard)
-{
-	mWinner = winner;
-
-	MakeOutputFile(gameOverMessage, ifToPrintBoard);
-}
-
 Game::Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm)
 {
 	mPlayersVec.push_back(make_shared<Player>());
@@ -104,11 +97,7 @@ Game::Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgori
 	mAlgorithmsVec.push_back(std::move(player2Algorithm));
 }
 
-Game::~Game()
-{
-}
-
-bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board)
+bool Game::PutNonJokerOnBoard(int playerNum, const std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board) const
 {
 	unique_ptr<Piece> piece = PieceFactory::GetPieceFromChar(piecePos->getPiece());
 	if (piece == nullptr)
@@ -130,7 +119,7 @@ bool Game::PutNonJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pie
 	return board.PutPieceOnSinglePlayerBoard(std::move(piece), piecePos->getPosition());
 }
 
-bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
+bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation) const
 {
 	unique_ptr<Piece> actualPiece = PieceFactory::GetPieceFromChar(cJokerRepresantation, joker->GetOwner());
 	if (actualPiece == nullptr)
@@ -151,7 +140,7 @@ bool Game::ChangeJokerActualType(Joker* joker, char cJokerRepresantation)
 	return true;
 }
 
-bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, int playerNum)
+bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, int playerNum) const
 {
 	if (!joker->InitializeOwner(mPlayersVec[playerNum]))
 	{
@@ -169,7 +158,7 @@ bool Game::InitJokerOwnerAndActualType(Joker* joker, char cJokerRepresantation, 
 	return true;
 }
 
-bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board)
+bool Game::PutJokerOnBoard(int playerNum, const std::unique_ptr<PiecePosition>& piecePos, BoardImpl<Piece>& board) const
 {
 	// actualPiece shouldn't have an owner! because we don't want to 
 	// count it as one of the player's pieces.
@@ -186,9 +175,9 @@ bool Game::PutJokerOnBoard(int playerNum, std::unique_ptr<PiecePosition>& pieceP
 	return board.PutPieceOnSinglePlayerBoard(std::move(joker), piecePos->getPosition());
 }
 
-bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl<Piece>& board)
+bool Game::PutPlayerPiecesOnBoard(int playerNum, const std::vector<unique_ptr<PiecePosition>>& playerPiecePositions, BoardImpl<Piece>& board) const
 {
-	for (std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
+	for (const std::unique_ptr<PiecePosition>& piecePos : playerPiecePositions)
 	{
 		// TODO: define
 		if (piecePos->getJokerRep() == NON_JOKER_REP)
@@ -210,15 +199,16 @@ bool Game::PutPlayerPiecesOnBoard(int playerNum, std::vector<unique_ptr<PiecePos
 	return true;
 }
 
-void Game::SetBadInputFileMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage, bool ifToPrintBoard)
+void Game::SetBadInputMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage, bool ifToPrintBoard) const
 {
 	char tmp_game_over_message[MESSAGE_MAX_LEN];
 	sprintf_s(tmp_game_over_message, templateBadFormatMessage, loserNum);
-	ReportGameOver(winner, tmp_game_over_message, ifToPrintBoard);
+	ReportGameOverToFile(winner, tmp_game_over_message, ifToPrintBoard);
 }
 
-bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
-	std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board) {
+bool Game::PutPiecePositionsOnBoard(const std::vector<unique_ptr<PiecePosition>>& player1PiecePositions, 
+	const std::vector<unique_ptr<PiecePosition>>& player2PiecePositions, 
+	BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board) const {
 
 	bool isErrorInPlayer1Positioning = !PutPlayerPiecesOnBoard(0, player1PiecePositions, tempPlayer1Board) ||
 		(!mPlayersVec[0]->DoesPosiotionedAllFlags()); // Missing Flags - Flags are not positioned according to their number
@@ -232,18 +222,18 @@ bool Game::PutPiecePositionsOnBoard(std::vector<unique_ptr<PiecePosition>>& play
 	{
 		// Positioning for both players are analyzed at the same stage - so 
 		// if both are bad the result is 0 (no winner).
-		ReportGameOver(Winner::Tie, BAD_POS_BOTH_PLAYERS, false);
+		ReportGameOverToFile(Winner::Tie, BAD_POS_BOTH_PLAYERS, false);
 		return false;
 	}
 	// Position for one player is invalid
 	else if (isErrorInPlayer1Positioning)
 	{
-		SetBadInputFileMessageWithWinner(1, Winner::Player2, BAD_POS_PLAYER, false);
+		SetBadInputMessageWithWinner(1, Winner::Player2, BAD_POS_PLAYER, false);
 		return false;
 	}
 	else if (isErrorInPlayer2Positioning)
 	{
-		SetBadInputFileMessageWithWinner(2, Winner::Player1, BAD_POS_PLAYER, false);
+		SetBadInputMessageWithWinner(2, Winner::Player1, BAD_POS_PLAYER, false);
 		return false;
 	}
 
@@ -293,7 +283,7 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	{
 		// Written in the forum to put in comment
 		//std::cout << "The joker change is illegal because given position is illegal." << std::endl;
-		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 
@@ -303,7 +293,7 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	{
 		// Written in the forum to put in comment
 		//cout << "Joker position doesn't have a piece other than a joker" << endl;
-		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 	// Joker position that doesn't have a Joker owned by this player
@@ -316,7 +306,7 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 	else if (!ChangeJokerActualType(joker, jokerChange.getJokerNewRep()))
 	{
 		// Already printed error.
-		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return false;
 	}
 
@@ -325,45 +315,38 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 
 unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 {
-	// Checks if mPlayersVec[i] can move. If not, he loses the game.
-	if (mPlayersVec[playerIndex]->GetCountOfMovingPieces() == 0)
-	{
-		ReportGameOver((Winner)mPlayersVec[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN_PLAYER);
+	if (mPlayersVec[playerIndex]->GetCountOfMovingPieces() == 0){
+		ReportGameOverToFile((Winner)mPlayersVec[GetOpponentIndex(playerIndex)]->GetPlayerNum(), PIECES_EATEN_PLAYER);
 		return nullptr;
 	}
 
-	// For this player
 	unique_ptr<Move> theMove = mAlgorithmsVec[playerIndex]->getMove();
 
 	// Written in the forum that we can return nullptr for invalid line/ end of file
 	// In both cases we are allowed to refer to it as a lose.
-	if (theMove == nullptr)
-	{
+	if (theMove == nullptr){
 		int playerNum = mPlayersVec[playerIndex]->GetPlayerNum();
-		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return nullptr;
 	}
 
-	if (!mGameBoard.MovePiece(*mPlayersVec[playerIndex], theMove, fightToFill))
-	{
+	if (!mGameBoard.MovePiece(*mPlayersVec[playerIndex], theMove, fightToFill)){
 		int playerNum = mPlayersVec[playerIndex]->GetPlayerNum();
-		SetBadInputFileMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
+		SetBadInputMessageWithWinner(playerNum, GetWinner(playerNum), BAD_MOVE_PLAYER);
 		return nullptr;
 	}
 
-	// Check if it was a winning move which ate the last flag of the oponnent.
-	// If so, the player who just moved wins the game.
+	// If the player who just moved ate the last flag of the oponnent, he wins the game.
 	// Note that the flags number of the current player haven't changed.
-	if (mPlayersVec[GetOpponentIndex(playerIndex)]->GetFlagsCount() == 0)
-	{
-		ReportGameOver((Winner)mPlayersVec[playerIndex]->GetPlayerNum(), FLAGS_CAPTURED);
+	if (mPlayersVec[GetOpponentIndex(playerIndex)]->GetFlagsCount() == 0){
+		ReportGameOverToFile((Winner)mPlayersVec[playerIndex]->GetPlayerNum(), FLAGS_CAPTURED);
 		return nullptr;
 	}
 
 	return theMove;
 }
 
-void Game::NotifyOtherPlayer(int otherPlayerIndex, FightInfoImpl& fightToFill, Move& move)
+void Game::NotifyOtherPlayer(int otherPlayerIndex, const FightInfoImpl& fightToFill, const Move& move) const
 {
 	// For the other player.
 	PlayerAlgorithm& opponentAlgorithm = *mAlgorithmsVec[otherPlayerIndex];
@@ -440,7 +423,7 @@ void Game::HandleMoves()
 		countMoves++;
 	}
 
-	ReportGameOver(Winner::Tie, TIE_NO_FIGHTS);
+	ReportGameOverToFile(Winner::Tie, TIE_NO_FIGHTS);
 }
 
 void Game::RunGame()

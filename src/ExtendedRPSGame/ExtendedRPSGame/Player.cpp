@@ -48,9 +48,15 @@ Player::Player()
 //	mMaxCountPieces[PieceFactory::PieceType::Flag] = F;
 //}
 
-int Player::GetPieceCount(PieceFactory::PieceType pieceType)
+int Player::GetPieceCount(PieceFactory::PieceType pieceType) const
 {
-	return mCountPieces[pieceType];
+	auto pieceCount = mCountPieces.find(pieceType);
+
+	if (pieceCount != mCountPieces.end()) {
+		return pieceCount->second;
+	}
+
+	return 0;
 }
 
 bool Player::DecPieceCount(PieceFactory::PieceType pieceType)
@@ -86,10 +92,21 @@ bool Player::IncPieceCountInInitialization(PieceFactory::PieceType pieceType)
 	return true;
 }
 
-int Player::GetCountOfMovingPieces()
+int Player::GetCountOfMovingPieces() const
 {
 	return mCountMovingPieces;
 }
+//
+//int Player::GetFlagsCount() const
+//{
+//	auto flagsCount = mCountPieces.find(PieceFactory::PieceType::Flag);
+//
+//	if (flagsCount != mCountPieces.end()) {
+//		return flagsCount->second;
+//	}
+//
+//	return 0;
+//}
 
 void Player::AddToCountMovingPieces(PieceFactory::PieceType pieceType)
 {

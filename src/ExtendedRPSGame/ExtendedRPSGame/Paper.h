@@ -19,8 +19,8 @@ class Paper :
 protected:
 	// Paper implements it according to its own rules.
 	// When a piece wants to move to an occupied location by a piece of other type,
-	// Deletes and removes the loser from its owner.
-	// Returns the winning piece. If there is no winner, returns nullptr.
+	// Removes the loser from its owner.
+	// Returns the winner.
 	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
 public:
 	Paper(std::shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}

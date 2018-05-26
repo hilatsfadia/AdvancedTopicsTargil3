@@ -48,7 +48,7 @@ void Parser::RemoveExtraWhitespaces(const string &input, string &output)
 		[](char a, char b) { return isspace(a) && isspace(b); });
 }
 
-void Parser::GetTokensFromLine(const std::string& line, std::vector<std::string>& outTokens)
+void Parser::GetTokensFromLine(const std::string& line, std::vector<std::string>& outTokens) const
 {
 	string lineWithoutExtraSpaces(line);
 	RemoveExtraWhitespaces(line, lineWithoutExtraSpaces);
@@ -70,7 +70,7 @@ bool Parser::CheckOpenInputFile(const std::ifstream& inFile, const std::string& 
 	return true;
 }
 
-bool Parser::CheckReadOK(std::ifstream& inFile, const std::string& playerfileName)
+bool Parser::CheckReadOK(const std::ifstream& inFile, const std::string& playerfileName) const
 {
 	if (inFile.bad())
 	{

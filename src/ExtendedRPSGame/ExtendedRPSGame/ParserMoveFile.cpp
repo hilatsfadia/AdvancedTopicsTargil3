@@ -26,7 +26,7 @@ using std::cout;
 using std::endl;
 using std::make_unique;
 
-unique_ptr<JokerChange> ParserMoveFile::ParseCurrJokerChange()
+unique_ptr<JokerChange> ParserMoveFile::ParseCurrJokerChange() const
 {
 	// If no change is requested
 	if (currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER)
@@ -60,7 +60,7 @@ unique_ptr<JokerChange> ParserMoveFile::ParseCurrJokerChange()
 	return make_unique<JokerChangeImpl>(*posJoker, currMoveLineTokens[NEW_REP_TOKEN_NUM][0]);
 }
 
-unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens()
+unique_ptr<Move> ParserMoveFile::ProcessMoveLineTokens() const
 {
 	if ((currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITHOUT_JOKER) && (currMoveLineTokens.size() != MOVE_LINE_TOKENS_COUNT_WITH_JOKER))
 	{

@@ -22,11 +22,9 @@ private:
 
 protected:
 	
-
 	// Process a line tokens. 
-	// Checks for tokens validity.
-	// Execute the line.
-	unique_ptr<Move> ProcessMoveLineTokens();
+	// Checks for tokens validity, if not valid return nullptr.
+	unique_ptr<Move> ProcessMoveLineTokens() const;
 
 	// In case Moves file is done (all lines were used) and the
 	// opponent still have moves : the opponent (given player parameter) will still
@@ -44,7 +42,7 @@ public:
 	// Process the joker tokens. 
 	// Checks for tokens validity.
 	// Execute the joker representation change.
-	unique_ptr<JokerChange> ParseCurrJokerChange();
+	unique_ptr<JokerChange> ParseCurrJokerChange() const;
 };
 
 #endif //ADTO_TARGIL1_PARSER_MOVE_FILE_H

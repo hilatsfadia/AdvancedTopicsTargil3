@@ -26,13 +26,13 @@ public:
     virtual int getY() const { return this->y; }
 	void setX(int x) { this->x = x; }
 	void setY(int y) { this->y = y; }
-
+/*
 	friend bool operator==(const PointImpl& lhs, const PointImpl& rhs)
 	{
 		return ((lhs.getX() == rhs.getX()) && (lhs.getY() == rhs.getY()));
 	}
 
-	friend inline bool operator!=(const PointImpl& lhs, const PointImpl& rhs) { return !(lhs == rhs); }
+	friend inline bool operator!=(const PointImpl& lhs, const PointImpl& rhs) { return !(lhs == rhs); }*/
 
 	// The L1 distance
 	int DistanceInStepsFrom(const PointImpl& other) const;

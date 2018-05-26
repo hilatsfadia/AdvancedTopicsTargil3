@@ -54,7 +54,7 @@ public:
 	int GetPlayerNum() const { return mPlayerNum; }
 
 	// Gets the number of pieces this player has of the given type.
-	int GetPieceCount(PieceFactory::PieceType pieceType);
+	int GetPieceCount(PieceFactory::PieceType pieceType) const;
 
 	// Removes one piece of the given type from this player.
 	// Returns true if this player had at least one piece 
@@ -69,10 +69,10 @@ public:
 	bool IncPieceCountInInitialization(PieceFactory::PieceType pieceType);
 
 	// Gets the number of players' pieces that can move.
-	int GetCountOfMovingPieces();
+	int GetCountOfMovingPieces() const;
 
 	// Gets the number of flag this player has.
-	int GetFlagsCount() { return mCountPieces[PieceFactory::PieceType::Flag]; }
+	int GetFlagsCount() const { return GetPieceCount(PieceFactory::PieceType::Flag); };
 
 	bool DoesPosiotionedAllFlags() const { return mPositionedAllFlags; }
 

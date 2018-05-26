@@ -18,8 +18,9 @@ class MoveImpl : public Move{
 	PointImpl mTo;
 public:
 	MoveImpl(const PointImpl& from, const PointImpl& to) : mFrom(from), mTo(to){}
-    virtual const Point& getFrom() const { return mFrom; }
-    virtual const Point& getTo() const { return  mTo; }
+
+    virtual const Point& getFrom() const override { return mFrom; }
+    virtual const Point& getTo() const override { return  mTo; }
 };
 
 

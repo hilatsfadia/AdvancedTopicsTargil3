@@ -125,30 +125,3 @@ void StrategyPiece::ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType
 		}
 	}
 }
-
-//
-//char StrategyPiece::GetStronger(const Piece* piece) const
-//{
-//	PieceFactory::PieceType type = piece->GetPieceType();
-//
-//	switch (type)
-//	{
-//		case (PieceFactory::PieceType::Joker):
-//		{
-//			const Joker* joker = dynamic_cast<const Joker*>(piece);
-//			if (joker != nullptr)
-//			{
-//				return GetStrongerNotJoker(joker->GetActualPiece());
-//			}
-//
-//			break;
-//		}
-//		default:
-//		{
-//			return GetStrongerNotJoker(piece);
-//			break;
-//		}
-//	}
-//
-//	return COVERED_CHAR;
-//}

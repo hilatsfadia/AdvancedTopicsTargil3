@@ -37,11 +37,11 @@ protected:
 
 	// Splits the line into tokens, given in the out parameter,
 	// ignoring extra white spaces.
-	void GetTokensFromLine(const std::string& line, std::vector<std::string>& outTokens);
+	void GetTokensFromLine(const std::string& line, std::vector<std::string>& outTokens) const;
 
 	// Returns true if and only if the state of inFile is not bad. If bad, prints
 	// relevant message and updates the problematic line number.
-	bool CheckReadOK(std::ifstream& inFile, const std::string& playerfileName);
+	bool CheckReadOK(const std::ifstream& inFile, const std::string& playerfileName) const;
 
 	// Gets the Point of the position from coordinates strings
 	static unique_ptr<PointImpl> GetPositionFromChars(const std::string& posy, const std::string& posx);

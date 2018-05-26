@@ -65,8 +65,6 @@ public:
 
 	// TODO: maybe derived class
 	void ChangeJokerToStronger(PieceFactory::PieceType enemyPieceType);
-
-	//char GetStronger(const Piece* piece) const;
 };
 
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H

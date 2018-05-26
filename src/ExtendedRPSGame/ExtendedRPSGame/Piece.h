@@ -23,29 +23,19 @@ protected:
 	// shared ptr because it is shared among it's pieces (as their owner) and the game.
 	shared_ptr<Player> mOwner;
 	int mOwnerNum;
-	
-	//PieceType mPieceType;
+
+	// For Explosion with bomb or tools of the same type.
+	// Removes both pieces from their owner.
+	void BothPiecesLosers(Piece& enemy);
 
 public:
 	enum class WinningPiece { Tie = 0, CallingObject = 1, OtherObject = 2 };
-	//enum class WinningPiece { Tie, ThisPiece, enemy };
 
 	virtual ~Piece() {};
-	//Piece() : mOwner(nullptr) {};
 
 	// TODO: maybe remove the owner itself and keep only it's number
-	// TODO!!!
 	Piece(shared_ptr<Player> owner = nullptr) : mOwner(owner) { if (owner != nullptr) mOwnerNum = owner->GetPlayerNum(); }
 	Piece(int ownerNum) : mOwner(nullptr), mOwnerNum(ownerNum) {}
-
-	// Deletes and removes the loser from its owner.
-	// Returns winner.
-	void LoseToPiece();
-
-	// For Explosion with bomb or tools of the same type.
-	// Deletes and removes both pieces from their owner.
-	// Returns nullptr.
-	void BothPiecesLosers(Piece& enemy);
 
 	// Update both the piece and the owner of the ownership.
 	bool InitializeOwner(std::shared_ptr<Player> owner);
@@ -60,6 +50,10 @@ public:
 
 	// Gets the owner number of this piece
 	int GetOwnerNum() const { return mOwnerNum; }
+
+	// Removes the loser from its owner.
+	// Returns winner.
+	void LoseToPiece();
 
 	// When a piece wants to move to an occupied location by a piece of the same type.
 	// Deletes and removes both pieces from their owner.
