@@ -31,7 +31,7 @@ private:
 	int mPlayer;
 	int mOpponent;
 	int mOpponentNumCoveredPieces;
-	int mOpponentNumMovablePieces = 0;
+	int mOpponentNumCoveredMovablePieces = 0;
 	//int mPlayerNumMovablePieces;
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mPlayerJokerLocations;

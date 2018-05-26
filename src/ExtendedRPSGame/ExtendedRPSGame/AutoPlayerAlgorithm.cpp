@@ -167,20 +167,10 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 	//next exercise remember to add handling to more than one flag
 	int winner = fight.getWinner();
 
-	if ((winner == TIE) || (winner == mPlayer))
-	{
-		// TODO: look
-		// It can be empty due to not initialized in notifyOnInitialBoard
-		if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(fight.getPosition()))
-		{
-			if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered)
-			{
-				mOpponentNumCoveredPieces--;
-			}
-			if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece())
-			{
-				mOpponentNumMovablePieces--;
-			}
+	// It can be empty due to not initialized in notifyOnInitialBoard
+	if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(fight.getPosition())){
+		if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered){
+			mOpponentNumCoveredPieces--;
 		}
 	}
 
@@ -189,16 +179,14 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 	}
 	else if (winner == mOpponent) {
 		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition()); // already done by the supplied board?
-		bool oldIsMoving = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece();
-
+		if ((mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered) && 
+			(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece()))
+		{
+			mOpponentNumCoveredMovablePieces--;
+		}
+		// It can't be empty due to not initialized in notifyOnInitialBoard, because opponent is the winner
 		// Uncover also if uncovered already to handle jokers.
 		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).UncoverPiece(fight.getPiece(winner));
-
-		// If uncovering reveled it as moving
-		if (!oldIsMoving && (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece()))
-		{
-			mOpponentNumMovablePieces++;
-		}
 	}
 	else // winner == mPlayer
 	{
@@ -208,7 +196,7 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 
 void AutoPlayerAlgorithm::findOpponentFlags() 
 {
-	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumMovablePieces <= F)) 
+	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumCoveredMovablePieces <= F))
 	{ //TODO: double check that everyone is by default false
 		for (int row = 1; row <= M; row++)
 		{
@@ -419,7 +407,7 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
 	if (!mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).GetIsMovingPiece())
 	{
 		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).SetMovingPiece();
-		mOpponentNumMovablePieces++;
+		mOpponentNumCoveredMovablePieces++;
 	}
 
 	mPlayersStrategyBoards[mOpponent - 1].MovePieceWithoutChecks(move.getFrom(), move.getTo());
