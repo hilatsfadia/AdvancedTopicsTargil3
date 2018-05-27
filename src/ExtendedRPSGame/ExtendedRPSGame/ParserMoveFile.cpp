@@ -92,10 +92,13 @@ unique_ptr<Move> ParserMoveFile::ParseCurrMove(std::ifstream& playerMoveFileStre
 		GetTokensFromLine(line, currMoveLineTokens);
 
 		// Skip empty lines
-		if (currMoveLineTokens.size() != 0)
+		while ((currMoveLineTokens.size() == 0) && (std::getline(playerMoveFileStream, line)))
 		{
-			return ProcessMoveLineTokens();
+			currMoveLineTokens.clear();
+			GetTokensFromLine(line, currMoveLineTokens);
 		}
+
+		return ProcessMoveLineTokens();
 	}
 	// Souldn't get here!
 	catch (...)
