@@ -23,7 +23,7 @@
 #define SECOND_PLAYER_NUM 2
 #define TIE 0
 
-class AutoPlayerAlgorithm : public PlayerAlgorithm
+class RSPPlayer_309962264 : public PlayerAlgorithm
 {
 private:
 	BoardImpl<StrategyPiece> mPlayersStrategyBoards[NUM_OF_PLAYERS];

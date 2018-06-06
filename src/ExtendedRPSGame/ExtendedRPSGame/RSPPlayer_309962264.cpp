@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "AutoPlayerAlgorithm.h"
+#include "RSPPlayer_309962264.h"
 #include "PointImpl.h"
 #include "PieceFactory.h"
 #include "Move.h"
@@ -17,12 +17,15 @@
 #include <ctime>
 #include <algorithm>
 #include <iterator>
+#include "AlgorithmRegistration.h"
+
+//REGISTER_ALGORITHM(309962264)
 
 using std::make_unique;
 // Type Alias
 using PieceType = PieceFactory::PieceType;
 
-void AutoPlayerAlgorithm::UpdateLineNumber(int & yPos, bool isToMoveForward) const
+void RSPPlayer_309962264::UpdateLineNumber(int & yPos, bool isToMoveForward) const
 {
 	if (isToMoveForward)
 	{
@@ -34,7 +37,7 @@ void AutoPlayerAlgorithm::UpdateLineNumber(int & yPos, bool isToMoveForward) con
 	}
 }
 
-void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, 
+void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, 
 	int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper) const
 {
 	for (int i = 0; i < count; i++) {
@@ -54,7 +57,7 @@ void AutoPlayerAlgorithm::initPositionsVectorOneType(std::vector<unique_ptr<Piec
 	//}
 }
 
-void AutoPlayerAlgorithm::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const
+void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const
 {
 	PointImpl point;
 	int xPos = 1;
@@ -83,7 +86,7 @@ void AutoPlayerAlgorithm::initPositionsVector(int player, std::vector<unique_ptr
 	//mPlayerNumMovablePieces = R + P + S;
 }
 
-void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill)
+void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
 	for (const std::unique_ptr<PiecePosition>& piecePos : vectorToFill) {
 		unique_ptr<Piece> uncoveredPiece = nullptr;
@@ -104,7 +107,7 @@ void AutoPlayerAlgorithm::initTheAlgorithmPlayerBoard(int player, const std::vec
 	}
 }
 
-void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
+void RSPPlayer_309962264::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
 	srand((unsigned int)time(0));
 	//srand(static_cast<unsigned int>(time(0)));
@@ -121,13 +124,13 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<unique_ptr
 	initTheAlgorithmPlayerBoard(player, vectorToFill);
 }
 
-void AutoPlayerAlgorithm::ClearPlayersBoardsInPosition(const Point& pos)
+void RSPPlayer_309962264::ClearPlayersBoardsInPosition(const Point& pos)
 {
 	mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
 	mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(pos);
 }
 
-void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
+void RSPPlayer_309962264::updateStrategyAccordingToBoard(const Board & b)
 {
 	for (int row = 1; row <= M; row++)
 	{
@@ -162,7 +165,7 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToBoard(const Board & b)
 	}
 }
 
-void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
+void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 {
 	//next exercise remember to add handling to more than one flag
 	int winner = fight.getWinner();
@@ -194,7 +197,7 @@ void AutoPlayerAlgorithm::updateStrategyAccordingToFight(const FightInfo& fight)
 	}
 }
 
-void AutoPlayerAlgorithm::findOpponentFlags() 
+void RSPPlayer_309962264::findOpponentFlags() 
 {
 	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumCoveredMovablePieces <= F))
 	{ //TODO: double check that everyone is by default false
@@ -219,7 +222,7 @@ void AutoPlayerAlgorithm::findOpponentFlags()
 	}
 }
 
-void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
+void RSPPlayer_309962264::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
 {
 	updateStrategyAccordingToBoard(b);
 
@@ -233,18 +236,18 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 	updateThreats();
 }
 
-bool AutoPlayerAlgorithm::AreBothBoardsEmptyInPosition(int x, int y) const
+bool RSPPlayer_309962264::AreBothBoardsEmptyInPosition(int x, int y) const
 {
 	return (mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(x, y) &&
 		mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(x, y));
 }
 
-bool AutoPlayerAlgorithm::AreBothBoardsEmptyInPosition(const Point& pos) const
+bool RSPPlayer_309962264::AreBothBoardsEmptyInPosition(const Point& pos) const
 {
 	return AreBothBoardsEmptyInPosition(pos.getX(), pos.getY());
 }
 
-void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const
+void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const
 {
 	int xPos = pos.getX();
 	int yPos = pos.getY();
@@ -282,7 +285,7 @@ void AutoPlayerAlgorithm::FillAdjacentLegalPositions(const Point& pos, std::vect
 //	mGameBoardInfo.GetBoardInPosition(move.getFrom()).ClearSquare();
 //}
 //
-void AutoPlayerAlgorithm::getMovingPiecesInDistanceFromFlag(const PointImpl &flag_pos, 
+void RSPPlayer_309962264::getMovingPiecesInDistanceFromFlag(const PointImpl &flag_pos, 
 	int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill) const
 {
 	for (int row = 1; row <= M; row++)
@@ -304,7 +307,7 @@ void AutoPlayerAlgorithm::getMovingPiecesInDistanceFromFlag(const PointImpl &fla
 	}
 }
 
-unique_ptr<PointImpl> AutoPlayerAlgorithm::getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl& flagPos) const
+unique_ptr<PointImpl> RSPPlayer_309962264::getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl& flagPos) const
 {
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(from, adjacentLegalPositions);
@@ -312,7 +315,7 @@ unique_ptr<PointImpl> AutoPlayerAlgorithm::getUnoccupiedPlaceTowardsFlag(const P
 
 	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
 	{
-		if (isRelevantDestination(piece, *pos, AutoPlayerAlgorithm::MoveType::TowardsFlag) 
+		if (isRelevantDestination(piece, *pos, RSPPlayer_309962264::MoveType::TowardsFlag) 
 			&& pos->DistanceInStepsFrom(flagPos) < from.DistanceInStepsFrom(flagPos))
 		{
 			return make_unique<PointImpl>(*pos);
@@ -322,7 +325,7 @@ unique_ptr<PointImpl> AutoPlayerAlgorithm::getUnoccupiedPlaceTowardsFlag(const P
 	return nullptr;
 }
 
-unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag() const
+unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
 {
 	std::vector<unique_ptr<PointImpl>> posVector;
 	unique_ptr<PointImpl> moveTo;
@@ -335,7 +338,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag() const
 		}
 	}
 
-	unique_ptr<Move> move = getStrategyMove(AutoPlayerAlgorithm::MoveType::RunAway);
+	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAway);
 	if (move != nullptr) {
 		return move;
 	}
@@ -372,20 +375,20 @@ unique_ptr<Move> AutoPlayerAlgorithm::conquerTheFlag() const
 	return nullptr;
 }
 
-unique_ptr<Move> AutoPlayerAlgorithm::getMove()
+unique_ptr<Move> RSPPlayer_309962264::getMove()
 {
 	//findFlag(); // Why is it needed here?
-	unique_ptr<Move> move = getStrategyMove(AutoPlayerAlgorithm::MoveType::RunAway);
+	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAway);
 	if (move == nullptr) {
 		if (mOpponentFlagLocations.size() != 0) {
 			move = conquerTheFlag();	//why would it give nullptr?
 		}
 
 		if (move == nullptr) {
-			move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Attack);
+			move = getStrategyMove(RSPPlayer_309962264::MoveType::Attack);
 
 			if (move == nullptr) {
-				move = getStrategyMove(AutoPlayerAlgorithm::MoveType::Random);
+				move = getStrategyMove(RSPPlayer_309962264::MoveType::Random);
 			}
 		}
 	}
@@ -402,7 +405,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getMove()
 	return move;
 }
 
-void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
+void RSPPlayer_309962264::notifyOnOpponentMove(const Move& move)
 {
 	if (!mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).GetIsMovingPiece())
 	{
@@ -416,7 +419,7 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move)
 	updateThreats();
 }
 
-void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo)
+void RSPPlayer_309962264::notifyFightResult(const FightInfo & fightInfo)
 {
 	updateStrategyAccordingToFight(fightInfo);
 	
@@ -424,7 +427,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo)
 	updateThreats();
 }
 
-void AutoPlayerAlgorithm::eraseJokerLocation(const Point& jokerPos) {
+void RSPPlayer_309962264::eraseJokerLocation(const Point& jokerPos) {
 	for (std::vector<PointImpl>::iterator itr = mPlayerJokerLocations.begin(); itr != mPlayerJokerLocations.end(); ) {
 		if (jokerPos.getX() == itr->getX()
 			&& jokerPos.getY() == itr->getY()) { //TODO:impl ==
@@ -436,12 +439,12 @@ void AutoPlayerAlgorithm::eraseJokerLocation(const Point& jokerPos) {
 	}
 }
 
-void AutoPlayerAlgorithm::updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos) {
+void RSPPlayer_309962264::updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos) {
 	eraseJokerLocation(oldJokerPos);
 	mPlayerJokerLocations.push_back(newJokerPos);
 }
 
-void AutoPlayerAlgorithm::updateThreatsForPlayerInPosition(int player, const PointImpl& pos)
+void RSPPlayer_309962264::updateThreatsForPlayerInPosition(int player, const PointImpl& pos)
 {
 	if (!mPlayersStrategyBoards[player - 1].IsEmptyInPosition(pos))
 	{
@@ -452,7 +455,7 @@ void AutoPlayerAlgorithm::updateThreatsForPlayerInPosition(int player, const Poi
 }
 
 // TODO: maybe not all board.
-void AutoPlayerAlgorithm::updateThreats() 
+void RSPPlayer_309962264::updateThreats() 
 {
 	for (int row = 1; row <= M; row++)
 	{
@@ -465,19 +468,19 @@ void AutoPlayerAlgorithm::updateThreats()
 	}
 }
 
-bool AutoPlayerAlgorithm::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const{
+bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const{
 	// Important! don't go to an invalid place or a place with other piece of the same player
 	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(pos) &&
 		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
 
 	switch (moveType){
-		case AutoPlayerAlgorithm::MoveType::RunAway:
-		case AutoPlayerAlgorithm::MoveType::TowardsFlag:
-		case AutoPlayerAlgorithm::MoveType::Random: {
+		case RSPPlayer_309962264::MoveType::RunAway:
+		case RSPPlayer_309962264::MoveType::TowardsFlag:
+		case RSPPlayer_309962264::MoveType::Random: {
 			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
 			break;
 		}
-		case AutoPlayerAlgorithm::MoveType::Attack:{
+		case RSPPlayer_309962264::MoveType::Attack:{
 			isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(pos))
 				&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(pos)))
 				&& !isThreatenedInPosition(piece, pos));
@@ -492,7 +495,7 @@ bool AutoPlayerAlgorithm::isRelevantDestination(const StrategyPiece& piece, cons
 	return isRelevantDest;
 }
 
-unique_ptr<PointImpl> AutoPlayerAlgorithm::getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const
+unique_ptr<PointImpl> RSPPlayer_309962264::getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const
 {
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(from, adjacentLegalPositions);
@@ -509,24 +512,24 @@ unique_ptr<PointImpl> AutoPlayerAlgorithm::getStrategyDestination(const Strategy
 	return nullptr;
 }
 
-bool AutoPlayerAlgorithm::isPieceToMove(const StrategyPiece& strategyPiece, AutoPlayerAlgorithm::MoveType moveType) const
+bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType) const
 {
 	bool isRelevantPiece = strategyPiece.GetIsMovingPiece();
 	switch (moveType)
 	{
-		case AutoPlayerAlgorithm::MoveType::RunAway:
+		case RSPPlayer_309962264::MoveType::RunAway:
 		{
 			// Joker doesn't run away, it can change it representation.
 			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreatened() 
 				&& (strategyPiece.GetPieceType() != PieceType::Joker);
 			break;
 		}
-		case AutoPlayerAlgorithm::MoveType::Attack:
+		case RSPPlayer_309962264::MoveType::Attack:
 		{
 			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreathening();
 			break;
 		}
-		case AutoPlayerAlgorithm::MoveType::Random:
+		case RSPPlayer_309962264::MoveType::Random:
 		{
 			//isRelevantPiece = isRelevantPiece && ((strategyPiece.GetStrategyPieceID() != lastMovedPieceID) || mPlayerNumMovablePieces <= 1);
 			break;
@@ -541,7 +544,7 @@ bool AutoPlayerAlgorithm::isPieceToMove(const StrategyPiece& strategyPiece, Auto
 	return isRelevantPiece;
 }
 
-unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMoveInPosition(AutoPlayerAlgorithm::MoveType moveType, int row, int col) const
+unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962264::MoveType moveType, int row, int col) const
 {
 	PointImpl posFrom(col, row);
 	if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(posFrom))
@@ -563,7 +566,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMoveInPosition(AutoPlayerAlgori
 	return nullptr;
 }
 
-unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMove(AutoPlayerAlgorithm::MoveType moveType) const{
+unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType) const{
 	std::vector<int> rows, cols;
 
 	for (int row = 1; row <= M; row++){
@@ -591,7 +594,7 @@ unique_ptr<Move> AutoPlayerAlgorithm::getStrategyMove(AutoPlayerAlgorithm::MoveT
 	return nullptr;
 }
 
-bool AutoPlayerAlgorithm::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const
+bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const
 {
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
@@ -617,7 +620,7 @@ bool AutoPlayerAlgorithm::isThreatenedInPosition(const StrategyPiece& piece, con
 }
 
 // TODO: merge functions
-bool AutoPlayerAlgorithm::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const
+bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const
 {
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
@@ -646,7 +649,7 @@ bool AutoPlayerAlgorithm::isThreateningInPosition(const StrategyPiece& piece, co
 	return false;
 }
 
-unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
+unique_ptr<JokerChange> RSPPlayer_309962264::getJokerChange()
 {
 	unique_ptr<JokerChange> jokerChange = nullptr;
 	for (const Point& jokerPos : mPlayerJokerLocations) {
@@ -661,7 +664,7 @@ unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange()
 	return jokerChange;
 }
 
-unique_ptr<JokerChange> AutoPlayerAlgorithm::changeThreatenedJoker(const Point& threatenedJokerPos){
+unique_ptr<JokerChange> RSPPlayer_309962264::changeThreatenedJoker(const Point& threatenedJokerPos){
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(threatenedJokerPos, adjacentLegalPositions);
 	StrategyPiece& threatenedPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(threatenedJokerPos);

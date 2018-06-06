@@ -102,13 +102,19 @@
     <ClInclude Include="PointImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AutoPlayerAlgorithm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StrategyPiece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RPSPiece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlgorithmRegistration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPPlayer_309962264.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TournamentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -179,13 +185,19 @@
     <ClCompile Include="PointImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AutoPlayerAlgorithm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StrategyPiece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RPSPiece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AlgorithmRegistration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPPlayer_309962264.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TournamentManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

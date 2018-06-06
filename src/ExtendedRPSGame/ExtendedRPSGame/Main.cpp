@@ -1,14 +1,17 @@
 #include "stdafx.h"
 #include "Game.h"
-#include "FilePlayerAlgorithm.h"
-#include "Parser.h"
 #include <iostream>
-#include "AutoPlayerAlgorithm.h"
+#include "RSPPlayer_309962264.h"
 #include <memory>
+#include "TournamentManager.h"
 
-#define COMMAND_LINE_AUTO_ALGORITHM_STR "auto"
-#define COMMAND_LINE_FILE_ALGORITHM_STR "file"
-#define COMMNAD_LINE_VS_STR "-vs-"
+#define COMMAND_LINE_THREADS_OPTIONAL_PARAMETER "-threads"
+#define COMMAND_LINE_PATH_OPTIONAL_PARAMETER "-path"
+#define COMMAND_LINE_THREADS_OPTIONAL_PARAMETER_USAGE COMMAND_LINE_THREADS_OPTIONAL_PARAMETER##" <num_threads>"
+#define COMMAND_LINE_PATH_OPTIONAL_PARAMETER_USAGE COMMAND_LINE_PATH_OPTIONAL_PARAMETER##" <location_of_algorithms>"
+#define COMMAND_LINE_PARAMETER_ARGC 2
+#define DEFAULT_NUM_OF_THREADS 4
+#define DEFAULT_SO_FILES_DIRECTORY "./" //working directory
 
 using std::string;
 using std::cout;
@@ -17,67 +20,68 @@ using std::make_unique;
 
 void PrintUsage()
 {
-	cout << "Usage of the program: you should give a parameter of one of the following options: "
-		<< COMMAND_LINE_AUTO_ALGORITHM_STR << COMMNAD_LINE_VS_STR << COMMAND_LINE_FILE_ALGORITHM_STR << endl
-		<< COMMAND_LINE_FILE_ALGORITHM_STR << COMMNAD_LINE_VS_STR << COMMAND_LINE_AUTO_ALGORITHM_STR << endl
-		<< COMMAND_LINE_AUTO_ALGORITHM_STR << COMMNAD_LINE_VS_STR << COMMAND_LINE_AUTO_ALGORITHM_STR << endl
-		<< COMMAND_LINE_FILE_ALGORITHM_STR << COMMNAD_LINE_VS_STR << COMMAND_LINE_FILE_ALGORITHM_STR << endl;
+	cout << "Usage of the program: you can optionally give the following two parameters in any order: "
+		<< COMMAND_LINE_THREADS_OPTIONAL_PARAMETER_USAGE
+		<< " " << COMMAND_LINE_PATH_OPTIONAL_PARAMETER_USAGE << endl;
 }
 
-// Creates a player algorithm object according to the given str.
-unique_ptr<PlayerAlgorithm> getPlayerAlgoritmFromStr(string str)
+bool UpdateOptionalParameter(int& numOfThreadsToUpdate, string& soFilesDirectoryToUpdate, string parameter, string value)
 {
-	if (str == COMMAND_LINE_AUTO_ALGORITHM_STR)
-	{
-		return make_unique<AutoPlayerAlgorithm>();
+	if (parameter == COMMAND_LINE_THREADS_OPTIONAL_PARAMETER) {
+		try
+		{
+			numOfThreadsToUpdate = stoi(value);
+		}
+		catch (std::exception& e)
+		{
+			std::cout << e.what() << std::endl;
+			return false;
+		}
 	}
-	else if (str == COMMAND_LINE_FILE_ALGORITHM_STR)
-	{
-		return make_unique<FilePlayerAlgorithm>();
+	else if (parameter == COMMAND_LINE_PATH_OPTIONAL_PARAMETER) {
+		soFilesDirectoryToUpdate = value;
+	}
+	else{
+		return false;
 	}
 
-	return nullptr;
+	return true;
+}
+
+bool UpdateCommandLineParameters(int& numOfThreadsToUpdate, string& soFilesDirectoryToUpdate, int argc, char *argv[]){
+	if (argc == 3) { // One command line parameter
+		if (!UpdateOptionalParameter(numOfThreadsToUpdate, soFilesDirectoryToUpdate, argv[1], argv[2])) {
+			return false;
+		}
+	}
+	else if (argc == 5) { // Two command line parameters
+		if (argv[1] == argv[3]) {
+			return false;
+		}
+		else {
+			if ((!UpdateOptionalParameter(numOfThreadsToUpdate, soFilesDirectoryToUpdate, argv[1], argv[2])) ||
+				(!UpdateOptionalParameter(numOfThreadsToUpdate, soFilesDirectoryToUpdate, argv[3], argv[4]))) {
+				return false;
+			}
+		}
+	}
+	else if (argc != 1) { // Number of parameters is illegal
+		return false;
+	}
 }
 
 int main(int argc, char *argv[])
 {
-	// Number of parameters is illegal
-	if (argc != 2)
+	int numOfThreads = DEFAULT_NUM_OF_THREADS;
+	string soFilesDirectory = DEFAULT_SO_FILES_DIRECTORY;
+
+	if (!UpdateCommandLineParameters(numOfThreads, soFilesDirectory, argc, argv))
 	{
 		PrintUsage();
 		return 1;
 	}
 
-	string algorithmsOption = argv[1];
-	std::vector<string> algorithmsStrings;
-	Parser::Split(algorithmsOption, '-', algorithmsStrings);
-
-	// Unknown parameter
-	if (algorithmsStrings.size() != NUM_OF_PLAYERS+1)
-	{
-		PrintUsage();
-		return 1;
-	}
-
-	// Unknown parameter
-	if (algorithmsStrings[1] != "vs")
-	{
-		PrintUsage();
-		return 1;
-	}
-
-	unique_ptr<PlayerAlgorithm> player1Algorithm = getPlayerAlgoritmFromStr(algorithmsStrings[0]);
-	unique_ptr<PlayerAlgorithm> player2Algorithm = getPlayerAlgoritmFromStr(algorithmsStrings[2]);
-
-	// Unknown parameter
-	if ((player1Algorithm == nullptr) || (player2Algorithm == nullptr))
-	{
-		PrintUsage();
-		return 1;
-	}
-
-	Game game(std::move(player1Algorithm), std::move(player2Algorithm));
-	game.RunGame();
+	TournamentManager::getTournamentManager().run();
 
     return 0;
 }
