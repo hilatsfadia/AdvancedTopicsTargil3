@@ -4,14 +4,20 @@
 #include <map>
 #include <functional>
 #include <memory>
+#include <list>
+#include <cstring>
+#include <vector>
 #include "PlayerAlgorithm.h"
 
 class TournamentManager
 {
 	static TournamentManager theTournamentManager;
 	std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> id2factory;
+	std::map<std::string, int> id2fnumberOfGames;
 	// private ctor
 	TournamentManager() {}
+
+	void eraseID(std::vector<std::string>& ids, std::string id);
 public:
 	static TournamentManager& getTournamentManager() {
 		return theTournamentManager;
@@ -21,14 +27,8 @@ public:
 		id2factory[id] = factoryMethod;
 	}
 	//int loadAlgorithm(const std::string& path, const std::string& soFileNameWithoutSuffix);
-	void run()const {
-		//for (auto& pair : id2factory) {
-		//	const auto& id = pair.first;
-		//	std::cout << id << ": ";
-		//	const auto& factoryMethod = pair.second;
-		//	factoryMethod()->foo();
-		//}
-	}
+	void run();
+	//void run()const;
 
 	int loadAlgorithms(int, const std::string& soFilesDirectory);
 

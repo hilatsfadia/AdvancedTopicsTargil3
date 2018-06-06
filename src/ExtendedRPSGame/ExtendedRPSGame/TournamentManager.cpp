@@ -1,11 +1,13 @@
-#include <list>
-#include <cstring>
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <algorithm>
 //#include <unistd.h>
 #include "TournamentManager.h"
+#include "Game.h"
+
+#define GAMES_TO_PLAY 30
 
 using namespace std;
 
@@ -15,11 +17,63 @@ static const unsigned int BUF_SIZE = 1024;
 // define the static variable
 TournamentManager TournamentManager::theTournamentManager;
 
+void TournamentManager::eraseID(vector<string>& ids, string id){
+    for (auto it = ids.begin(); it != ids.end();) {
+        if (*it == id) {
+            it = ids.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void TournamentManager::run() {
+    //for (auto& pair : id2factory) {
+    //	const auto& id = pair.first;
+    //	std::cout << id << ": ";
+    //	const auto& factoryMethod = pair.second;
+    //	factoryMethod()->foo();
+    //}
+    vector<string> ids;
+    for(auto it = id2factory.begin(); it != id2factory.end(); ++it) {
+        ids.push_back(it->first);
+        id2fnumberOfGames[it->first] = 0;
+    }
+
+    // TODO: move it
+    Game game(id2factory[ids[0]](), id2factory[ids[1]]());
+    game.RunGame();
+
+    for (string id : ids){
+        vector<string> enemies(ids.begin(), ids.end());
+        eraseID(enemies, id);
+        std::random_shuffle(std::begin(enemies), std::end(enemies));
+        int countConcatenations = GAMES_TO_PLAY / enemies.size();
+        int modVal = GAMES_TO_PLAY % enemies.size();
+        cout << "countConcatenations: " << countConcatenations << endl;
+        cout << "modVal: " << modVal << endl;
+
+        list<string> enemiesToPlayWith;
+        for (int i = 0; i < countConcatenations; i++){
+            enemiesToPlayWith.insert(enemiesToPlayWith.end(), enemies.begin(), enemies.end());
+        }
+
+        cout << "enemiesToPlayWith.size() : " << enemiesToPlayWith.size() << endl;
+
+        //enemiesToPlayWith.insert(enemiesToPlayWith.end(), enemies.begin(), std::advance(enemies.begin(), modVal)); // TODO:
+
+//        for (string enemy : enemiesToPlayWith) {
+//
+//        Game game(id2factory[id](), id2factory[enemiesToPlayWith[0]]());
+//        }
+    }
+}
+
 int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) {
     FILE *dl;   // handle to read directory
     std::string lsCommandStr = "ls " + soFilesDirectory + "*.so";  // command string to get dynamic lib names
     char inBuf[BUF_SIZE]; // input buffer for lib names
-    //list<void *> dl_list; // list to hold handles for dynamic libs
+    list<void *> dl_list; // list to hold handles for dynamic libs
     list<void *>::iterator itr;
     map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>>::iterator fitr;
     int countSOFiles = 0;
@@ -46,7 +100,7 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
 
         countSOFiles++;
         // add the handle to our list // TODO: delete!
-        //dl_list.insert(dl_list.end(), dlib);
+        dl_list.insert(dl_list.end(), dlib);
     }
 
     if (countSOFiles <= 1){

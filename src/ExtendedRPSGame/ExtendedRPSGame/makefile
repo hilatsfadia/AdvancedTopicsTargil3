@@ -132,7 +132,7 @@ AlgorithmRegistration.o: AlgorithmRegistration.cpp \
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 TournamentManager.o: TournamentManager.cpp TournamentManager.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
- JokerChange.h
+ JokerChange.h Game.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 
 	
