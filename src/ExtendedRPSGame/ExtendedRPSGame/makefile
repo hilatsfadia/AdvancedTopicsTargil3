@@ -1,13 +1,20 @@
 COMP = g++-5.3.0
+LIBS = -ldl
+
+default:
+	make all
+	
 #put all your object files here
 OBJS = RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o TournamentManager.o
+MAINOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o TournamentManager.o
 #The executable filename DON'T CHANGE
 EXEC = ex3
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
+	
+$(EXEC): $(MAINOBJS)
+	$(COMP) -rdynamic -o $(EXEC) $(MAINOBJS) $(LIBS)
 
-$(EXEC): $(OBJS)
-	$(COMP) $(OBJS) -o $@
 #a rule for building a simple c++ source file
 #use g++ -MM Main.cpp to see dependencies
 
@@ -16,7 +23,11 @@ RSPPlayer_309962264.o: RSPPlayer_309962264.cpp RSPPlayer_309962264.h \
  JokerChange.h BoardImpl.h Piece.h PieceFactory.h Player.h PointImpl.h \
  FightInfoImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h Paper.h \
  RPSPiece.h Rock.h Scissors.h Bomb.h Joker.h MoveImpl.h JokerChangeImpl.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	
+RSPPlayer_309962264.so: RSPPlayer_309962264.o
+	$(COMP) -shared -Wl,-soname,RSPPlayer_309962264.so -o RSPPlayer_309962264.so RSPPlayer_309962264.o
+
 BoardImpl.o: BoardImpl.cpp BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h PointImpl.h FightInfoImpl.h StrategyPiece.h
@@ -109,5 +120,8 @@ TournamentManager.o: TournamentManager.cpp TournamentManager.h \
  JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 
+all: $(EXEC) $(OBJS) RSPPlayer_309962264.so
+
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -f *.so *.o $(EXEC)
+#	rm -f $(OBJS) $(EXEC) RSPPlayer_309962264.so
