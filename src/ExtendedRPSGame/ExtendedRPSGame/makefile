@@ -1,8 +1,8 @@
 COMP = g++-5.3.0
 #put all your object files here
-OBJS = RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
+OBJS = RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o TournamentManager.o
 #The executable filename DON'T CHANGE
-EXEC = ex2
+EXEC = ex3
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
 
@@ -104,5 +104,10 @@ StrategyPiece.o: StrategyPiece.cpp StrategyPiece.h Piece.h PieceFactory.h \
  Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
  Move.h JokerChange.h Joker.h Rock.h RPSPiece.h Paper.h Scissors.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+TournamentManager.o: TournamentManager.cpp TournamentManager.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+
 clean:
 	rm -f $(OBJS) $(EXEC)

@@ -20,6 +20,7 @@ public:
 		// TODO: should warn if id is already registered
 		id2factory[id] = factoryMethod;
 	}
+	//int loadAlgorithm(const std::string& path, const std::string& soFileNameWithoutSuffix);
 	void run()const {
 		//for (auto& pair : id2factory) {
 		//	const auto& id = pair.first;

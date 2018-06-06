@@ -2,7 +2,7 @@
 #include <iostream>
 #include "RSPPlayer_309962264.h"
 #include <memory>
-//#include "TournamentManager.h"
+#include "TournamentManager.h"
 
 #define COMMAND_LINE_THREADS_OPTIONAL_PARAMETER "-threads"
 #define COMMAND_LINE_PATH_OPTIONAL_PARAMETER "-path"
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	//TournamentManager::getTournamentManager().run();
+	TournamentManager::getTournamentManager().run();
 
     return 0;
 }
