@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Parser.h"
 #include "Game.h"
 #include "Joker.h"
@@ -108,13 +107,13 @@ void Parser::PrintUsageMessage(int playerNum)
 string Parser::GetPositionsFileName(int playerNum)
 {
 	char fileName[INPUT_FILE_NAME_MAX_LEN];
-	sprintf_s(fileName, PLAYER_POSITION_FILE, playerNum);
+	sprintf(fileName, PLAYER_POSITION_FILE, playerNum);
 	return fileName;
 }
 
 string Parser::GetMovesFileName(int playerNum)
 {
 	char fileName[INPUT_FILE_NAME_MAX_LEN];
-	sprintf_s(fileName, PLAYER_MOVE_FILE, playerNum);
+	sprintf(fileName, PLAYER_MOVE_FILE, playerNum);
 	return fileName;
 }

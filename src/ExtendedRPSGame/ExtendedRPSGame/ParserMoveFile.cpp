@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ParserMoveFile.h"
 #include "Game.h"
 #include "Joker.h"

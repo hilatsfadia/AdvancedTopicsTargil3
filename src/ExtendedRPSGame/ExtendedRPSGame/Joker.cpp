@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Joker.h"
 #include "Piece.h"
 #include "Player.h"

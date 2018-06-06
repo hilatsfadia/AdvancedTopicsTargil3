@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "BoardImpl.h"
 #include <iostream>
 #include "Player.h"

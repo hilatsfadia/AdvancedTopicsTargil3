@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Piece.h"
 #include "Player.h"
 #include <cctype>

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Rock.h"
 
 Piece::WinningPiece Rock::FightWithOtherPieceType(Piece& enemy)

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Scissors.h"
 
 Piece::WinningPiece Scissors::FightWithOtherPieceType(Piece& enemy)

@@ -1,14 +1,13 @@
-#include "stdafx.h"
 #include "Game.h"
 #include <iostream>
 #include "RSPPlayer_309962264.h"
 #include <memory>
-#include "TournamentManager.h"
+//#include "TournamentManager.h"
 
 #define COMMAND_LINE_THREADS_OPTIONAL_PARAMETER "-threads"
 #define COMMAND_LINE_PATH_OPTIONAL_PARAMETER "-path"
-#define COMMAND_LINE_THREADS_OPTIONAL_PARAMETER_USAGE COMMAND_LINE_THREADS_OPTIONAL_PARAMETER##" <num_threads>"
-#define COMMAND_LINE_PATH_OPTIONAL_PARAMETER_USAGE COMMAND_LINE_PATH_OPTIONAL_PARAMETER##" <location_of_algorithms>"
+#define COMMAND_LINE_THREADS_OPTIONAL_PARAMETER_USAGE COMMAND_LINE_THREADS_OPTIONAL_PARAMETER " <num_threads>"
+#define COMMAND_LINE_PATH_OPTIONAL_PARAMETER_USAGE COMMAND_LINE_PATH_OPTIONAL_PARAMETER " <location_of_algorithms>"
 #define COMMAND_LINE_PARAMETER_ARGC 2
 #define DEFAULT_NUM_OF_THREADS 4
 #define DEFAULT_SO_FILES_DIRECTORY "./" //working directory
@@ -68,6 +67,8 @@ bool UpdateCommandLineParameters(int& numOfThreadsToUpdate, string& soFilesDirec
 	else if (argc != 1) { // Number of parameters is illegal
 		return false;
 	}
+
+	return true;
 }
 
 int main(int argc, char *argv[])
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	TournamentManager::getTournamentManager().run();
+	//TournamentManager::getTournamentManager().run();
 
     return 0;
 }

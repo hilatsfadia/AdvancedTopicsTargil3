@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "FightInfoImpl.h"
 
 void FightInfoImpl::SetFightInfoValues(const Point& position, char player1Piece, char player2Piece, int winner)

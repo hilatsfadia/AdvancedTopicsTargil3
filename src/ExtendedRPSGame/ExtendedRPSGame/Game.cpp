@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Game.h"
 #include <string>
 #include <fstream>
@@ -202,7 +201,7 @@ bool Game::PutPlayerPiecesOnBoard(int playerNum, const std::vector<unique_ptr<Pi
 void Game::SetBadInputMessageWithWinner(int loserNum, Game::Winner winner, const char * templateBadFormatMessage, bool ifToPrintBoard) const
 {
 	char tmp_game_over_message[MESSAGE_MAX_LEN];
-	sprintf_s(tmp_game_over_message, templateBadFormatMessage, loserNum);
+	sprintf(tmp_game_over_message, templateBadFormatMessage, loserNum);
 	ReportGameOverToFile(winner, tmp_game_over_message, ifToPrintBoard);
 }
 

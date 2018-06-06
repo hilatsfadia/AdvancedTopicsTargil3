@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Flag.h"
 
 Piece::WinningPiece Flag::FightWithOtherPieceType(Piece&)

@@ -1,6 +1,6 @@
 COMP = g++-5.3.0
 #put all your object files here
-OBJS = AutoPlayerAlgorithm.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
+OBJS = RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
 #The executable filename DON'T CHANGE
 EXEC = ex2
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
@@ -11,7 +11,7 @@ $(EXEC): $(OBJS)
 #a rule for building a simple c++ source file
 #use g++ -MM Main.cpp to see dependencies
 
-AutoPlayerAlgorithm.o: AutoPlayerAlgorithm.cpp AutoPlayerAlgorithm.h \
+RSPPlayer_309962264.o: RSPPlayer_309962264.cpp RSPPlayer_309962264.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h BoardImpl.h Piece.h PieceFactory.h Player.h PointImpl.h \
  FightInfoImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h Paper.h \
@@ -50,7 +50,7 @@ JokerChangeImpl.o: JokerChangeImpl.cpp JokerChangeImpl.h PointImpl.h \
 Main.o: Main.cpp Game.h BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h PointImpl.h FightInfoImpl.h FilePlayerAlgorithm.h \
- ParserMoveFile.h Parser.h AutoPlayerAlgorithm.h PiecePositionImpl.h \
+ ParserMoveFile.h Parser.h RSPPlayer_309962264.h PiecePositionImpl.h \
  StrategyPiece.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 MoveImpl.o: MoveImpl.cpp MoveImpl.h Point.h Move.h PointImpl.h

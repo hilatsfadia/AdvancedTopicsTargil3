@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "RPSPiece.h"
 #include "Joker.h"
 

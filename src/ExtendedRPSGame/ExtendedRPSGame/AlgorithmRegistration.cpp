@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "AlgorithmRegistration.h"
 #include "TournamentManager.h"
 

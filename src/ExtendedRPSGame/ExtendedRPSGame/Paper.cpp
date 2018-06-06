@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Paper.h"
 
 Piece::WinningPiece Paper::FightWithOtherPieceType(Piece& enemy)

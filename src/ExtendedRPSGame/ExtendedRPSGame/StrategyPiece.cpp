@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "StrategyPiece.h"
 #include "Joker.h"
 #include "Rock.h"

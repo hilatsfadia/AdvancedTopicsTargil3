@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "RSPPlayer_309962264.h"
 #include "PointImpl.h"
 #include "PieceFactory.h"
