@@ -1,6 +1,5 @@
 #include "Game.h"
 #include <iostream>
-#include "RSPPlayer_309962264.h"
 #include <memory>
 #include "TournamentManager.h"
 
@@ -17,7 +16,7 @@ using std::cout;
 using std::endl;
 using std::make_unique;
 
-void PrintUsage()
+void PrintCommandLineUsage()
 {
 	cout << "Usage of the program: you can optionally give the following two parameters in any order: "
 		<< COMMAND_LINE_THREADS_OPTIONAL_PARAMETER_USAGE
@@ -78,9 +77,21 @@ int main(int argc, char *argv[])
 
 	if (!UpdateCommandLineParameters(numOfThreads, soFilesDirectory, argc, argv))
 	{
-		PrintUsage();
+		PrintCommandLineUsage();
 		return 1;
 	}
+
+	int res = TournamentManager::getTournamentManager().loadAlgorithms(numOfThreads, soFilesDirectory);
+	if (res == TournamentManager::FOLDER_COULD_NOT_BE_OPENED){
+		cout << "The given folder or the default working directory could not be opened" << endl;
+	}
+	else if (res == TournamentManager::SO_FILE_CANNOT_BE_LOADED) {
+	}
+	else if (res == TournamentManager::ALMOST_NO_ALGORITHM_REGISTERED) {
+		cout << "Usage: you should provide at least 2 registered algorithms in order to make the tournament" << endl;
+	}
+
+	// res == TournamentManager::ALGORITHM_REGISTERED_SUCCESSFULLY
 
 	TournamentManager::getTournamentManager().run();
 

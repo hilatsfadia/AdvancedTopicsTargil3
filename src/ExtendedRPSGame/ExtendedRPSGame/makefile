@@ -5,8 +5,8 @@ default:
 	make all
 	
 #put all your object files here
-OBJS = RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o TournamentManager.o
-MAINOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o TournamentManager.o
+OBJS = RSPPlayer_111111111.o RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
+MAINOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
 #The executable filename DON'T CHANGE
 EXEC = ex3
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
@@ -24,9 +24,17 @@ RSPPlayer_309962264.o: RSPPlayer_309962264.cpp RSPPlayer_309962264.h \
  FightInfoImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h Paper.h \
  RPSPiece.h Rock.h Scissors.h Bomb.h Joker.h MoveImpl.h JokerChangeImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
-	
 RSPPlayer_309962264.so: RSPPlayer_309962264.o
 	$(COMP) -shared -Wl,-soname,RSPPlayer_309962264.so -o RSPPlayer_309962264.so RSPPlayer_309962264.o
+	
+RSPPlayer_111111111.o: RSPPlayer_111111111.cpp RSPPlayer_111111111.h \
+ PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
+ JokerChange.h BoardImpl.h Piece.h PieceFactory.h Player.h PointImpl.h \
+ FightInfoImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h Paper.h \
+ RPSPiece.h Rock.h Scissors.h Bomb.h Joker.h MoveImpl.h JokerChangeImpl.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+RSPPlayer_111111111.so: RSPPlayer_111111111.o
+	$(COMP) -shared -Wl,-soname,RSPPlayer_111111111.so -o RSPPlayer_111111111.so RSPPlayer_111111111.o
 
 BoardImpl.o: BoardImpl.cpp BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
@@ -42,7 +50,12 @@ FilePlayerAlgorithm.o: FilePlayerAlgorithm.cpp FilePlayerAlgorithm.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h ParserMoveFile.h Parser.h Player.h PieceFactory.h \
  PointImpl.h ParserInitFile.h MoveImpl.h JokerChangeImpl.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	
+#Delete!!!!!!!!!!!!!!!!!!!!!!!!!
+#FilePlayerAlgorithm.so: FilePlayerAlgorithm.o
+#	$(COMP) -shared -fPIC -Wl,-soname,FilePlayerAlgorithm.so -o FilePlayerAlgorithm.so FilePlayerAlgorithm.o
+	
 Flag.o: Flag.cpp Flag.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
  Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
@@ -60,9 +73,7 @@ JokerChangeImpl.o: JokerChangeImpl.cpp JokerChangeImpl.h PointImpl.h \
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 Main.o: Main.cpp Game.h BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
- JokerChange.h PointImpl.h FightInfoImpl.h FilePlayerAlgorithm.h \
- ParserMoveFile.h Parser.h RSPPlayer_309962264.h PiecePositionImpl.h \
- StrategyPiece.h
+ JokerChange.h PointImpl.h FightInfoImpl.h TournamentManager.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 MoveImpl.o: MoveImpl.cpp MoveImpl.h Point.h Move.h PointImpl.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
@@ -115,12 +126,19 @@ StrategyPiece.o: StrategyPiece.cpp StrategyPiece.h Piece.h PieceFactory.h \
  Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
  Move.h JokerChange.h Joker.h Rock.h RPSPiece.h Paper.h Scissors.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
+AlgorithmRegistration.o: AlgorithmRegistration.cpp \
+ AlgorithmRegistration.h PlayerAlgorithm.h Point.h PiecePosition.h \
+ Board.h FightInfo.h Move.h JokerChange.h TournamentManager.h
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 TournamentManager.o: TournamentManager.cpp TournamentManager.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 
-all: $(EXEC) $(OBJS) RSPPlayer_309962264.so
+	
+#all: $(EXEC) $(OBJS) RSPPlayer_309962264.so FilePlayerAlgorithm.so
+#all: $(EXEC) $(OBJS) RSPPlayer_309962264.so
+all: $(EXEC) $(OBJS) RSPPlayer_309962264.so RSPPlayer_111111111.so
 
 clean:
 	rm -f *.so *.o $(EXEC)

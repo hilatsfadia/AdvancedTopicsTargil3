@@ -29,6 +29,10 @@ public:
 		//	factoryMethod()->foo();
 		//}
 	}
+
+	int loadAlgorithms(int, const std::string& soFilesDirectory);
+
+	enum {ALGORITHM_REGISTERED_SUCCESSFULLY = 0, FOLDER_COULD_NOT_BE_OPENED = 1, SO_FILE_CANNOT_BE_LOADED = 2, ALMOST_NO_ALGORITHM_REGISTERED = 3};
 };
 
 #endif
