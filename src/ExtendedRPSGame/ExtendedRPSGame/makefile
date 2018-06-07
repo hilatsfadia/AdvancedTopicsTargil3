@@ -1,11 +1,13 @@
 COMP = g++-5.3.0
 LIBS = -ldl
 
-default:
-	make all
+rps_tournament:
+	make the_tournament
+rps_lib:
+	make the_lib
 	
 #put all your object files here
-OBJS = RSPPlayer_111111111.o RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
+LIBOBJS = RSPPlayer_111111111.o RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Joker.o JokerChangeImpl.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
 EXECOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
 #The executable filename DON'T CHANGE
 EXEC = ex3
@@ -138,7 +140,8 @@ TournamentManager.o: TournamentManager.cpp TournamentManager.h \
 	
 #all: $(EXEC) $(OBJS) RSPPlayer_309962264.so FilePlayerAlgorithm.so
 #all: $(EXEC) $(OBJS) RSPPlayer_309962264.so
-all: $(EXEC) $(OBJS) RSPPlayer_309962264.so RSPPlayer_111111111.so
+the_tournament: $(EXEC) $(EXECOBJS)
+the_lib: $(LIBOBJS) RSPPlayer_309962264.so RSPPlayer_111111111.so
 
 clean:
 	rm -f *.so *.o $(EXEC)
