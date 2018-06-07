@@ -6,14 +6,14 @@ default:
 	
 #put all your object files here
 OBJS = RSPPlayer_111111111.o RSPPlayer_309962264.o BoardImpl.o Bomb.o FightInfoImpl.o FilePlayerAlgorithm.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Parser.o ParserInitFile.o ParserMoveFile.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
-MAINOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
+EXECOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Game.o Joker.o JokerChangeImpl.o Main.o MoveImpl.o Paper.o Piece.o PieceFactory.o PiecePositionImpl.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o AlgorithmRegistration.o TournamentManager.o
 #The executable filename DON'T CHANGE
 EXEC = ex3
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
 	
-$(EXEC): $(MAINOBJS)
-	$(COMP) -rdynamic -o $(EXEC) $(MAINOBJS) $(LIBS)
+$(EXEC): $(EXECOBJS)
+	$(COMP) -rdynamic -o $(EXEC) $(EXECOBJS) $(LIBS)
 
 #a rule for building a simple c++ source file
 #use g++ -MM Main.cpp to see dependencies
