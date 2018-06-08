@@ -34,8 +34,6 @@ using PieceType = PieceFactory::PieceType;
 
 class Player
 {
-	static int mPlayerCounter;
-
 	// Number of pieces of each type that the player holds.
 	std::map<PieceType, int> mCountPieces;
 
@@ -51,7 +49,7 @@ class Player
 
 public:
 	//Player(PlayerAlgorithm* playerAlgorithm);
-	Player();
+	Player(int playerNum);
 	~Player();
 
 	int GetPlayerNum() const { return mPlayerNum; }

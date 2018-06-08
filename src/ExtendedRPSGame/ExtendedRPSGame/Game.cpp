@@ -90,8 +90,8 @@ void Game::ReportGameOverToFile(Winner winner, const std::string& gameOverMessag
 
 Game::Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm)
 {
-	mPlayersVec.push_back(make_shared<Player>());
-	mPlayersVec.push_back(make_shared<Player>());
+	mPlayersVec.push_back(make_shared<Player>(NUM_OF_PLAYERS-1));
+	mPlayersVec.push_back(make_shared<Player>(NUM_OF_PLAYERS));
 	mAlgorithmsVec.push_back(std::move(player1Algorithm));
 	mAlgorithmsVec.push_back(std::move(player2Algorithm));
 }

@@ -1,16 +1,14 @@
 #include "Player.h"
 
 std::map<PieceType, int> Player::mMaxCountPieces;
-int Player::mPlayerCounter = 1;
 
 Player::~Player()
 {
 }
 
-Player::Player()
+Player::Player(int playerNum)
 {
-	mPlayerNum = mPlayerCounter;
-	mPlayerCounter++;
+	mPlayerNum = playerNum;
 	mCountPieces[PieceType::Rock] = 0;
 	mCountPieces[PieceType::Paper] = 0;
 	mCountPieces[PieceType::Scissors] = 0;
