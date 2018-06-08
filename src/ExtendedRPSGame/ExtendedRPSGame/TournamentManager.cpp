@@ -42,13 +42,13 @@ void TournamentManager::runSingleSubSimulationThread() {
         runSingleSubSimulation(games[index]);
     }
 }
-//
-//void run() {
+
+// TODO: delete
+//void TournamentManager::run() {
 //    for(const auto& game: games) {
 //        runSingleSubSimulation(game);
 //    }
 //}
-
 
 void TournamentManager::runMultiThreaded(size_t numThreads){
     vector<unique_ptr<thread>> threads(numThreads);
@@ -183,5 +183,6 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
         cout << fitr->first << endl;
     }
 
+    createGames();
     return ALGORITHM_REGISTERED_SUCCESSFULLY;
 }

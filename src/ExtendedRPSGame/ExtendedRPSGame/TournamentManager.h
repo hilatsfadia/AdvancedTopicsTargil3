@@ -35,6 +35,7 @@ public:
 	void runSingleSubSimulation(const std::pair<std::string, std::string>& gameToPlay);
 	void runSingleSubSimulationThread();
 	void runMultiThreaded(size_t numThreads);
+	//void run();
 	//void run()const;
 
 	int loadAlgorithms(int, const std::string& soFilesDirectory);
