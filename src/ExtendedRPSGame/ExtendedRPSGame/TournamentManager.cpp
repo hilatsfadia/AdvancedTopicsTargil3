@@ -29,23 +29,23 @@ void TournamentManager::eraseID(vector<string>& ids, string id){
 }
 
 void TournamentManager::runSingleSubSimulation(const std::pair<std::string, std::string>& gameToPlay) {
-    Game game(id2factory[gameToPlay.first](), id2factory[gameToPlay.second]());
+    Game game(mId2factory[gameToPlay.first](), mId2factory[gameToPlay.second]());
     game.RunGame();
 }
 
 void TournamentManager::runSingleSubSimulationThread() {
     // Thread should take a new game, if available, and run it
     // if no game is available, thread is done
-    for(size_t index = gameIndex++; // fetch old value, then add. equivalent to: fetch_add(1)
-        index < games.size();
-        index = gameIndex++) {
-        runSingleSubSimulation(games[index]);
+    for(size_t index = mGameIndex++; // fetch old value, then add. equivalent to: fetch_add(1)
+        index < mGames.size();
+        index = mGameIndex++) {
+        runSingleSubSimulation(mGames[index]);
     }
 }
 
 // TODO: delete
 //void TournamentManager::run() {
-//    for(const auto& game: games) {
+//    for(const auto& game: mGames) {
 //        runSingleSubSimulation(game);
 //    }
 //}
@@ -63,16 +63,16 @@ void TournamentManager::runMultiThreaded(size_t numThreads){
 }
 
 void TournamentManager::createGames() {
-    games.clear();
+    mGames.clear();
     list<void *>::iterator itr;
     vector<string> ids;
-    for(auto it = id2factory.begin(); it != id2factory.end(); ++it) {
+    for(auto it = mId2factory.begin(); it != mId2factory.end(); ++it) {
         ids.push_back(it->first);
-        id2numberOfGames[it->first] = GAMES_TO_PLAY;
+        mId2numberOfGames[it->first] = GAMES_TO_PLAY;
     }
 
     // TODO: move it
-//    Game game(id2factory[ids[0]](), id2factory[ids[1]]());
+//    Game game(mId2factory[ids[0]](), mId2factory[ids[1]]());
 //    game.RunGame();
 
     for (string id : ids){
@@ -80,12 +80,12 @@ void TournamentManager::createGames() {
         eraseID(enemies, id);
         std::random_shuffle(std::begin(enemies), std::end(enemies));
 
-        for(auto itr = enemies.begin(); id2numberOfGames[id] > 0 ;){
+        for(auto itr = enemies.begin(); mId2numberOfGames[id] > 0 ;){
             std::string& enemy = *itr;
-            if (id2numberOfGames[enemy] > 0) {
-                    games.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
-                    id2numberOfGames[id]--;
-                    id2numberOfGames[enemy]--;
+            if (mId2numberOfGames[enemy] > 0) {
+                    mGames.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
+                    mId2numberOfGames[id]--;
+                    mId2numberOfGames[enemy]--;
             }
             itr++;
             if (itr == enemies.end()){
@@ -93,38 +93,38 @@ void TournamentManager::createGames() {
             }
         }
 
-//        int countConcatenations = id2numberOfGames[id] / enemies.size();
-//        int modVal = id2numberOfGames[id] % enemies.size();
+//        int countConcatenations = mId2numberOfGames[id] / enemies.size();
+//        int modVal = mId2numberOfGames[id] % enemies.size();
 //        cout << "countConcatenations: " << countConcatenations << endl;
 //        cout << "modVal: " << modVal << endl;
 //        for (int i = 0; i < countConcatenations; i++){
 //            for (auto enemy : enemies){
-//                if (id2numberOfGames[enemy] > 0) {
-//                    games.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
-//                    id2numberOfGames[id]--;
-//                    id2numberOfGames[enemy]--;
+//                if (mId2numberOfGames[enemy] > 0) {
+//                    mGames.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
+//                    mId2numberOfGames[id]--;
+//                    mId2numberOfGames[enemy]--;
 //                }
 //            }
 //        }
 //        int countModAdditions = 0;
 //        for(auto itr=enemies.begin(); (itr!=enemies.end() && countModAdditions < modVal) ; itr++){
-//            games.push_back(std::make_pair(id, *itr));
-//            id2numberOfGames[id]--;
-//            id2numberOfGames[itr]--;
+//            mGames.push_back(std::make_pair(id, *itr));
+//            mId2numberOfGames[id]--;
+//            mId2numberOfGames[itr]--;
 //            countModAdditions++;
 //        }
 //        for (string enemy : enemiesToPlayWith) {
-//        Game game(id2factory[id](), id2factory[enemiesToPlayWith[0]]());
+//        Game game(mId2factory[id](), mId2factory[enemiesToPlayWith[0]]());
 //        }
     }
 
     // TODO: why coredump?
-//    for (auto fitr=id2factory.begin(); fitr!=id2factory.end();
+//    for (auto fitr=mId2factory.begin(); fitr!=mId2factory.end();
 //        fitr++){
 //        fitr->second = nullptr;
 //    }
 //    // close all the dynamic libs we opened
-//    for(itr=dlList.begin(); itr!=dlList.end(); itr++){
+//    for(itr=mDlList.begin(); itr!=mDlList.end(); itr++){
 //        dlclose(*itr);
 //        *itr = nullptr;
 //    }
@@ -146,7 +146,7 @@ int TournamentManager::loadAlgoritm(char* inBuf){
     }
 
     // add the handle to our list
-    dlList.insert(dlList.end(), dlib);
+    mDlList.insert(mDlList.end(), dlib);
 
     return ALGORITHM_REGISTERED_SUCCESSFULLY;
 }
@@ -172,13 +172,13 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
         }
     }
 
-    if (id2factory.size() <= 1){
+    if (mId2factory.size() <= 1){
         return ALMOST_NO_ALGORITHM_REGISTERED;
     }
 
     //cout << "stam" << endl;
     // create an array of the shape names
-    for(fitr=id2factory.begin(); fitr!=id2factory.end();
+    for(fitr=mId2factory.begin(); fitr!=mId2factory.end();
         fitr++){
         cout << fitr->first << endl;
     }
