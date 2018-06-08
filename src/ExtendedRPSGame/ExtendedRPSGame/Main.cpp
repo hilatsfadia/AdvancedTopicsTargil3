@@ -92,8 +92,10 @@ int main(int argc, char *argv[])
 	}
 
 	// res == TournamentManager::ALGORITHM_REGISTERED_SUCCESSFULLY
+	cout << "run Tournament" << endl;
 
-	TournamentManager::getTournamentManager().run();
+	TournamentManager::getTournamentManager().runMultiThreaded(numOfThreads);
 
+	cout << "Exiting main" << endl;
     return 0;
 }

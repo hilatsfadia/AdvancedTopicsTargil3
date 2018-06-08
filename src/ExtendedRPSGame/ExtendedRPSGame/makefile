@@ -15,7 +15,7 @@ CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
 	
 $(EXEC): $(EXECOBJS)
-	$(COMP) -rdynamic -o $(EXEC) $(EXECOBJS) $(LIBS)
+	$(COMP) -rdynamic -o $(EXEC) $(EXECOBJS) $(LIBS) -pthread
 
 #a rule for building a simple c++ source file
 #use g++ -MM Main.cpp to see dependencies
