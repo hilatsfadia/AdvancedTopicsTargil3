@@ -33,18 +33,23 @@ class Player;
 #define BAD_POS_PLAYER "Bad Positioning input for player %d"
 #define BAD_POS_BOTH_PLAYERS "Bad Positioning input for both players"
 #define BAD_MOVE_PLAYER "Bad Moves input for player %d"
-#define TIE_NO_FIGHTS "A tie – no fight for 100 moves" // No fight for 100 consequative moves
+#define TIE_NO_FIGHTS "A tie â€“ no fight for 100 moves" // No fight for 100 consequative moves
 
 #define MESSAGE_MAX_LEN 150
 #define INPUT_FILE_NAME_MAX_LEN 100
 
 class Game
 {
+// This declaration is needed for the functions to
+// recognize the enum.
+// It is defined afterwards.
+public:
+    enum class Winner;
+
 private:
 
-	enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
-
 	BoardImpl<Piece> mGameBoard;
+	Winner mWinner = Winner::None;
 
 	// shared ptr because it is shared among it's pieces (as their owner) and the game.
 	std::vector<shared_ptr<Player>> mPlayersVec;
@@ -74,22 +79,28 @@ private:
 	// Report errors if any (bad positioning or no flags).
 	bool PutPiecePositionsOnBoard(const std::vector<unique_ptr<PiecePosition>>& player1PiecePositions,
 		const std::vector<unique_ptr<PiecePosition>>& player2PiecePositions,
-		BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board) const;
-	
+		BoardImpl<Piece>& tempPlayer1Board, BoardImpl<Piece>& tempPlayer2Board);
+
 	// When positioning or moves from the algorithm has bad format,
 	// Report game over message and winner.
-	void SetBadInputMessageWithWinner(int loserNum, Winner winner, const char* templateBadFormatMessage, bool ifToPrintBoard = true) const;
+	void SetBadInputMessageWithWinner(int loserNum, Winner winner, const char* templateBadFormatMessage);
 
+	// TODO: ask if needed
 	// When game is over, prints the relevant output file.
 	void ReportGameOverToFile(Winner winner, const std::string& gameOverMessage, bool ifToPrintBoard = true) const;
 
+	// Reports the winner.
+	void ReportGameOver(Winner winner){
+		mWinner = winner;
+	}
+
 	// TODO: maybe pass a boolean, if to check tie.
 	// Returns true iff all the pieces of one of the players or for both are eaten.
-	bool ReportAllMovingPiecesEaten() const;
+	bool ReportAllMovingPiecesEaten();
 
 	// Returns true iff the flags are captured (both flags or one)
 	// or all the pieces for both players are eaten.
-	bool ReportGameOverAfterInitBoard() const;
+	bool ReportGameOverAfterInitBoard();
 
 	// Note that if this player index is 1 than the other player index is 0 and vice versa.
 	// Index is 0 based
@@ -109,7 +120,7 @@ private:
 	void HandleMoves();
 
 	// Get the winner object according to loser player's number.
-	Winner GetWinner(int loserNum) const;
+	Winner GetWinnerOutOfLooser(int loserNum) const;
 
 	// Change a joker of the given player according to the information in jokerChange.
 	bool ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum);
@@ -118,9 +129,14 @@ private:
 	void LogAfterMove(int countMoves);
 
 public:
+    enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
 	Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm);
 
 	void RunGame();
+
+	Winner GetWinner() const{
+		return mWinner;
+	}
 };
 #endif //ADTO_TARGIL1_GAME_H

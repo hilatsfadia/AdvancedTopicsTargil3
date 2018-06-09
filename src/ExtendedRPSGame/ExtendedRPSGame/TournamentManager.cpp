@@ -9,6 +9,12 @@
 #include "Game.h"
 
 #define GAMES_TO_PLAY 30
+#define WINNER_SCORES 3
+#define LOOSER_SCORES 0
+#define TIE_SCORES 1
+
+// Type Alias
+using Winner = Game::Winner;
 
 using namespace std;
 
@@ -28,9 +34,40 @@ void TournamentManager::eraseID(vector<string>& ids, string id){
     }
 }
 
+void TournamentManager::handleUpdateOfScores(const std::pair<std::string, std::string>& gameToPlay, size_t player1AdditionScores, size_t player2AdditionScores){
+    lock_guard<mutex> lock(scoresLock);
+    mId2scores[gameToPlay.first] += player1AdditionScores;
+    mId2scores[gameToPlay.second] += player2AdditionScores;
+}
+
 void TournamentManager::runSingleSubSimulation(const std::pair<std::string, std::string>& gameToPlay) {
     Game game(mId2factory[gameToPlay.first](), mId2factory[gameToPlay.second]());
     game.RunGame();
+    Winner winner = game.GetWinner();
+    switch (winner){
+        case Winner::Player1:{
+            handleUpdateOfScores(gameToPlay, WINNER_SCORES, LOOSER_SCORES);
+            break;
+        }
+        case Winner::Player2:{
+            handleUpdateOfScores(gameToPlay, LOOSER_SCORES, WINNER_SCORES);
+            break;
+        }
+        case Winner::Tie:{
+            handleUpdateOfScores(gameToPlay, TIE_SCORES, TIE_SCORES);
+            break;
+        }
+        default:{
+            // Shouldn't happen
+            break;
+        }
+    }
+}
+
+void TournamentManager::runSingleThreaded() {
+    for (const auto& game: mGames) {
+        runSingleSubSimulation(game);
+    }
 }
 
 void TournamentManager::runSingleSubSimulationThread() {
@@ -43,23 +80,43 @@ void TournamentManager::runSingleSubSimulationThread() {
     }
 }
 
-// TODO: delete
-//void TournamentManager::run() {
-//    for(const auto& game: mGames) {
-//        runSingleSubSimulation(game);
-//    }
-//}
+bool TournamentManager::cmpPlayersInfo(const pair<const std::string, int>  &player1Info, const pair<const std::string, int> &player2Info)
+{
+    if (player1Info.second == player2Info.second) {
+        return player1Info.first < player2Info.first;
+    }
+
+    return player1Info.second > player2Info.second;
+}
+
+void TournamentManager::printResults() const{
+    vector<pair<std::string, int> > scoresVec;
+    copy(mId2scores.begin(), mId2scores.end(), back_inserter(scoresVec));
+    sort(scoresVec.begin(), scoresVec.end(), TournamentManager::cmpPlayersInfo);
+
+    for(size_t i = 0; i < scoresVec.size(); ++i) {
+        cout << scoresVec[i].first << " " << scoresVec[i].second << endl;
+    }
+}
 
 void TournamentManager::runMultiThreaded(size_t numThreads){
-    vector<unique_ptr<thread>> threads(numThreads);
-    for(auto& thread_ptr : threads) {
-        thread_ptr = make_unique<thread>(&TournamentManager::runSingleSubSimulationThread, this); // create and run the thread
+    if (numThreads == 1){
+        runSingleThreaded();
+    }
+    else {
+        vector <unique_ptr<thread>> threads(numThreads-1);
+        for (auto &thread_ptr : threads) {
+            thread_ptr = make_unique<thread>(&TournamentManager::runSingleSubSimulationThread,
+                                             this); // create and run the thread
+        }
+
+        // Join all the threads to finish nicely (i.e. without crashing / terminating threads)
+        for (auto &thread_ptr : threads) {
+            thread_ptr->join();
+        }
     }
 
-    // Join all the threads to finish nicely (i.e. without crashing / terminating threads)
-    for(auto& thread_ptr : threads) {
-        thread_ptr->join();
-    }
+    printResults();
 }
 
 void TournamentManager::createGames() {
@@ -69,6 +126,7 @@ void TournamentManager::createGames() {
     for(auto it = mId2factory.begin(); it != mId2factory.end(); ++it) {
         ids.push_back(it->first);
         mId2numberOfGames[it->first] = GAMES_TO_PLAY;
+        mId2scores[it->first] = 0;
     }
 
     // TODO: move it
@@ -118,7 +176,7 @@ void TournamentManager::createGames() {
 //        }
     }
 
-    // TODO: why coredump?
+    // TODO: why coredump? look!
 //    for (auto fitr=mId2factory.begin(); fitr!=mId2factory.end();
 //        fitr++){
 //        fitr->second = nullptr;

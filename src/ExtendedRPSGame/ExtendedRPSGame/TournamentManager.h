@@ -8,6 +8,7 @@
 #include <cstring>
 #include <vector>
 #include <atomic>
+#include <mutex>
 #include "PlayerAlgorithm.h"
 
 class TournamentManager
@@ -15,12 +16,17 @@ class TournamentManager
 	static TournamentManager theTournamentManager;
 	std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> mId2factory;
 	std::map<std::string, int> mId2numberOfGames;
+	std::map<std::string, int> mId2scores;
+    std::mutex scoresLock;
 	std::atomic_size_t mGameIndex{0}; // atomic_size_t is a language typedef for std::atomic<size_t>
 	std::list<void *> mDlList; // list to hold handles for dynamic libs
 	std::vector<std::pair<std::string, std::string>> mGames;
 	// private ctor
 	TournamentManager() {}
 
+    void handleUpdateOfScores(const std::pair<std::string, std::string>& gameToPlay, size_t player1AdditionScores, size_t player2AdditionScores);
+    void printResults() const;
+    void runSingleThreaded();
     int loadAlgoritm(char* inBuf);
     void createGames();
     void runSingleSubSimulation(const std::pair<std::string, std::string>& gameToPlay);
@@ -35,8 +41,10 @@ public:
 		mId2factory[id] = factoryMethod;
 	}
 
+    static bool cmpPlayersInfo(const std::pair<const std::string, int>  &player1Info, const std::pair<const std::string, int> &player2Info);
+
 	void runMultiThreaded(size_t numThreads);
-	//void run();
+
 	//void run()const;
 
 	int loadAlgorithms(int, const std::string& soFilesDirectory);
