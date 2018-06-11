@@ -11,6 +11,7 @@
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 #include <vector>
+#include <memory>
 #include "PlayerAlgorithm.h"
 #include "BoardImpl.h"
 #include "PiecePositionImpl.h"

@@ -18,7 +18,7 @@
 #include <iterator>
 #include "AlgorithmRegistration.h"
 
-REGISTER_ALGORITHM(309962264)
+//REGISTER_ALGORITHM(309962264)
 
 using std::make_unique;
 // Type Alias

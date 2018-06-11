@@ -191,7 +191,7 @@ void TournamentManager::createGames() {
 int TournamentManager::loadAlgoritm(char* inBuf){
     void *dlib;
     char name[BUF_SIZE];
-
+	// TODO:!!!
     // trim off the whitespace
     char *ws = strpbrk(inBuf, " \t\n");
     if(ws) *ws = '\0';

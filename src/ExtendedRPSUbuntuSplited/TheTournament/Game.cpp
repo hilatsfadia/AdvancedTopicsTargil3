@@ -4,8 +4,8 @@
 #include <iostream>
 #include "PieceFactory.h"
 #include "Piece.h"
-#include "ParserInitFile.h"
-#include "ParserMoveFile.h"
+//#include "ParserInitFile.h"
+//#include "ParserMoveFile.h"
 #include "Player.h"
 #include "Joker.h"
 #include "FightInfoImpl.h"
