@@ -16,7 +16,7 @@ class TournamentManager
 	static TournamentManager theTournamentManager;
 	std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> mId2factory;
 	std::map<std::string, int> mId2numberOfGames;
-	std::map<std::string, int> mId2scores;
+	std::map<std::string, size_t> mId2scores;
     std::mutex scoresLock;
 	std::atomic_size_t mGameIndex{0}; // atomic_size_t is a language typedef for std::atomic<size_t>
 	std::list<void *> mDlList; // list to hold handles for dynamic libs
