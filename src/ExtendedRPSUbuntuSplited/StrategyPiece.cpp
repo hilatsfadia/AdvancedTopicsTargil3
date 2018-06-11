@@ -6,17 +6,12 @@
 #include "Joker.h"
 #include <memory>
 
-int StrategyPiece::mStrategyPiecesCounter = 1;
-
 StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
 {
 	if (uncoveredPiece != nullptr)
 	{
 		UncoverPiece(std::move(uncoveredPiece));
 	}
-
-	mStrategyPieceID = mStrategyPiecesCounter;
-	mStrategyPiecesCounter++;
 }
 
 PieceType StrategyPiece::GetPieceType() const

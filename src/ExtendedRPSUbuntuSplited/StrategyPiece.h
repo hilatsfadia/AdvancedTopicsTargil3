@@ -19,8 +19,6 @@ class StrategyPiece :
 	public Piece
 {
 private:
-	static int mStrategyPiecesCounter;
-	int mStrategyPieceID;
 	unique_ptr<Piece> mUncoveredPiece = nullptr;
 	bool mIsThreatened = false;
 	bool mIsThreathening = false;
@@ -58,8 +56,6 @@ public:
 	// Returns true iff this piece is threatening an enemy piece (one or more)
 	bool GetIsThreathening() const { return mIsThreathening; }
 	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
-
-	int GetStrategyPieceID() const { return mStrategyPieceID; }
 
 	virtual bool IsStrongerThan(const StrategyPiece& other) const;
 

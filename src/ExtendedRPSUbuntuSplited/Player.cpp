@@ -1,7 +1,5 @@
 #include "Player.h"
 
-std::map<PieceType, int> Player::mMaxCountPieces;
-
 Player::~Player()
 {
 }

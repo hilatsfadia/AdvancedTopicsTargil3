@@ -38,7 +38,7 @@ class Player
 	std::map<PieceType, int> mCountPieces;
 
 	// Max number of pieces of each type that the player can hold.
-	static std::map<PieceType, int> mMaxCountPieces;
+	std::map<PieceType, int> mMaxCountPieces;
 
 	int mPlayerNum;
 	int mCountMovingPieces = 0;
