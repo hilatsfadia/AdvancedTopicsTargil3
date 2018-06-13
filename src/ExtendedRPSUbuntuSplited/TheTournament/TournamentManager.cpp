@@ -24,14 +24,30 @@ static const unsigned int BUF_SIZE = 1024;
 // define the static variable
 TournamentManager TournamentManager::theTournamentManager;
 
-void TournamentManager::eraseID(vector<string>& ids, string id){
-    for (auto it = ids.begin(); it != ids.end();) {
-        if (*it == id) {
-            it = ids.erase(it);
+void TournamentManager::eraseString(vector<string>& stringsVec, string toErase){
+    for (auto it = stringsVec.begin(); it != stringsVec.end();) {
+        if (*it == toErase) {
+            it = stringsVec.erase(it);
         } else {
             ++it;
         }
     }
+}
+
+TournamentManager::~TournamentManager()
+{
+	mId2factory.clear();
+
+	// TODO: why coredump? look!
+	//    for (auto fitr=mId2factory.begin(); fitr!=mId2factory.end();
+	//        fitr++){
+	//        fitr->second = nullptr;
+	//    }
+	// close all the dynamic libs we opened
+	for(auto itr=mDlList.begin(); itr!=mDlList.end(); itr++){
+	    dlclose(*itr);
+	    //*itr = nullptr;
+	}
 }
 
 void TournamentManager::handleUpdateOfScores(const std::pair<std::string, std::string>& gameToPlay, size_t player1AdditionScores, size_t player2AdditionScores){
@@ -100,6 +116,8 @@ void TournamentManager::printResults() const{
 }
 
 void TournamentManager::runMultiThreaded(size_t numThreads){
+	createGames();
+
     if (numThreads == 1){
         runSingleThreaded();
     }
@@ -123,69 +141,37 @@ void TournamentManager::createGames() {
     mGames.clear();
     list<void *>::iterator itr;
     vector<string> ids;
-    for(auto it = mId2factory.begin(); it != mId2factory.end(); ++it) {
+    for(auto it = mId2factory.begin(); it != mId2factory.end(); it++) {
         ids.push_back(it->first);
         mId2numberOfGames[it->first] = GAMES_TO_PLAY;
         mId2scores[it->first] = 0;
     }
 
-    // TODO: move it
-//    Game game(mId2factory[ids[0]](), mId2factory[ids[1]]());
-//    game.RunGame();
+	for (string id : ids) {
+		vector<string> enemies(ids.begin(), ids.end());
+		eraseString(enemies, id);
+		std::random_shuffle(std::begin(enemies), std::end(enemies));
 
-    for (string id : ids){
-        vector<string> enemies(ids.begin(), ids.end());
-        eraseID(enemies, id);
-        std::random_shuffle(std::begin(enemies), std::end(enemies));
+		for (auto itr = enemies.begin(); mId2numberOfGames[id] > 0;) {
+			std::string& enemy = *itr;
+			if (mId2numberOfGames[enemy] > 0) {
+				mGames.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
+				mId2numberOfGames[id]--;
+				mId2numberOfGames[enemy]--;
+			}
 
-        for(auto itr = enemies.begin(); mId2numberOfGames[id] > 0 ;){
-            std::string& enemy = *itr;
-            if (mId2numberOfGames[enemy] > 0) {
-                    mGames.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
-                    mId2numberOfGames[id]--;
-                    mId2numberOfGames[enemy]--;
-            }
-            itr++;
-            if (itr == enemies.end()){
-                itr = enemies.begin();
-            }
-        }
-
-//        int countConcatenations = mId2numberOfGames[id] / enemies.size();
-//        int modVal = mId2numberOfGames[id] % enemies.size();
-//        cout << "countConcatenations: " << countConcatenations << endl;
-//        cout << "modVal: " << modVal << endl;
-//        for (int i = 0; i < countConcatenations; i++){
-//            for (auto enemy : enemies){
-//                if (mId2numberOfGames[enemy] > 0) {
-//                    mGames.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
-//                    mId2numberOfGames[id]--;
-//                    mId2numberOfGames[enemy]--;
-//                }
-//            }
-//        }
-//        int countModAdditions = 0;
-//        for(auto itr=enemies.begin(); (itr!=enemies.end() && countModAdditions < modVal) ; itr++){
-//            mGames.push_back(std::make_pair(id, *itr));
-//            mId2numberOfGames[id]--;
-//            mId2numberOfGames[itr]--;
-//            countModAdditions++;
-//        }
-//        for (string enemy : enemiesToPlayWith) {
-//        Game game(mId2factory[id](), mId2factory[enemiesToPlayWith[0]]());
-//        }
-    }
-
-    // TODO: why coredump? look!
-//    for (auto fitr=mId2factory.begin(); fitr!=mId2factory.end();
-//        fitr++){
-//        fitr->second = nullptr;
-//    }
-//    // close all the dynamic libs we opened
-//    for(itr=mDlList.begin(); itr!=mDlList.end(); itr++){
-//        dlclose(*itr);
-//        *itr = nullptr;
-//    }
+			if (mId2numberOfGames[enemy] == 0) {
+				itr = enemies.erase(itr);
+				continue;
+			}
+			else {
+				++itr;
+				if (itr == enemies.end()) {
+					itr = enemies.begin();
+				}
+			}
+		}
+	}
 }
 
 int TournamentManager::loadAlgoritm(char* inBuf){
@@ -211,7 +197,13 @@ int TournamentManager::loadAlgoritm(char* inBuf){
 
 int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) {
     FILE *dl;   // handle to read directory
-    std::string lsCommandStr = "ls " + soFilesDirectory + "*.so";  // command string to get dynamic lib names
+	std::string soFilesDirectoryWithSlash = soFilesDirectory;
+
+	if (soFilesDirectoryWithSlash[soFilesDirectoryWithSlash.size() - 1] != '/') {
+		soFilesDirectoryWithSlash += '/';
+	}
+
+    std::string lsCommandStr = "ls " + soFilesDirectoryWithSlash + "*.so";  // command string to get dynamic lib names
     char inBuf[BUF_SIZE]; // input buffer for lib names
     map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>>::iterator fitr;
 
@@ -234,13 +226,5 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
         return ALMOST_NO_ALGORITHM_REGISTERED;
     }
 
-    //cout << "stam" << endl;
-    // create an array of the shape names
-    for(fitr=mId2factory.begin(); fitr!=mId2factory.end();
-        fitr++){
-        cout << fitr->first << endl;
-    }
-
-    createGames();
     return ALGORITHM_REGISTERED_SUCCESSFULLY;
 }
