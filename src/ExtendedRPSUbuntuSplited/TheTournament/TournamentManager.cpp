@@ -215,7 +215,8 @@ void TournamentManager::createGames() {
 			int i = 0;
 			while (mId2numberOfGames[id] > 0) {
 				mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1); // TODO: ask about the order
-				i++;
+				mId2numberOfGames[id]--;
+				(i == enemies.size()-1)? i=0 : i++;
 			}
 		}
 	}
@@ -231,7 +232,7 @@ int TournamentManager::loadAlgoritm(char* inBuf){
     if(ws) *ws = '\0';
     // append ./ to the front of the lib name
     sprintf(name, "./%s", inBuf);
-    dlib = dlopen(name, RTLD_NOW);
+    dlib = dlopen(name, RTLD_LAZY);
     if(dlib == NULL){
         cerr << dlerror() << endl;
 		cout << "so file of algorithm: " << name << " cannot be loaded" << endl;

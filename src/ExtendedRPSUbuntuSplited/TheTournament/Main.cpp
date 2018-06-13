@@ -83,12 +83,15 @@ int main(int argc, char *argv[])
 
 	int res = TournamentManager::getTournamentManager().loadAlgorithms(numOfThreads, soFilesDirectory);
 	if (res == TournamentManager::FOLDER_COULD_NOT_BE_OPENED){
-		cout << "The given folder or the default working directory could not be opened" << endl;
+		cout << "The given folder could not be opened" << endl;
+		PrintCommandLineUsage();
+		return 1;
 	}
-	else if (res == TournamentManager::SO_FILE_CANNOT_BE_LOADED) {
-	}
+	//else if (res == TournamentManager::SO_FILE_CANNOT_BE_LOADED) {
+	//}
 	else if (res == TournamentManager::ALMOST_NO_ALGORITHM_REGISTERED) {
 		cout << "Usage: you should provide at least 2 registered algorithms in order to make the tournament" << endl;
+		return 1;
 	}
 
 	// res == TournamentManager::ALGORITHM_REGISTERED_SUCCESSFULLY
