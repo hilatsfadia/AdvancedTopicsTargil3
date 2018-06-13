@@ -2,10 +2,10 @@
 #define ADTO_TARGIL1_PIECE_H
 
 //--------------------------
-// Piece Interface
+// Piece Class
 //--------------------------
 
-// Manages the characteristics of the individual piece and its 
+// Abstract class. Manages the characteristics of the individual piece and its 
 // fights on the actual gameboard.
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 

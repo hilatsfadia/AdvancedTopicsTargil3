@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_SCISSORS_H
 
 //--------------------------
-// Scissors Interface
+// Scissors Class
 //--------------------------
 
 // Creates and handles all instances of piece of type scissors. 

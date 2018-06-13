@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_RPS_PIECE_H
 
 //--------------------------
-// RPSPiece Interface
+// RPSPiece Class
 //--------------------------
 
 // Abstract class to the RPS game pieces. Manages the characteristics 

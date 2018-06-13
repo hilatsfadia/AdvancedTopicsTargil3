@@ -2,7 +2,7 @@
 #define ADVANCEDTOPICS_MASTER_POINTIMPL_H
 
 //--------------------------
-// PointImpl Interface
+// PointImpl Class
 //--------------------------
 
 // Represents a certain coordinate on board.

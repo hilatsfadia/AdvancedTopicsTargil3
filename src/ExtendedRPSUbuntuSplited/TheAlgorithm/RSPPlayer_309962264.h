@@ -2,7 +2,7 @@
 #define ADVANCEDTOPICS_MASTER_AUTOPLAYERALGORITHM_H
 
 //--------------------------
-// AutoPlayerAlgorithm Interface
+// RSPPlayer_309962264 Class
 //--------------------------
 
 // Creates an auto algorithm for the player. 

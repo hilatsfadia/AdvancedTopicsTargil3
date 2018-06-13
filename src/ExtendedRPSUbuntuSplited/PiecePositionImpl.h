@@ -2,7 +2,7 @@
 #define ADVANCEDTOPICS_MASTER_PIECEPOSITIONIMPL_H
 
 //--------------------------
-// PiecePositionImpl Interface
+// PiecePositionImpl Class
 //--------------------------
 
 // Manages a certain position on board given to it.

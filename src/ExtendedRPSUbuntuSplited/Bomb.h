@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_BOMB_H
 
 //--------------------------
-// Bomb Interface
+// Bomb Class
 //--------------------------
 
 // Creates and handles all instances of piece of type bomb. Inherits type piece.

@@ -2,7 +2,7 @@
 #define ADVANCEDTOPICS_MASTER_MOVEIMPL_H
 
 //--------------------------
-// MoveImpl Interface
+// MoveImpl Class
 //--------------------------
 
 // Manages the return of a move on the board for the player.

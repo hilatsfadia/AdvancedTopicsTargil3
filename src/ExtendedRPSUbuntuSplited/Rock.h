@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_ROCK_H
 
 //--------------------------
-// Rock Interface
+// Rock Class
 //--------------------------
 
 // Creates and handles all instances of piece of type rock. 

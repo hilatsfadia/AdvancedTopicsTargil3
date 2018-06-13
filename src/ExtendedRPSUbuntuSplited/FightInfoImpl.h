@@ -3,7 +3,7 @@
 #define ADVANCEDTOPICS_MASTER_FIGHTINFOIMPL_H
 
 //--------------------------
-// FightInfoImpl Interface
+// FightInfoImpl Class
 //--------------------------
 
 // Manages a struct that holds all the information of a current 

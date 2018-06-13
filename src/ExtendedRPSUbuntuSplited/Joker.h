@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_JOKER_PIECE_H
 
 //--------------------------
-// Joker Interface
+// Joker Class
 //--------------------------
 
 // Creates and handles all instances of piece of type joker. 

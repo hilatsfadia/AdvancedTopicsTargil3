@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_FLAG_H
 
 //--------------------------
-// Flag Interface
+// Flag Class
 //--------------------------
 
 // Creates and handles all instances of piece of type flag. 

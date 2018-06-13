@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_Player_H
 
 //--------------------------
-// Player Interface
+// Player Class
 //--------------------------
 
 // Manages and creates a new player to play on board and handles all his pieces.

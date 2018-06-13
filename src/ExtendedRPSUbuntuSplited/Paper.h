@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_PAPER_H
 
 //--------------------------
-// Paper Interface
+// Paper Class
 //--------------------------
 
 // Creates and handles all instances of piece of type paper. 

@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_BOARD_H
 
 //--------------------------
-// BoardImpl Interface
+// BoardImpl Class
 //--------------------------
 
 // Generates and handles the board which the game is played upon.

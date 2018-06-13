@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_PIECE_FACTORY_H
 
 //--------------------------
-// PieceFactory Interface
+// PieceFactory Class
 //--------------------------
 
 // A class that creates new instances of type piece.

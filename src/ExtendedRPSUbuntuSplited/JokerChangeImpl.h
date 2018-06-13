@@ -2,7 +2,7 @@
 #define ADVANCEDTOPICS_MASTER_JOKERCHANGEIMPL_H
 
 //--------------------------
-// JokerChangeImpl Interface
+// JokerChangeImpl Class
 //--------------------------
 
 // Manages the return of a joker change move on the board for the player.

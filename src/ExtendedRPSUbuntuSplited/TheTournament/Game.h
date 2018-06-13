@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_GAME_H
 
 //--------------------------
-// Game Interface
+// Game Class
 //--------------------------
 
 // Functions as game manager.Manages the progress of the game, 

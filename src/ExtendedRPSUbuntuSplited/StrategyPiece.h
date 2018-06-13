@@ -2,7 +2,7 @@
 #define ADTO_TARGIL1_PIECE_STRATEGY_H
 
 //--------------------------
-// StrategyPiece Interface
+// StrategyPiece Class
 //--------------------------
 
 //Creates and manages an instance the represents a dummy piece on a dummy 
