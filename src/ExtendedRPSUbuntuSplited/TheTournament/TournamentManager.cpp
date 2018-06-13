@@ -50,14 +50,36 @@ TournamentManager::~TournamentManager()
 	}
 }
 
-void TournamentManager::handleUpdateOfScores(const std::pair<std::string, std::string>& gameToPlay, size_t player1AdditionScores, size_t player2AdditionScores){
-    lock_guard<mutex> lock(scoresLock);
-    mId2scores[gameToPlay.first] += player1AdditionScores;
-    mId2scores[gameToPlay.second] += player2AdditionScores;
+void TournamentManager::handleUpdateOfScores(const GameRepr& gamePlayed, size_t player1AdditionScores, size_t player2AdditionScores){
+	switch (gamePlayed.accumulateMethod) {
+		case AccumulateGameScores::BothPlayers:
+		{
+			lock_guard<mutex> lock(scoresLock);
+			mId2scores[gamePlayed.player1Id] += player1AdditionScores;
+			mId2scores[gamePlayed.player2Id] += player2AdditionScores;
+			break;
+		}
+		case AccumulateGameScores::Player1:
+		{
+			lock_guard<mutex> lock(scoresLock);
+			mId2scores[gamePlayed.player1Id] += player1AdditionScores;
+			break;
+		}
+		case AccumulateGameScores::Player2:
+		{
+			lock_guard<mutex> lock(scoresLock);
+			mId2scores[gamePlayed.player2Id] += player2AdditionScores;
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
 }
 
-void TournamentManager::runSingleSubSimulation(const std::pair<std::string, std::string>& gameToPlay) {
-    Game game(mId2factory[gameToPlay.first](), mId2factory[gameToPlay.second]());
+void TournamentManager::runSingleSubSimulation(const GameRepr& gameToPlay) {
+    Game game(mId2factory[gameToPlay.player1Id](), mId2factory[gameToPlay.player2Id]());
     game.RunGame();
     Winner winner = game.GetWinner();
     switch (winner){
@@ -137,6 +159,38 @@ void TournamentManager::runMultiThreaded(size_t numThreads){
     printResults();
 }
 
+void TournamentManager::FillEnemiesInRandomOrder(const std::string & playerId, const vector<string>& allIds, std::vector<std::string>& enemiesToFill)
+{
+	enemiesToFill = allIds;
+	eraseString(enemiesToFill, playerId);
+	std::random_shuffle(std::begin(enemiesToFill), std::end(enemiesToFill));
+}
+
+void TournamentManager::createGamesForPlayer(const std::string & playerId, const vector<string>& allIds){
+	vector<string> enemies;
+	FillEnemiesInRandomOrder(playerId, allIds, enemies);
+
+	for (auto itr = enemies.begin(); ((mId2numberOfGames[playerId] > 0) && (enemies.size() > 0));) {
+		std::string& enemy = *itr;
+		if (mId2numberOfGames[enemy] > 0) {
+			mGames.emplace_back(playerId, enemy, AccumulateGameScores::BothPlayers); // TODO: ask about the order
+			mId2numberOfGames[playerId]--;
+			mId2numberOfGames[enemy]--;
+		}
+
+		if (mId2numberOfGames[enemy] == 0) {
+			itr = enemies.erase(itr);
+			continue;
+		}
+		else {
+			++itr;
+			if (itr == enemies.end()) {
+				itr = enemies.begin();
+			}
+		}
+	}
+}
+
 void TournamentManager::createGames() {
     mGames.clear();
     list<void *>::iterator itr;
@@ -148,27 +202,20 @@ void TournamentManager::createGames() {
     }
 
 	for (string id : ids) {
-		vector<string> enemies(ids.begin(), ids.end());
-		eraseString(enemies, id);
-		std::random_shuffle(std::begin(enemies), std::end(enemies));
+		createGamesForPlayer(id, ids);
+	}
 
-		for (auto itr = enemies.begin(); mId2numberOfGames[id] > 0;) {
-			std::string& enemy = *itr;
-			if (mId2numberOfGames[enemy] > 0) {
-				mGames.push_back(std::make_pair(id, enemy)); // TODO: ask about the order
-				mId2numberOfGames[id]--;
-				mId2numberOfGames[enemy]--;
-			}
-
-			if (mId2numberOfGames[enemy] == 0) {
-				itr = enemies.erase(itr);
-				continue;
-			}
-			else {
-				++itr;
-				if (itr == enemies.end()) {
-					itr = enemies.begin();
-				}
+	// Checks if a player has to play more games and don't have whom to play with.
+	// As demanded, this player should play against other, when accumulating points only to
+	// the player who hasn't played 30 games yet.
+	for (string id : ids) {
+		if (mId2numberOfGames[id] > 0) {
+			vector<string> enemies;
+			FillEnemiesInRandomOrder(id, ids, enemies);
+			int i = 0;
+			while (mId2numberOfGames[id] > 0) {
+				mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1); // TODO: ask about the order
+				i++;
 			}
 		}
 	}
@@ -177,6 +224,7 @@ void TournamentManager::createGames() {
 int TournamentManager::loadAlgoritm(char* inBuf){
     void *dlib;
     char name[BUF_SIZE];
+	size_t oldMapSize = mId2factory.size();
 	// TODO:!!!
     // trim off the whitespace
     char *ws = strpbrk(inBuf, " \t\n");
@@ -186,14 +234,22 @@ int TournamentManager::loadAlgoritm(char* inBuf){
     dlib = dlopen(name, RTLD_NOW);
     if(dlib == NULL){
         cerr << dlerror() << endl;
+		cout << "so file of algorithm: " << name << " cannot be loaded" << endl;
         return SO_FILE_CANNOT_BE_LOADED;
     }
 
-    // add the handle to our list
-    mDlList.insert(mDlList.end(), dlib);
+	if (mId2factory.size() == oldMapSize)
+	{
+		cout << "Algorithm: " << name << " didn't register" << endl;
+		return NO_ALGORITHM_REGISTERED;
+	}
+
+	// add the handle to our list
+	mDlList.insert(mDlList.end(), dlib);
 
     return ALGORITHM_REGISTERED_SUCCESSFULLY;
 }
+
 
 int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) {
     FILE *dl;   // handle to read directory
@@ -215,11 +271,14 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
     }
 
     while(fgets(inBuf, BUF_SIZE, dl)){
-        if (loadAlgoritm(inBuf) == ALGORITHM_REGISTERED_SUCCESSFULLY){
-        }
-        else{
-            // TODO:
-        }
+		int loadResult = loadAlgoritm(inBuf);
+		// 
+		// ALGORITHM_REGISTERED_SUCCESSFULLY
+        //if (loadResult == SO_FILE_CANNOT_BE_LOADED){
+        //}
+        //else if (loadResult == SO_FILE_CANNOT_BE_LOADED) {
+        //    // TODO:
+        //}
     }
 
     if (mId2factory.size() <= 1){

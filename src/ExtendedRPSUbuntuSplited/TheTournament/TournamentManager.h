@@ -21,6 +21,18 @@
 
 class TournamentManager
 {
+	// This enum is needed to the case in which a player has to play against
+	// other player which has already played all his games.
+	enum class AccumulateGameScores { BothPlayers = 0, Player1 = 1, Player2 = 2 };
+
+	struct GameRepr {
+		std::string player1Id;
+		std::string player2Id;
+		AccumulateGameScores accumulateMethod;
+		GameRepr(const std::string& thePlayer1Id, const std::string& thePlayer2Id, AccumulateGameScores theAccumulateMethod) :
+			player1Id(thePlayer1Id), player2Id(thePlayer2Id), accumulateMethod(theAccumulateMethod) {}
+	};
+
 	static TournamentManager theTournamentManager;
 	std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> mId2factory;
 	std::map<std::string, int> mId2numberOfGames;
@@ -28,21 +40,30 @@ class TournamentManager
     std::mutex scoresLock;
 	std::atomic_size_t mGameIndex{0}; // atomic_size_t is a language typedef for std::atomic<size_t>
 	std::list<void *> mDlList; // list to hold handles for dynamic libs
-	std::vector<std::pair<std::string, std::string>> mGames;
+	std::vector<GameRepr> mGames;
 	// private ctor (of singleton)
 	TournamentManager() {}
 
-    void handleUpdateOfScores(const std::pair<std::string, std::string>& gameToPlay, size_t player1AdditionScores, size_t player2AdditionScores);
+	// Updates asynchronically the scores of the player who played the game. 
+	// The question for whom to accumulate the scores, is decided by the
+	// value of the given AccumulateGameScores method.
+    void handleUpdateOfScores(const GameRepr& gamePlayed, size_t player1AdditionScores, size_t player2AdditionScores);
     void printResults() const;
     void runSingleThreaded();
 
 	// Loads a specific algorithm from the given so file name
     int loadAlgoritm(char* inBuf);
 
-	// Initializes a vector of all the games in the tournament 
+	void FillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& allIds, std::vector<std::string>& enemiesToFill);
+
+	// Tries to create 30 games for the given player against other players
+	// who haven't yet played all their 30 games.
+	void createGamesForPlayer(const std::string& playerId, const std::vector<std::string>& allIds);
+
+	// Creates a vector of all the games in the tournament 
 	// (vector of pairs, who's against whom)
     void createGames();
-    void runSingleSubSimulation(const std::pair<std::string, std::string>& gameToPlay);
+    void runSingleSubSimulation(const GameRepr& gameToPlay);
     void runSingleSubSimulationThread();
 
 	// Erase the given string from the given vector
@@ -67,7 +88,7 @@ public:
 	// Loads all the so files in the given directory
 	int loadAlgorithms(int, const std::string& soFilesDirectory);
 
-	enum {ALGORITHM_REGISTERED_SUCCESSFULLY = 0, FOLDER_COULD_NOT_BE_OPENED = -1, SO_FILE_CANNOT_BE_LOADED = -2, ALMOST_NO_ALGORITHM_REGISTERED = -3};
+	enum {ALGORITHM_REGISTERED_SUCCESSFULLY = 0, FOLDER_COULD_NOT_BE_OPENED = -1, SO_FILE_CANNOT_BE_LOADED = -2, NO_ALGORITHM_REGISTERED = -3, ALMOST_NO_ALGORITHM_REGISTERED = -4};
 };
 
 #endif
