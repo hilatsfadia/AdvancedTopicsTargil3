@@ -212,7 +212,7 @@ void TournamentManager::createGames() {
 		if (mId2numberOfGames[id] > 0) {
 			vector<string> enemies;
 			FillEnemiesInRandomOrder(id, ids, enemies);
-			int i = 0;
+			size_t i = 0;
 			while (mId2numberOfGames[id] > 0) {
 				mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1); // TODO: ask about the order
 				mId2numberOfGames[id]--;
@@ -272,7 +272,8 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
     }
 
     while(fgets(inBuf, BUF_SIZE, dl)){
-		int loadResult = loadAlgoritm(inBuf);
+		loadAlgoritm(inBuf);
+		//int loadResult = loadAlgoritm(inBuf);
 		// 
 		// ALGORITHM_REGISTERED_SUCCESSFULLY
         //if (loadResult == SO_FILE_CANNOT_BE_LOADED){
