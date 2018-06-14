@@ -56,7 +56,7 @@ private:
 	std::vector<unique_ptr<PlayerAlgorithm>> mAlgorithmsVec;
 
 	// TODO: delete!!!
-	std::ofstream logFile;
+	//std::ofstream logFile;
 
 	// Put a non joker piece in given position.  
 	// Get detailed about positioning from the given tokens, and checks for tokens validity.
@@ -126,7 +126,7 @@ private:
 	bool ChangeJokerRepresentation(const JokerChange& jokerChange, int playerNum);
 
 	// Log the current board after move to file.
-	void LogAfterMove(int countMoves);
+	//void LogAfterMove(int countMoves);
 
 public:
     enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };

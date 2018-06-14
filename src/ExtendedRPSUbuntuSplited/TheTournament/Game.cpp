@@ -315,16 +315,16 @@ bool Game::ChangeJokerRepresentation(const JokerChange& jokerChange, int playerN
 
 	return true;
 }
-
-void Game::LogAfterMove(int countMoves)
-{
-	logFile << "Count Move: " << countMoves << endl;
-	logFile << "\n" << endl;
-	mGameBoard.Print(logFile);
-	logFile << "###############################################" << endl;
-	logFile << "\n" << endl;
-	logFile.flush();
-}
+//
+//void Game::LogAfterMove(int countMoves)
+//{
+//	logFile << "Count Move: " << countMoves << endl;
+//	logFile << "\n" << endl;
+//	mGameBoard.Print(logFile);
+//	logFile << "###############################################" << endl;
+//	logFile << "\n" << endl;
+//	logFile.flush();
+//}
 
 unique_ptr<Move> Game::CheckGetMove(int playerIndex, FightInfoImpl& fightToFill)
 {
@@ -377,7 +377,7 @@ void Game::NotifyOtherPlayer(int otherPlayerIndex, const FightInfoImpl& fightToF
 void Game::HandleMoves(){
 	// One turn consists of two moves of the two players.
 	int countNoFightMoves = 0;
-	int countMoves = 1;// TODO: delete!!!
+	//int countMoves = 1;// TODO: delete!!!
 
 	while (countNoFightMoves < MAX_MOVES)
 	{
@@ -398,7 +398,7 @@ void Game::HandleMoves(){
 				countNoFightMoves++;
 			}
 
-			LogAfterMove(countMoves);// TODO: delete!!!
+			//LogAfterMove(countMoves);// TODO: delete!!!
 			unique_ptr<JokerChange> currJokerChange = mAlgorithmsVec[i]->getJokerChange();
 			if (currJokerChange != nullptr){ // if a change is requested
 				if (!ChangeJokerRepresentation(*currJokerChange, i + 1)){
@@ -409,7 +409,7 @@ void Game::HandleMoves(){
 			NotifyOtherPlayer(GetOpponentIndex(i), fightToFill, *currMove);
 		}
 
-		countMoves++;// TODO: delete!!!
+		//countMoves++;// TODO: delete!!!
 	}
 
 	ReportGameOver(Winner::Tie);
@@ -424,11 +424,11 @@ void Game::RunGame()
 	}
 
 	// TODO: delete!!!
-	logFile.open("log.txt");
-	mGameBoard.Print(logFile);
-	logFile << "###############################################" << endl;
-	logFile << "\n\n\n" << endl;
-	logFile.flush();
+	//logFile.open("log.txt");
+	//mGameBoard.Print(logFile);
+	//logFile << "###############################################" << endl;
+	//logFile << "\n\n\n" << endl;
+	//logFile.flush();
 
 	if (ReportGameOverAfterInitBoard())
 	{
