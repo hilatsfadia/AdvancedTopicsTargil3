@@ -139,18 +139,18 @@ void RSPPlayer_309962264::updateStrategyAccordingToBoard(const Board & b)
 
 			// Update the board of the player of this algorithm, by removing
 			// eaten pieces.
-			if (b.getPlayer(pos) != mPlayer) // it's mOpponent or 0
-			{
-				if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos))
-				{
-					if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(pos).GetPieceType() == PieceType::Joker)
-					{
-						eraseJokerLocation(pos);
-					}
+			//if (b.getPlayer(pos) != mPlayer) // it's mOpponent or 0
+			//{
+			//	if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos))
+			//	{
+			//		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(pos).GetPieceType() == PieceType::Joker)
+			//		{
+			//			eraseJokerLocation(pos);
+			//		}
 
-					mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
-				}
-			}
+			//		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
+			//	}
+			//}
 
 			// Update the board of the oponnent player, by getting all it's pieces locations
 			if (b.getPlayer(pos) == mOpponent)
@@ -174,6 +174,18 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 		if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered){
 			mOpponentNumCoveredPieces--;
 		}
+	}
+
+	if ((winner == TIE) || (winner == mOpponent))
+	{
+		//if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
+		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
+		{
+			eraseJokerLocation(fight.getPosition());
+		}
+
+		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
+		//}
 	}
 
 	if (winner == TIE) {
@@ -652,11 +664,13 @@ unique_ptr<JokerChange> RSPPlayer_309962264::getJokerChange()
 {
 	unique_ptr<JokerChange> jokerChange = nullptr;
 	for (const Point& jokerPos : mPlayerJokerLocations) {
-		StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(jokerPos);
+		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(jokerPos)) {
+			StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(jokerPos);
 
-		if (strategyPiece.GetIsThreatened()) {
-			jokerChange = changeThreatenedJoker(jokerPos);
-			updateThreats();
+			if (strategyPiece.GetIsThreatened()) {
+				jokerChange = changeThreatenedJoker(jokerPos);
+				updateThreats();
+			}
 		}
 	}
 
