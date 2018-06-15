@@ -101,7 +101,8 @@ void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vec
 			uncoveredPiece = PieceFactory::GetPieceFromChar(piecePos->getPiece(), mPlayer);
 		}
 
-		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer, std::move(uncoveredPiece));
+		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer);
+		strategyPiece->UncoverPiece(std::move(uncoveredPiece));
 		mPlayersStrategyBoards[player - 1].PutPieceInPosition(piecePos->getPosition(), std::move(strategyPiece));
 	}
 }

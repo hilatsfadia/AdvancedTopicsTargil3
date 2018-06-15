@@ -48,6 +48,9 @@ TournamentManager::~TournamentManager()
 	    dlclose(*itr);
 	    //*itr = nullptr;
 	}
+
+	// TODO:
+	//mDlList.clear();
 }
 
 void TournamentManager::handleUpdateOfScores(const GameRepr& gamePlayed, size_t player1AdditionScores, size_t player2AdditionScores){
@@ -79,7 +82,8 @@ void TournamentManager::handleUpdateOfScores(const GameRepr& gamePlayed, size_t 
 }
 
 void TournamentManager::runSingleSubSimulation(const GameRepr& gameToPlay) {
-    Game game(mId2factory[gameToPlay.player1Id](), mId2factory[gameToPlay.player2Id]());
+    Game game;
+    game.InitGame(mId2factory[gameToPlay.player1Id](), mId2factory[gameToPlay.player2Id]());
     game.RunGame();
     Winner winner = game.GetWinner();
     switch (winner){

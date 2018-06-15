@@ -28,8 +28,7 @@ namespace HilaAndJaelExtendedRPS
 		bool mIsMovingPiece = false;
 
 	public:
-		StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
-		StrategyPiece(int ownerNum) : StrategyPiece(ownerNum, nullptr) { }
+		StrategyPiece(int ownerNum) : Piece(ownerNum) { }
 
 		// Gets this piece type.
 		// If this piece is still covered, gets PieceType::Unknown.

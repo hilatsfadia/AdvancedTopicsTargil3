@@ -19,7 +19,6 @@ namespace HilaAndJaelExtendedRPS
 	{
 	private:
 		PieceFactory() {}
-		~PieceFactory() {}
 	public:
 		enum class PieceType { Rock, Paper, Scissors, Bomb, Joker, Flag, Covered };
 

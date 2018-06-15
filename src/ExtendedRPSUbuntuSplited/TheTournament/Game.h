@@ -59,6 +59,8 @@ private:
 	std::vector<shared_ptr<Player>> mPlayersVec;
 	std::vector<unique_ptr<PlayerAlgorithm>> mAlgorithmsVec;
 
+	bool mIsInitialized = false;
+
 	// TODO: delete!!!
 	//std::ofstream logFile;
 
@@ -135,7 +137,7 @@ private:
 public:
     enum class Winner { Tie = 0, Player1 = 1, Player2 = 2, None = 3 };
 
-	Game(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm);
+	void InitGame(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm);
 
 	void RunGame();
 

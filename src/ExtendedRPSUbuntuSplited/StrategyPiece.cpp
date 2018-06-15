@@ -8,14 +8,6 @@
 
 using namespace HilaAndJaelExtendedRPS;
 
-StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
-{
-	if (uncoveredPiece != nullptr)
-	{
-		UncoverPiece(std::move(uncoveredPiece));
-	}
-}
-
 PieceType StrategyPiece::GetPieceType() const
 {
 	return ((mUncoveredPiece == nullptr) ? PieceType::Covered : mUncoveredPiece->GetPieceType());
