@@ -5,6 +5,8 @@
 #include "JokerChange.h"
 #include "StrategyPiece.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 // Type Alias
 using WinningPiece = Piece::WinningPiece;
 

@@ -1,5 +1,7 @@
 #include "FightInfoImpl.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 void FightInfoImpl::SetFightInfoValues(const Point& position, char player1Piece, char player2Piece, int winner)
 {
 	mPos = std::make_unique<PointImpl>(position.getX(), position.getY());

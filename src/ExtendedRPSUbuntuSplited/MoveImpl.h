@@ -13,15 +13,17 @@
 #include "Move.h"
 #include "PointImpl.h"
 
-class MoveImpl : public Move{
-	PointImpl mFrom;
-	PointImpl mTo;
-public:
-	MoveImpl(const PointImpl& from, const PointImpl& to) : mFrom(from), mTo(to){}
+namespace HilaAndJaelExtendedRPS
+{
+	class MoveImpl : public Move {
+		PointImpl mFrom;
+		PointImpl mTo;
+	public:
+		MoveImpl(const PointImpl& from, const PointImpl& to) : mFrom(from), mTo(to) {}
 
-    virtual const Point& getFrom() const override { return mFrom; }
-    virtual const Point& getTo() const override { return  mTo; }
-};
-
+		virtual const Point& getFrom() const override { return mFrom; }
+		virtual const Point& getTo() const override { return  mTo; }
+	};
+}
 
 #endif //ADVANCEDTOPICS_MASTER_MOVEIMPL_H

@@ -13,54 +13,57 @@
 
 #include "Piece.h"
 #include "PieceFactory.h"
-#define COVERED_CHAR 'C'
 
-class StrategyPiece :
-	public Piece
+namespace HilaAndJaelExtendedRPS
 {
-private:
-	unique_ptr<Piece> mUncoveredPiece = nullptr;
-	bool mIsThreatened = false;
-	bool mIsThreathening = false;
-	bool mIsMovingPiece = false;
+	#define COVERED_CHAR 'C'
 
-public:
-	StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
-	StrategyPiece(int ownerNum) : StrategyPiece(ownerNum, nullptr) { }
+	class StrategyPiece :
+		public Piece
+	{
+	private:
+		unique_ptr<Piece> mUncoveredPiece = nullptr;
+		bool mIsThreatened = false;
+		bool mIsThreathening = false;
+		bool mIsMovingPiece = false;
 
-	// Gets this piece type.
-	// If this piece is still covered, gets PieceType::Unknown.
-	PieceType GetPieceType() const override;
-	PieceType GetActualPieceType() const override;
+	public:
+		StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece);
+		StrategyPiece(int ownerNum) : StrategyPiece(ownerNum, nullptr) { }
 
-	bool GetIsMovingPiece() const override;
+		// Gets this piece type.
+		// If this piece is still covered, gets PieceType::Unknown.
+		PieceType GetPieceType() const override;
+		PieceType GetActualPieceType() const override;
 
-	char GetPieceChar() const override;
-	char GetActualPieceChar() const override;
+		bool GetIsMovingPiece() const override;
 
-	void SetMovingPiece() { mIsMovingPiece = true; }
+		char GetPieceChar() const override;
+		char GetActualPieceChar() const override;
 
-	// Uncovers this piece by giving it the actual piece it represents.
-	void UncoverPiece(std::unique_ptr<Piece> uncoveredPiece);
+		void SetMovingPiece() { mIsMovingPiece = true; }
 
-	// Uncover this piece by setting it's real piece.
-	// If this piece is already uncovered, check if it's indeed the given char. If not, update
-	// it to be the relevant joker (with a relevant representation).
-	// uncoveredPieceChar should be R, P, S, B or F (but NOT J)
-	void UncoverPiece(char uncoveredPieceChar);
+		// Uncovers this piece by giving it the actual piece it represents.
+		void UncoverPiece(std::unique_ptr<Piece> uncoveredPiece);
 
-	// Returns true iff this piece is threatened by an enemy piece (one or more)
-	bool GetIsThreatened() const { return mIsThreatened; }
-	void SetIsThreatened(bool isThreatend) { mIsThreatened = isThreatend; }
+		// Uncover this piece by setting it's real piece.
+		// If this piece is already uncovered, check if it's indeed the given char. If not, update
+		// it to be the relevant joker (with a relevant representation).
+		// uncoveredPieceChar should be R, P, S, B or F (but NOT J)
+		void UncoverPiece(char uncoveredPieceChar);
 
-	// Returns true iff this piece is threatening an enemy piece (one or more)
-	bool GetIsThreathening() const { return mIsThreathening; }
-	void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
+		// Returns true iff this piece is threatened by an enemy piece (one or more)
+		bool GetIsThreatened() const { return mIsThreatened; }
+		void SetIsThreatened(bool isThreatend) { mIsThreatened = isThreatend; }
 
-	virtual bool IsStrongerThan(const StrategyPiece& other) const;
+		// Returns true iff this piece is threatening an enemy piece (one or more)
+		bool GetIsThreathening() const { return mIsThreathening; }
+		void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
-	// TODO: maybe derived class
-	void ChangeJokerToStronger(PieceType enemyPieceType);
-};
+		virtual bool IsStrongerThan(const StrategyPiece& other) const;
 
+		// TODO: maybe derived class
+		void ChangeJokerToStronger(PieceType enemyPieceType);
+	};
+}
 #endif //ADTO_TARGIL1_PIECE_STRATEGY_H

@@ -24,6 +24,8 @@
 #define SECOND_PLAYER_NUM 2
 #define TIE 0
 
+using namespace HilaAndJaelExtendedRPS;
+
 class RSPPlayer_309962264 : public PlayerAlgorithm
 {
 private:

@@ -6,8 +6,6 @@
 #include "Piece.h"
 //#include "ParserInitFile.h"
 //#include "ParserMoveFile.h"
-#include "Player.h"
-#include "Joker.h"
 #include "FightInfoImpl.h"
 #include "PiecePositionImpl.h"
 #include "PlayerAlgorithm.h"
@@ -16,6 +14,7 @@
 #define MAX_MOVES 100
 
 using namespace std;
+using namespace HilaAndJaelExtendedRPS;
 
 Game::Winner Game::GetWinnerOutOfLooser(int loserNum) const
 {

@@ -1,5 +1,7 @@
 #include "Player.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 Player::~Player()
 {
 }

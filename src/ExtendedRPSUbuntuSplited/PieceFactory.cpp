@@ -7,6 +7,8 @@
 #include "Flag.h"
 #include "Player.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 using std::shared_ptr;
 using std::make_unique;
 

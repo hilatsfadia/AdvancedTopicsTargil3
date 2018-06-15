@@ -10,22 +10,24 @@
 
 #include <memory>
 
-class Piece;
-class Player;
-
-class PieceFactory
+namespace HilaAndJaelExtendedRPS
 {
-private:
-	PieceFactory() {}
-	~PieceFactory() {}
-public:
-	enum class PieceType { Rock, Paper, Scissors, Bomb, Joker, Flag, Covered };
+	class Piece;
+	class Player;
 
-	// Creates a new piece object according to it's given char representation. (not joker)
-	// Returns the created piece, or nullptr if pieceChar can't represent a piece.
-	// TODO: maybe remove the owner, kepp only it's number
-	static std::unique_ptr<Piece> GetPieceFromChar(char pieceChar, std::shared_ptr<Player> owner = nullptr);
-	static std::unique_ptr<Piece> GetPieceFromChar(char pieceChar, int ownerNum);
-};
+	class PieceFactory
+	{
+	private:
+		PieceFactory() {}
+		~PieceFactory() {}
+	public:
+		enum class PieceType { Rock, Paper, Scissors, Bomb, Joker, Flag, Covered };
 
+		// Creates a new piece object according to it's given char representation. (not joker)
+		// Returns the created piece, or nullptr if pieceChar can't represent a piece.
+		// TODO: maybe remove the owner, kepp only it's number
+		static std::unique_ptr<Piece> GetPieceFromChar(char pieceChar, std::shared_ptr<Player> owner = nullptr);
+		static std::unique_ptr<Piece> GetPieceFromChar(char pieceChar, int ownerNum);
+	};
+}
 #endif //ADTO_TARGIL1_PIECE_FACTORY_H

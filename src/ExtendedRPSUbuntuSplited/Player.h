@@ -14,75 +14,78 @@
 #include "PieceFactory.h"
 #include "PlayerAlgorithm.h"
 
-// TODO: delete it!
-//#define R 1
-//#define P 0
-//#define S 0
-//#define B 0
-//#define J 0
-//#define F 1
-
-#define R 2
-#define P 5
-#define S 1
-#define B 2
-#define J 2
-#define F 1
-
-// Type Alias
-using PieceType = PieceFactory::PieceType;
-
-class Player
+namespace HilaAndJaelExtendedRPS
 {
-	// Number of pieces of each type that the player holds.
-	std::map<PieceType, int> mCountPieces;
 
-	// Max number of pieces of each type that the player can hold.
-	std::map<PieceType, int> mMaxCountPieces;
+	// TODO: delete it!
+	//#define R 1
+	//#define P 0
+	//#define S 0
+	//#define B 0
+	//#define J 0
+	//#define F 1
 
-	int mPlayerNum;
-	int mCountMovingPieces = 0;
-	int mCountPoints = 0;
-	int mPositionedAllFlags = false;
+	#define R 2
+	#define P 5
+	#define S 1
+	#define B 2
+	#define J 2
+	#define F 1
 
-	//unique_ptr<PlayerAlgorithm> mPlayerAlgorithm = nullptr;
+	// Type Alias
+	using PieceType = PieceFactory::PieceType;
 
-public:
-	//Player(PlayerAlgorithm* playerAlgorithm);
-	Player(int playerNum);
-	~Player();
+	class Player
+	{
+		// Number of pieces of each type that the player holds.
+		std::map<PieceType, int> mCountPieces;
 
-	int GetPlayerNum() const { return mPlayerNum; }
+		// Max number of pieces of each type that the player can hold.
+		std::map<PieceType, int> mMaxCountPieces;
 
-	// Gets the number of pieces this player has of the given type.
-	int GetPieceCount(PieceType pieceType) const;
+		int mPlayerNum;
+		int mCountMovingPieces = 0;
+		int mCountPoints = 0;
+		int mPositionedAllFlags = false;
 
-	// Removes one piece of the given type from this player.
-	// Returns true if this player had at least one piece 
-	// of the given type before removing.
-	bool DecPieceCount(PieceType pieceType);
+		//unique_ptr<PlayerAlgorithm> mPlayerAlgorithm = nullptr;
 
-	// Adds one piece of the given type from this player.
-	// Returns true if this player can hold one more piece
-	// of the given type before addition.
-	// Also, checks if the given type is flag, If so, updates if
-	// all flags were positioned.
-	bool IncPieceCountInInitialization(PieceType pieceType);
+	public:
+		//Player(PlayerAlgorithm* playerAlgorithm);
+		Player(int playerNum);
+		~Player();
 
-	// Gets the number of players' pieces that can move.
-	int GetCountOfMovingPieces() const;
+		int GetPlayerNum() const { return mPlayerNum; }
 
-	// Gets the number of flag this player has.
-	int GetFlagsCount() const { return GetPieceCount(PieceType::Flag); };
+		// Gets the number of pieces this player has of the given type.
+		int GetPieceCount(PieceType pieceType) const;
 
-	bool DoesPosiotionedAllFlags() const { return mPositionedAllFlags; }
+		// Removes one piece of the given type from this player.
+		// Returns true if this player had at least one piece 
+		// of the given type before removing.
+		bool DecPieceCount(PieceType pieceType);
 
-	void AddToCountMovingPieces(PieceType pieceType);
-	void RemoveFromCountMovingPieces(PieceType pieceType);
+		// Adds one piece of the given type from this player.
+		// Returns true if this player can hold one more piece
+		// of the given type before addition.
+		// Also, checks if the given type is flag, If so, updates if
+		// all flags were positioned.
+		bool IncPieceCountInInitialization(PieceType pieceType);
 
-	//PlayerAlgorithm* GetPlayerAlgorithm() { return mPlayerAlgorithm; }
-	//friend bool operator==(const Player& lhs, const Player& rhs);
-	//friend bool operator!=(const Player& lhs, const Player& rhs) { return !(lhs == rhs); }
-};
+		// Gets the number of players' pieces that can move.
+		int GetCountOfMovingPieces() const;
 
+		// Gets the number of flag this player has.
+		int GetFlagsCount() const { return GetPieceCount(PieceType::Flag); };
+
+		bool DoesPosiotionedAllFlags() const { return mPositionedAllFlags; }
+
+		void AddToCountMovingPieces(PieceType pieceType);
+		void RemoveFromCountMovingPieces(PieceType pieceType);
+
+		//PlayerAlgorithm* GetPlayerAlgorithm() { return mPlayerAlgorithm; }
+		//friend bool operator==(const Player& lhs, const Player& rhs);
+		//friend bool operator!=(const Player& lhs, const Player& rhs) { return !(lhs == rhs); }
+	};
+}
 #endif //ADTO_TARGIL1_Player_H

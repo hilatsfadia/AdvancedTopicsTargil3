@@ -1,5 +1,7 @@
 #include "Rock.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 Piece::WinningPiece Rock::FightWithOtherPieceType(Piece& enemy)
 {
 	PieceType enemyPieceType = enemy.GetPieceType();

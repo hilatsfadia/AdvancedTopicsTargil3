@@ -17,10 +17,8 @@
 #include "BoardImpl.h"
 // TODO delete!!!
 #include <fstream>
-
-class Joker;
-class PlayerAlgorithm;
-class Player;
+#include "Player.h"
+#include "Joker.h"
 
 #define OUTPUT_FILE_NAME "rps.output"
 #define NUM_OF_PLAYERS 2
@@ -37,6 +35,12 @@ class Player;
 
 #define MESSAGE_MAX_LEN 150
 #define INPUT_FILE_NAME_MAX_LEN 100
+
+//class HilaAndJaelExtendedRPS::Joker;
+//class PlayerAlgorithm;
+//class HilaAndJaelExtendedRPS::Player;
+
+using namespace HilaAndJaelExtendedRPS;
 
 class Game
 {

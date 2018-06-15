@@ -11,27 +11,29 @@
 
 #include "RPSPiece.h"
 
-#define SCISSORS_CHAR 'S'
-
-class Scissors :
-	public RPSPiece
+namespace HilaAndJaelExtendedRPS
 {
-protected:
-	// Scissors implements it according to its own rules.
-	// When a piece wants to move to an occupied location by a piece of other type,
-	// Removes the loser from its owner.
-	// Returns the winner.
-	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
-public:
-	Scissors(shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
-	Scissors(int ownerNum) : RPSPiece(ownerNum) {}
+	#define SCISSORS_CHAR 'S'
 
-	// Gets this piece type.
-	PieceType GetPieceType() const override { return PieceType::Scissors; }
+	class Scissors :
+		public RPSPiece
+	{
+	protected:
+		// Scissors implements it according to its own rules.
+		// When a piece wants to move to an occupied location by a piece of other type,
+		// Removes the loser from its owner.
+		// Returns the winner.
+		virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
+	public:
+		Scissors(shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
+		Scissors(int ownerNum) : RPSPiece(ownerNum) {}
 
-	char GetPieceChar() const override { return SCISSORS_CHAR; }
+		// Gets this piece type.
+		PieceType GetPieceType() const override { return PieceType::Scissors; }
 
-	virtual bool IsStrongerThan(const Piece& other) const override;
-};
+		char GetPieceChar() const override { return SCISSORS_CHAR; }
 
+		virtual bool IsStrongerThan(const Piece& other) const override;
+	};
+}
 #endif //ADTO_TARGIL1_SCISSORS_H

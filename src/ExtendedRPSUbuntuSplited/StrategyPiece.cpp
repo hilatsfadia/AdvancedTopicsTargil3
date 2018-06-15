@@ -6,6 +6,8 @@
 #include "Joker.h"
 #include <memory>
 
+using namespace HilaAndJaelExtendedRPS;
+
 StrategyPiece::StrategyPiece(int ownerNum, unique_ptr<Piece> uncoveredPiece) : Piece(ownerNum)
 {
 	if (uncoveredPiece != nullptr)

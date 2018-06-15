@@ -2,6 +2,8 @@
 #include "Piece.h"
 #include "Player.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 bool Joker::SetActualPiece(unique_ptr<Piece> newPiece)
 {
 	PieceType newPieceType = newPiece->GetPieceType();

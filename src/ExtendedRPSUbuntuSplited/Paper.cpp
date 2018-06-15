@@ -1,5 +1,7 @@
 #include "Paper.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 Piece::WinningPiece Paper::FightWithOtherPieceType(Piece& enemy)
 {
 	PieceType enemyPieceType = enemy.GetPieceType();

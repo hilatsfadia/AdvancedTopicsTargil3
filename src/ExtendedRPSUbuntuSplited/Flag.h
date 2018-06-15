@@ -11,27 +11,29 @@
 
 #include "Piece.h"
 
-#define FLAG_CHAR 'F'
-
-class Flag :
-	public Piece
+namespace HilaAndJaelExtendedRPS
 {
-protected:
-	// Flag implements it according to its own rules.
-	// When a piece wants to move to an occupied location by a piece of other type,
-	// Deletes and removes the loser from its owner.
-	// Returns the winner.
-	virtual WinningPiece FightWithOtherPieceType(Piece&) override;
-public:
-	Flag(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
-	Flag(int ownerNum) : Piece(ownerNum) {}
+	#define FLAG_CHAR 'F'
 
-	// Gets this piece type.
-	PieceType GetPieceType() const override { return PieceType::Flag; }
+	class Flag :
+		public Piece
+	{
+	protected:
+		// Flag implements it according to its own rules.
+		// When a piece wants to move to an occupied location by a piece of other type,
+		// Deletes and removes the loser from its owner.
+		// Returns the winner.
+		virtual WinningPiece FightWithOtherPieceType(Piece&) override;
+	public:
+		Flag(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
+		Flag(int ownerNum) : Piece(ownerNum) {}
 
-	bool GetIsMovingPiece() const override { return false; }
+		// Gets this piece type.
+		PieceType GetPieceType() const override { return PieceType::Flag; }
 
-	char GetPieceChar() const override { return FLAG_CHAR; }
-};
+		bool GetIsMovingPiece() const override { return false; }
 
+		char GetPieceChar() const override { return FLAG_CHAR; }
+	};
+}
 #endif //ADTO_TARGIL1_FLAG_H

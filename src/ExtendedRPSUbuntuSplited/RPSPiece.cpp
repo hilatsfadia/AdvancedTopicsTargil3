@@ -1,6 +1,8 @@
 #include "RPSPiece.h"
 #include "Joker.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 // To be changed in inherired classes
 Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 {

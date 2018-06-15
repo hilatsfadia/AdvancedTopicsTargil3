@@ -1,5 +1,7 @@
 #include "Scissors.h"
 
+using namespace HilaAndJaelExtendedRPS;
+
 Piece::WinningPiece Scissors::FightWithOtherPieceType(Piece& enemy)
 {
 	PieceType enemyPieceType = enemy.GetPieceType();

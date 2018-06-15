@@ -11,27 +11,29 @@
 
 #include "RPSPiece.h"
 
-#define ROCK_CHAR 'R'
-
-class Rock :
-	public RPSPiece
+namespace HilaAndJaelExtendedRPS
 {
-protected:
-	// Rock implements it according to its own rules.
-	// When a piece wants to move to an occupied location by a piece of other type,
-	// Removes the loser from its owner.
-	// Returns the winner.
-	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
-public:
-	Rock(shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
-	Rock(int ownerNum) : RPSPiece(ownerNum) {}
+	#define ROCK_CHAR 'R'
 
-	// Gets this piece type.
-	PieceType GetPieceType() const override { return PieceType::Rock; }
+	class Rock :
+		public RPSPiece
+	{
+	protected:
+		// Rock implements it according to its own rules.
+		// When a piece wants to move to an occupied location by a piece of other type,
+		// Removes the loser from its owner.
+		// Returns the winner.
+		virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
+	public:
+		Rock(shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
+		Rock(int ownerNum) : RPSPiece(ownerNum) {}
 
-	char GetPieceChar() const override { return ROCK_CHAR; }
+		// Gets this piece type.
+		PieceType GetPieceType() const override { return PieceType::Rock; }
 
-	virtual bool IsStrongerThan(const Piece& other) const override;
-};
+		char GetPieceChar() const override { return ROCK_CHAR; }
 
+		virtual bool IsStrongerThan(const Piece& other) const override;
+	};
+}
 #endif //ADTO_TARGIL1_ROCK_H

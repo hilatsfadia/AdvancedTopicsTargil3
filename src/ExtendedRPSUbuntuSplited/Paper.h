@@ -11,27 +11,29 @@
 
 #include "RPSPiece.h"
 
-#define PAPER_CHAR 'P'
-
-class Paper :
-	public RPSPiece
+namespace HilaAndJaelExtendedRPS
 {
-protected:
-	// Paper implements it according to its own rules.
-	// When a piece wants to move to an occupied location by a piece of other type,
-	// Removes the loser from its owner.
-	// Returns the winner.
-	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
-public:
-	Paper(std::shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
-	Paper(int ownerNum) : RPSPiece(ownerNum) {}
+	#define PAPER_CHAR 'P'
 
-	// Gets this piece type.
-	PieceType GetPieceType() const override { return PieceType::Paper; }
+	class Paper :
+		public RPSPiece
+	{
+	protected:
+		// Paper implements it according to its own rules.
+		// When a piece wants to move to an occupied location by a piece of other type,
+		// Removes the loser from its owner.
+		// Returns the winner.
+		virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
+	public:
+		Paper(std::shared_ptr<Player> owner = nullptr) : RPSPiece(owner) {}
+		Paper(int ownerNum) : RPSPiece(ownerNum) {}
 
-	char GetPieceChar() const override { return PAPER_CHAR; }
+		// Gets this piece type.
+		PieceType GetPieceType() const override { return PieceType::Paper; }
 
-	virtual bool IsStrongerThan(const Piece& other) const override;
-};
+		char GetPieceChar() const override { return PAPER_CHAR; }
 
+		virtual bool IsStrongerThan(const Piece& other) const override;
+	};
+}
 #endif //ADTO_TARGIL1_PAPER_H

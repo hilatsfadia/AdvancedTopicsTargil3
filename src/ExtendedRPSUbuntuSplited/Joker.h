@@ -12,52 +12,54 @@
 #include "Piece.h"
 #include <memory>
 
-#define JOKER_CHAR 'J'
-
-class Joker :
-	public Piece
+namespace HilaAndJaelExtendedRPS
 {
-protected:
-	std::unique_ptr<Piece> mActualPiece = nullptr;
+	#define JOKER_CHAR 'J'
 
-	// When a joker wants to move to an occupied location by other joker.
-	// Make a fight between the jokers actual representation.
-	// Deletes and removes the loser and it's actual representation from their owner.
-	// Returns the winner.
-	virtual WinningPiece FightPieceOfTheSameType(Piece& enemy) override;
+	class Joker :
+		public Piece
+	{
+	protected:
+		std::unique_ptr<Piece> mActualPiece = nullptr;
 
-	// Joker implements it according to its own rules.
-	// When a piece wants to move to an occupied location by a piece of other type,
-	// Removes the loser from its owner.
-	// Returns the winner.
-	virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
-public:
-	Joker(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
-	Joker(int ownerNum) : Piece(ownerNum) {}
-	Joker(int ownerNum, std::unique_ptr<Piece> actualPiece) : Piece(ownerNum), mActualPiece(std::move(actualPiece)) {} // TODO: SetActualPiece
+		// When a joker wants to move to an occupied location by other joker.
+		// Make a fight between the jokers actual representation.
+		// Deletes and removes the loser and it's actual representation from their owner.
+		// Returns the winner.
+		virtual WinningPiece FightPieceOfTheSameType(Piece& enemy) override;
 
-	// Gets this piece type.
-	PieceType GetPieceType() const override { return PieceType::Joker; }
-	PieceType GetActualPieceType() const override { return mActualPiece->GetPieceType(); }
+		// Joker implements it according to its own rules.
+		// When a piece wants to move to an occupied location by a piece of other type,
+		// Removes the loser from its owner.
+		// Returns the winner.
+		virtual WinningPiece FightWithOtherPieceType(Piece& enemy) override;
+	public:
+		Joker(shared_ptr<Player> owner = nullptr) : Piece(owner) {}
+		Joker(int ownerNum) : Piece(ownerNum) {}
+		Joker(int ownerNum, std::unique_ptr<Piece> actualPiece) : Piece(ownerNum), mActualPiece(std::move(actualPiece)) {} // TODO: SetActualPiece
 
-	// Return true if the given new piece has the same owner as this joker,
-	// and it represents a piece the Joker wants to be, from: R P S B
-	// If so, delete old actual piece and replace it by the given new piece.
-	bool SetActualPiece(unique_ptr<Piece> newPiece);
+		// Gets this piece type.
+		PieceType GetPieceType() const override { return PieceType::Joker; }
+		PieceType GetActualPieceType() const override { return mActualPiece->GetPieceType(); }
 
-	bool GetIsMovingPiece() const override { return mActualPiece->GetIsMovingPiece(); }
+		// Return true if the given new piece has the same owner as this joker,
+		// and it represents a piece the Joker wants to be, from: R P S B
+		// If so, delete old actual piece and replace it by the given new piece.
+		bool SetActualPiece(unique_ptr<Piece> newPiece);
 
-	char GetPieceChar() const override { return JOKER_CHAR; }
+		bool GetIsMovingPiece() const override { return mActualPiece->GetIsMovingPiece(); }
 
-	char GetActualPieceChar() const override { return mActualPiece->GetPieceChar(); }
+		char GetPieceChar() const override { return JOKER_CHAR; }
 
-	virtual bool IsStrongerThan(const Piece& other) const { return mActualPiece->IsStrongerThan(other); };
+		char GetActualPieceChar() const override { return mActualPiece->GetPieceChar(); }
 
-	const Piece& PeekActualPiece() const { return *mActualPiece; }
+		virtual bool IsStrongerThan(const Piece& other) const { return mActualPiece->IsStrongerThan(other); };
 
-	// Return the actual piece that this joker represents at the moment
-	// TODO: delete!
-	const Piece* GetActualPiece() const { return mActualPiece.get(); }
-};
+		const Piece& PeekActualPiece() const { return *mActualPiece; }
 
+		// Return the actual piece that this joker represents at the moment
+		// TODO: delete!
+		const Piece* GetActualPiece() const { return mActualPiece.get(); }
+	};
+}
 #endif //ADTO_TARGIL1_JOKER_PIECE_H
