@@ -9,7 +9,7 @@ rps_lib:
 #put all your object files here
 COMMONOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Joker.o Paper.o Piece.o PieceFactory.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
 LIBOBJS = $(COMMONOBJS) RSPPlayer_309962264.o
-LIBOBJS111111111 = $(COMMONOBJS) RSPPlayer_111111111.o
+#LIBOBJS111111111 = $(COMMONOBJS) RSPPlayer_111111111.o
 EXECOBJS = $(COMMONOBJS) Game.o AlgorithmRegistration.o TournamentManager.o Main.o
 #The executable filename DON'T CHANGE
 EXEC = ex3
@@ -78,7 +78,6 @@ Piece.o: Piece.cpp Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
 PieceFactory.o:  PieceFactory.cpp PieceFactory.h Rock.h RPSPiece.h Piece.h \
  Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
  Move.h JokerChange.h Paper.h Scissors.h Bomb.h Joker.h Flag.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
 Player.o: Player.cpp Player.h PieceFactory.h PlayerAlgorithm.h Point.h \
  PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
