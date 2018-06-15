@@ -28,7 +28,7 @@ RSPPlayer_309962264.o: RSPPlayer_309962264.cpp RSPPlayer_309962264.h \
  FightInfoImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h Paper.h \
  RPSPiece.h Rock.h Scissors.h Bomb.h Joker.h MoveImpl.h JokerChangeImpl.h \
  AlgorithmRegistration.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 RSPPlayer_309962264.so: RSPPlayer_309962264.o
 	$(COMP) -shared -Wl,-soname,RSPPlayer_309962264.so -o RSPPlayer_309962264.so $(LIBOBJS)
 	
@@ -45,13 +45,13 @@ RSPPlayer_309962264.so: RSPPlayer_309962264.o
 BoardImpl.o: BoardImpl.cpp BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h PointImpl.h FightInfoImpl.h StrategyPiece.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Bomb.o:   Bomb.cpp Bomb.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
  Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 FightInfoImpl.o: FightInfoImpl.cpp FightInfoImpl.h FightInfo.h \
  PointImpl.h Point.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 	
 Flag.o: Flag.cpp Flag.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
  Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
@@ -63,7 +63,7 @@ Game.o: Game.cpp Game.h BoardImpl.h Piece.h PieceFactory.h Player.h \
 Joker.o: Joker.cpp Joker.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Main.o: Main.cpp Game.h BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h PointImpl.h FightInfoImpl.h TournamentManager.h
@@ -71,35 +71,35 @@ Main.o: Main.cpp Game.h BoardImpl.h Piece.h PieceFactory.h Player.h \
 Paper.o: Paper.cpp Paper.h RPSPiece.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Piece.o: Piece.cpp Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
  Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 PieceFactory.o:  PieceFactory.cpp PieceFactory.h Rock.h RPSPiece.h Piece.h \
  Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
  Move.h JokerChange.h Paper.h Scissors.h Bomb.h Joker.h Flag.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Player.o: Player.cpp Player.h PieceFactory.h PlayerAlgorithm.h Point.h \
  PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
 PointImpl.o: PointImpl.cpp PointImpl.h Point.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Rock.o: Rock.cpp Rock.h RPSPiece.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 RPSPiece.o: RPSPiece.cpp RPSPiece.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h Joker.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Scissors.o: Scissors.cpp Scissors.h RPSPiece.h Piece.h PieceFactory.h \
  Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
  Move.h JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 StrategyPiece.o: StrategyPiece.cpp StrategyPiece.h Piece.h PieceFactory.h \
  Player.h PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h \
  Move.h JokerChange.h Joker.h Rock.h RPSPiece.h Paper.h Scissors.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 AlgorithmRegistration.o: AlgorithmRegistration.cpp \
  AlgorithmRegistration.h PlayerAlgorithm.h Point.h PiecePosition.h \
  Board.h FightInfo.h Move.h JokerChange.h TournamentManager.h
