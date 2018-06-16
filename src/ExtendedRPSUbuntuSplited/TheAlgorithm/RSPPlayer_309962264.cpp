@@ -194,14 +194,14 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 
 	if ((winner == TIE) || (winner == mOpponent))
 	{
-		//if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
-		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
-		{
-			eraseJokerLocation(fight.getPosition());
-		}
+		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
+			if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
+			{
+				eraseJokerLocation(fight.getPosition());
+			}
 
-		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
-		//}
+			mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
+		}
 	}
 
 	if (winner == TIE) {
@@ -378,12 +378,12 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
 		for (int d = 2; d < N - 1 + M - 1; d++) {
 			getMovingPiecesInDistanceFromFlag(flagPoint, d, posVector); //TODO:is it emptyed everytime?
 			//if (posVector.size() != 0) {
-				for (unique_ptr<PointImpl>& pos : posVector) {
-					moveTo = getUnoccupiedPlaceTowardsFlag(*pos, flagPoint);
-					if (moveTo != nullptr) {
-						return std::make_unique<MoveImpl>(*pos, *moveTo);
-					}
+			for (unique_ptr<PointImpl>& pos : posVector) {
+				moveTo = getUnoccupiedPlaceTowardsFlag(*pos, flagPoint);
+				if (moveTo != nullptr) {
+					return std::make_unique<MoveImpl>(*pos, *moveTo);
 				}
+			}
 			//}
 		}
 	}
