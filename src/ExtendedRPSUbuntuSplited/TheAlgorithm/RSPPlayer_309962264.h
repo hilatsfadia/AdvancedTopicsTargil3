@@ -41,7 +41,7 @@ private:
 	std::vector<PointImpl> mPlayerJokerLocations;
 	//int lastMovedPieceID = NONE;
 
-	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
+	enum class MoveType { RunAwayThreatened, RunAwayDiscovered, Attack, TowardsFlag, Random };
 
 	//-----------------------------------------------------------
 	// General helper functions
@@ -60,7 +60,7 @@ private:
 	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
 
 	// Retruns true iff the given current player's piece is adjacent to an opponents moving piece
-	bool isPlayerAdjacentToOpponentInPosition(const StrategyPiece & piece, const PointImpl & pos) const;
+	bool isPlayerAdjacentToOpponentInPosition(const PointImpl & pos) const;
 
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;

@@ -368,7 +368,9 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
 		}
 	}
 
-	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAway);
+	// If the flag isn't adjacent, you should run away if threatened
+	// before conquring it
+	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAwayThreatened);
 	if (move != nullptr) {
 		return move;
 	}
@@ -408,17 +410,20 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
 unique_ptr<Move> RSPPlayer_309962264::getMove()
 {
 	//findFlag(); // Why is it needed here?
-	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAway);
+	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAwayThreatened);
 	if (move == nullptr) {
-		if (mOpponentFlagLocations.size() != 0) {
-			move = conquerTheFlag();	//why would it give nullptr?
-		}
-
+		move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAwayDiscovered);
 		if (move == nullptr) {
-			move = getStrategyMove(RSPPlayer_309962264::MoveType::Attack);
+			if (mOpponentFlagLocations.size() != 0) {
+				move = conquerTheFlag();	//why would it give nullptr?
+			}
 
 			if (move == nullptr) {
-				move = getStrategyMove(RSPPlayer_309962264::MoveType::Random);
+				move = getStrategyMove(RSPPlayer_309962264::MoveType::Attack);
+
+				if (move == nullptr) {
+					move = getStrategyMove(RSPPlayer_309962264::MoveType::Random);
+				}
 			}
 		}
 	}
@@ -503,8 +508,9 @@ bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, cons
 	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(pos) &&
 		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
 
-	switch (moveType){
-		case RSPPlayer_309962264::MoveType::RunAway:
+	switch (moveType) {
+		case RSPPlayer_309962264::MoveType::RunAwayThreatened:
+		case RSPPlayer_309962264::MoveType::RunAwayDiscovered:
 		case RSPPlayer_309962264::MoveType::TowardsFlag:
 		case RSPPlayer_309962264::MoveType::Random: {
 			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
@@ -547,11 +553,19 @@ bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPP
 	bool isRelevantPiece = strategyPiece.GetIsMovingPiece();
 	switch (moveType)
 	{
-		case RSPPlayer_309962264::MoveType::RunAway:
+		case RSPPlayer_309962264::MoveType::RunAwayThreatened:
 		{
 			// Joker doesn't run away, it can change it representation.
 			isRelevantPiece = isRelevantPiece &&
-				(strategyPiece.GetIsThreatened() || (isPlayerAdjacentToOpponentInPosition(strategyPiece, from) && strategyPiece.GetIsDiscovered()))
+				strategyPiece.GetIsThreatened()
+				&& (strategyPiece.GetPieceType() != PieceType::Joker);
+			break;
+		}
+		case RSPPlayer_309962264::MoveType::RunAwayDiscovered:
+		{
+			// Joker doesn't run away, it can change it representation.
+			isRelevantPiece = isRelevantPiece &&
+				(isPlayerAdjacentToOpponentInPosition(from) && strategyPiece.GetIsDiscovered())
 				&& (strategyPiece.GetPieceType() != PieceType::Joker);
 			break;
 		}
@@ -680,7 +694,7 @@ bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, co
 	return false;
 }
 
-bool RSPPlayer_309962264::isPlayerAdjacentToOpponentInPosition(const StrategyPiece& piece, const PointImpl& pos) const
+bool RSPPlayer_309962264::isPlayerAdjacentToOpponentInPosition(const PointImpl& pos) const
 {
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
