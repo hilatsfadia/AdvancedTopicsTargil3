@@ -405,14 +405,16 @@ unique_ptr<Move> RSPPlayer_309962264::getMove()
 		}
 	}
 
-	if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(move->getFrom()).GetPieceType() == PieceType::Joker) {
-		updateJokerLocation(move->getFrom(), move->getTo());
-	}
+	if (move != nullptr) {
+		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(move->getFrom()).GetPieceType() == PieceType::Joker) {
+			updateJokerLocation(move->getFrom(), move->getTo());
+		}
 
-	//movePieceOnInfoBoard(*move);
-	mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
-	
-	updateThreats();
+		//movePieceOnInfoBoard(*move);
+		mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
+
+		updateThreats();
+	}
 
 	return move;
 }
