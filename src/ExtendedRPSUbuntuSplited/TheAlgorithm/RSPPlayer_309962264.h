@@ -57,10 +57,9 @@ private:
 	void FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
 
 	// Retruns true iff the given piece is/might be threatened in the given position
-	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
-
-	// Retruns true iff the given current player's piece is adjacent to an opponents moving piece
-	bool isPlayerAdjacentToOpponentInPosition(const PointImpl & pos) const;
+	// if isToCheckStronger is false, retruns true iff the given current player's piece is discovered and
+	// adjacent to an opponents moving piece
+	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger = true) const;
 
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
@@ -140,7 +139,7 @@ private:
 	unique_ptr<PointImpl> getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const;
 
 	// Return true iff the given piece has to be moved according to the given MoveType
-	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType, const PointImpl& from) const;
+	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType) const;
 
 	// Get a move according to the given MoveType in the given row
 	unique_ptr<Move> getStrategyMoveInPosition(MoveType moveType, int row, int col) const;

@@ -218,13 +218,14 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 		// Uncover also if uncovered already to handle jokers.
 		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).UncoverPiece(fight.getPiece(winner));
 	}
-	else // winner == mPlayer
-	{
+	else {// winner == mPlayer
 		mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(fight.getPosition());
-		StrategyPiece& PlayerStrategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition());
-		PlayerStrategyPiece.SetIsDiscovered(true);
+
+		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldnt be empty
+			StrategyPiece& PlayerStrategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition());
+			PlayerStrategyPiece.SetIsDiscovered(true);
+		}
 	}
-	/*mOpponentCoveredPiecesCounter[fight.getPiece(mOpponent)]--; */
 }
 
 void RSPPlayer_309962264::findOpponentFlags() 
@@ -484,7 +485,12 @@ void RSPPlayer_309962264::updateThreatsForPlayerInPosition(int player, const Poi
 	if (!mPlayersStrategyBoards[player - 1].IsEmptyInPosition(pos))
 	{
 		StrategyPiece& strategyPiece = mPlayersStrategyBoards[player - 1].PeekPieceInPosition(pos);
-		strategyPiece.SetIsThreatened(isThreatenedInPosition(strategyPiece, pos));
+
+		if (player == mPlayer) {
+			strategyPiece.SetIsThreatenedBecauseDiscovered(isThreatenedInPosition(strategyPiece, pos, false));
+		}
+
+		strategyPiece.SetIsThreatenedByStronger(isThreatenedInPosition(strategyPiece, pos));
 		strategyPiece.SetIsThreathening(isThreateningInPosition(strategyPiece, pos));
 	}
 }
@@ -548,7 +554,7 @@ unique_ptr<PointImpl> RSPPlayer_309962264::getStrategyDestination(const Strategy
 	return nullptr;
 }
 
-bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType, const PointImpl& from) const
+bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType) const
 {
 	bool isRelevantPiece = strategyPiece.GetIsMovingPiece();
 	switch (moveType)
@@ -557,16 +563,16 @@ bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPP
 		{
 			// Joker doesn't run away, it can change it representation.
 			isRelevantPiece = isRelevantPiece &&
-				strategyPiece.GetIsThreatened()
-				&& (strategyPiece.GetPieceType() != PieceType::Joker);
+				strategyPiece.GetIsThreatenedByStronger() && 
+				(strategyPiece.GetPieceType() != PieceType::Joker);
 			break;
 		}
 		case RSPPlayer_309962264::MoveType::RunAwayDiscovered:
 		{
-			// Joker doesn't run away, it can change it representation.
+			// Joker doesn't run away, it can change its representation.
 			isRelevantPiece = isRelevantPiece &&
-				(isPlayerAdjacentToOpponentInPosition(from) && strategyPiece.GetIsDiscovered())
-				&& (strategyPiece.GetPieceType() != PieceType::Joker);
+				strategyPiece.GetIsThreatenedBecauseDiscovered() && 
+				(strategyPiece.GetPieceType() != PieceType::Joker);
 			break;
 		}
 		case RSPPlayer_309962264::MoveType::Attack:
@@ -639,7 +645,7 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveT
 	return nullptr;
 }
 
-bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const
+bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger) const
 {
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
@@ -647,14 +653,22 @@ bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, con
 
 	int threateningPlayer = (piece.GetOwnerNum() == mPlayer) ? mOpponent : mPlayer;
 
-	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
+	for (const unique_ptr<PointImpl>& neighbourPos : adjacentLegalPositions)
 	{
-		if (!mPlayersStrategyBoards[threateningPlayer - 1].IsEmptyInPosition(*pos)) 
+		if (!mPlayersStrategyBoards[threateningPlayer - 1].IsEmptyInPosition(*neighbourPos)) 
 		{
-			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[threateningPlayer - 1].PeekPieceInPosition(pos->getX(), pos->getY());
+			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[threateningPlayer - 1].PeekPieceInPosition(neighbourPos->getX(), neighbourPos->getY());
 
-			// if (piece == false // ask why
-			if (neighbourPiece.GetIsMovingPiece() && neighbourPiece.IsStrongerThan(piece)) 
+			bool isPieceCouldBeThreatened = false;
+
+			if (isToCheckStronger) {
+				isPieceCouldBeThreatened = neighbourPiece.IsStrongerThan(piece);
+			}
+			else{
+				isPieceCouldBeThreatened = piece.GetIsDiscovered();
+			}
+			
+			if (neighbourPiece.GetIsMovingPiece() && isPieceCouldBeThreatened)
 			{ //TODO: WILL WORK?
 				return true;
 			}
@@ -664,7 +678,7 @@ bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, con
 	return false;
 }
 
-// TODO: merge functions
+// If possible merge
 bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const
 {
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
@@ -678,39 +692,14 @@ bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, co
 
 	int threatenedPlayer = (piece.GetOwnerNum() == mPlayer) ? mOpponent : mPlayer;
 
-	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
+	for (const unique_ptr<PointImpl>& neighbourPos : adjacentLegalPositions)
 	{
-		if (!mPlayersStrategyBoards[threatenedPlayer - 1].IsEmptyInPosition(*pos))
+		if (!mPlayersStrategyBoards[threatenedPlayer - 1].IsEmptyInPosition(*neighbourPos))
 		{
-			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[threatenedPlayer - 1].PeekPieceInPosition(pos->getX(), pos->getY());
+			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[threatenedPlayer - 1].PeekPieceInPosition(neighbourPos->getX(), neighbourPos->getY());
 
 			if (piece.IsStrongerThan(neighbourPiece))
 			{
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-bool RSPPlayer_309962264::isPlayerAdjacentToOpponentInPosition(const PointImpl& pos) const
-{
-	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
-	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
-
-	//int threateningPlayer = (piece.GetOwnerNum() == mPlayer) ? mOpponent : mPlayer;
-
-	for (const unique_ptr<PointImpl>& neighbourPos : adjacentLegalPositions)
-	{
-		if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(*neighbourPos))
-		{
-			//return true; //enough that there is a piece near us
-			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(neighbourPos->getX(), neighbourPos->getY());
-
-			// //assures its the other player?
-			if (neighbourPiece.GetIsMovingPiece())
-			{ //TODO: WILL WORK?
 				return true;
 			}
 		}
@@ -726,7 +715,7 @@ unique_ptr<JokerChange> RSPPlayer_309962264::getJokerChange()
 		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(jokerPos)) {
 			StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(jokerPos);
 
-			if (strategyPiece.GetIsThreatened()) {
+			if (strategyPiece.GetIsThreatenedByStronger()) {
 				jokerChange = changeThreatenedJoker(jokerPos);
 				updateThreats();
 			}
