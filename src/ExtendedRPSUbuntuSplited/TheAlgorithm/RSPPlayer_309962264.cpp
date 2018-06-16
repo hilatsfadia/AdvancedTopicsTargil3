@@ -17,15 +17,21 @@
 #include <algorithm>
 #include <iterator>
 #include "AlgorithmRegistration.h"
+#include <iostream>
 
 REGISTER_ALGORITHM(309962264)
 
 using std::make_unique;
+using namespace std;
+
 // Type Alias
 using PieceType = PieceFactory::PieceType;
 
-void RSPPlayer_309962264::UpdateLineNumber(int & yPos, bool isToMoveForward) const
+void RSPPlayer_309962264::UpdateLineNumber(int & yPos, bool isToMoveForward)
 {
+	logFile << "Inside UpdateLineNumber: " << endl;
+	logFile.flush();
+
 	if (isToMoveForward)
 	{
 		yPos++;
@@ -37,8 +43,11 @@ void RSPPlayer_309962264::UpdateLineNumber(int & yPos, bool isToMoveForward) con
 }
 
 void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, 
-	int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper) const
+	int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper)
 {
+	logFile << "Inside initPositionsVectorOneType: " << endl;
+	logFile.flush();
+
 	for (int i = 0; i < count; i++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), typeChar, jokerReper));
 		if (xPos == N) {
@@ -56,8 +65,11 @@ void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<Piec
 	//}
 }
 
-void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const
+void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
+	logFile << "Inside initPositionsVector: " << endl;
+	logFile.flush();
+
 	PointImpl point;
 	int xPos = 1;
 	//int yPos = 1;
@@ -87,8 +99,17 @@ void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr
 
 void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
+	logFile << "Inside initTheAlgorithmPlayerBoard: " << endl;
+	logFile.flush();
+
 	for (const std::unique_ptr<PiecePosition>& piecePos : vectorToFill) {
+		logFile << "piecePos:getPiece " << piecePos->getPiece() << endl;
+		logFile << "piecePos:getJokerRep " << piecePos->getJokerRep() << endl;
+		logFile << "piecePos:getPosition " << piecePos->getPosition().getX() << "," << piecePos->getPosition().getY() << endl;
+		logFile.flush();
+
 		unique_ptr<Piece> uncoveredPiece = nullptr;
+
 		if (piecePos->getPiece() == JOKER_CHAR)
 		{
 			unique_ptr<Joker> jokerPiece = make_unique<Joker>(mPlayer);
@@ -100,15 +121,24 @@ void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vec
 		{
 			uncoveredPiece = PieceFactory::GetPieceFromChar(piecePos->getPiece(), mPlayer);
 		}
+		//
+		logFile << ((uncoveredPiece == nullptr)?"it;s nulllllll!" : "not nulllllllllll!") << endl;
+		logFile.flush();
 
 		unique_ptr<StrategyPiece> strategyPiece = make_unique<StrategyPiece>(mPlayer);
 		strategyPiece->UncoverPiece(std::move(uncoveredPiece));
 		mPlayersStrategyBoards[player - 1].PutPieceInPosition(piecePos->getPosition(), std::move(strategyPiece));
+
+		logFile << "after iteration " << endl;
+		logFile.flush();
 	}
 }
 
 void RSPPlayer_309962264::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
+	logFile << "Inside getInitialPositions: " << endl;
+	logFile.flush();
+
 	srand((unsigned int)time(0));
 	//srand(static_cast<unsigned int>(time(0)));
 
@@ -121,17 +151,28 @@ void RSPPlayer_309962264::getInitialPositions(int player, std::vector<unique_ptr
 	}
 
 	initPositionsVector(player, vectorToFill);
+
+	mPlayersStrategyBoards[mPlayer - 1].Print(logFile);
+	logFile << "###############################################" << endl;
+	logFile << "\n\n\n" << endl;
+
 	initTheAlgorithmPlayerBoard(player, vectorToFill);
 }
 
 void RSPPlayer_309962264::ClearPlayersBoardsInPosition(const Point& pos)
 {
+	logFile << "Inside ClearPlayersBoardsInPosition: " << endl;
+	logFile.flush();
+
 	mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(pos);
 	mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(pos);
 }
 
 void RSPPlayer_309962264::updateStrategyAccordingToBoard(const Board & b)
 {
+	logFile << "Inside updateStrategyAccordingToBoard: " << endl;
+	logFile.flush();
+
 	for (int row = 1; row <= M; row++)
 	{
 		for (int col = 1; col <= N; col++)
@@ -167,6 +208,9 @@ void RSPPlayer_309962264::updateStrategyAccordingToBoard(const Board & b)
 
 void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 {
+	logFile << "Inside updateStrategyAccordingToFight: " << endl;
+	logFile.flush();
+
 	//next exercise remember to add handling to more than one flag
 	int winner = fight.getWinner();
 
@@ -211,6 +255,9 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 
 void RSPPlayer_309962264::findOpponentFlags() 
 {
+	logFile << "Inside findOpponentFlags: " << endl;
+	logFile.flush();
+
 	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumCoveredMovablePieces <= F))
 	{ //TODO: double check that everyone is by default false
 		for (int row = 1; row <= M; row++)
@@ -236,6 +283,9 @@ void RSPPlayer_309962264::findOpponentFlags()
 
 void RSPPlayer_309962264::notifyOnInitialBoard(const Board & b, const std::vector<unique_ptr<FightInfo>>& fights)
 {
+	logFile << "Inside notifyOnInitialBoard: " << endl;
+	logFile.flush();
+
 	updateStrategyAccordingToBoard(b);
 
 	for (const std::unique_ptr<FightInfo>& fight : fights)
@@ -248,19 +298,28 @@ void RSPPlayer_309962264::notifyOnInitialBoard(const Board & b, const std::vecto
 	updateThreats();
 }
 
-bool RSPPlayer_309962264::AreBothBoardsEmptyInPosition(int x, int y) const
+bool RSPPlayer_309962264::AreBothBoardsEmptyInPosition(int x, int y)
 {
+	logFile << "Inside AreBothBoardsEmptyInPosition: " << endl;
+	logFile.flush();
+
 	return (mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(x, y) &&
 		mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(x, y));
 }
 
-bool RSPPlayer_309962264::AreBothBoardsEmptyInPosition(const Point& pos) const
+bool RSPPlayer_309962264::AreBothBoardsEmptyInPosition(const Point& pos)
 {
+	logFile << "Inside AreBothBoardsEmptyInPosition: " << endl;
+	logFile.flush();
+
 	return AreBothBoardsEmptyInPosition(pos.getX(), pos.getY());
 }
 
-void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const
+void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill)
 {
+	logFile << "Inside FillAdjacentLegalPositions: " << endl;
+	logFile.flush();
+
 	int xPos = pos.getX();
 	int yPos = pos.getY();
 	PointImpl options[NUM_OF_ADJACENT_POSITIONS] =
@@ -298,8 +357,11 @@ void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vect
 //}
 //
 void RSPPlayer_309962264::getMovingPiecesInDistanceFromFlag(const PointImpl &flag_pos, 
-	int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill) const
+	int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill)
 {
+	logFile << "Inside getMovingPiecesInDistanceFromFlag: " << endl;
+	logFile.flush();
+
 	for (int row = 1; row <= M; row++)
 	{
 		for (int col = 1; col <= N; col++)
@@ -319,8 +381,11 @@ void RSPPlayer_309962264::getMovingPiecesInDistanceFromFlag(const PointImpl &fla
 	}
 }
 
-unique_ptr<PointImpl> RSPPlayer_309962264::getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl& flagPos) const
+unique_ptr<PointImpl> RSPPlayer_309962264::getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl& flagPos)
 {
+	logFile << "Inside getUnoccupiedPlaceTowardsFlag: " << endl;
+	logFile.flush();
+
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(from, adjacentLegalPositions);
 	const StrategyPiece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(from);
@@ -337,8 +402,11 @@ unique_ptr<PointImpl> RSPPlayer_309962264::getUnoccupiedPlaceTowardsFlag(const P
 	return nullptr;
 }
 
-unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
+unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag()
 {
+	logFile << "Inside conquerTheFlag: " << endl;
+	logFile.flush();
+
 	std::vector<unique_ptr<PointImpl>> posVector;
 	unique_ptr<PointImpl> moveTo;
 	for (const PointImpl& flagPoint : mOpponentFlagLocations) {
@@ -389,20 +457,53 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
 
 unique_ptr<Move> RSPPlayer_309962264::getMove()
 {
+	logFile << "Inside getMove: " << endl;
+	logFile.flush();
+	logFile << "mPlayer: " << mPlayer << endl;
+	mPlayersStrategyBoards[mPlayer - 1].Print(logFile);
+	logFile.flush();
+
 	//findFlag(); // Why is it needed here?
 	unique_ptr<Move> move = getStrategyMove(RSPPlayer_309962264::MoveType::RunAway);
+	logFile << "Inside getMove: 1" << endl;
+	logFile.flush();
 	if (move == nullptr) {
+		logFile << "Inside getMove: 2" << endl;
+		logFile.flush();
 		if (mOpponentFlagLocations.size() != 0) {
+			logFile << "Inside getMove:3 " << endl;
+			logFile.flush();
 			move = conquerTheFlag();	//why would it give nullptr?
+			logFile << "Inside getMove: 4" << endl;
+			logFile.flush();
 		}
-
+		logFile << "Inside getMove: 5" << endl;
+		logFile.flush();
 		if (move == nullptr) {
+			logFile << "Inside getMove: 6" << endl;
+			logFile.flush();
 			move = getStrategyMove(RSPPlayer_309962264::MoveType::Attack);
-
+			logFile << "Inside getMove: 7" << endl;
+			logFile.flush();
 			if (move == nullptr) {
+				logFile << "Inside getMove: 8" << endl;
+				logFile.flush();
 				move = getStrategyMove(RSPPlayer_309962264::MoveType::Random);
+				logFile << "Inside getMove: 9" << endl;
+				logFile.flush();
 			}
+			logFile << "Inside getMove: 10" << endl;
+			logFile.flush();
 		}
+		logFile << "Inside getMove: 11" << endl;
+		logFile.flush();
+	}
+	logFile << "Inside getMove: 12" << endl;
+	logFile.flush();
+
+	if (mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(move->getFrom())) {
+		logFile << "mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(move->getFrom()): " << endl;
+		logFile.flush();
 	}
 
 	if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(move->getFrom()).GetPieceType() == PieceType::Joker) {
@@ -419,6 +520,9 @@ unique_ptr<Move> RSPPlayer_309962264::getMove()
 
 void RSPPlayer_309962264::notifyOnOpponentMove(const Move& move)
 {
+	logFile << "Inside notifyOnOpponentMove: " << endl;
+	logFile.flush();
+
 	if (!mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).GetIsMovingPiece())
 	{
 		mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(move.getFrom()).SetMovingPiece();
@@ -433,6 +537,9 @@ void RSPPlayer_309962264::notifyOnOpponentMove(const Move& move)
 
 void RSPPlayer_309962264::notifyFightResult(const FightInfo & fightInfo)
 {
+	logFile << "Inside notifyFightResult: " << endl;
+	logFile.flush();
+
 	updateStrategyAccordingToFight(fightInfo);
 	
 	findOpponentFlags();
@@ -440,6 +547,9 @@ void RSPPlayer_309962264::notifyFightResult(const FightInfo & fightInfo)
 }
 
 void RSPPlayer_309962264::eraseJokerLocation(const Point& jokerPos) {
+	logFile << "Inside eraseJokerLocation: " << endl;
+	logFile.flush();
+
 	for (std::vector<PointImpl>::iterator itr = mPlayerJokerLocations.begin(); itr != mPlayerJokerLocations.end(); ) {
 		if (jokerPos.getX() == itr->getX()
 			&& jokerPos.getY() == itr->getY()) { //TODO:impl ==
@@ -452,12 +562,18 @@ void RSPPlayer_309962264::eraseJokerLocation(const Point& jokerPos) {
 }
 
 void RSPPlayer_309962264::updateJokerLocation(const Point& oldJokerPos, const Point& newJokerPos) {
+	logFile << "Inside updateJokerLocation: " << endl;
+	logFile.flush();
+
 	eraseJokerLocation(oldJokerPos);
 	mPlayerJokerLocations.push_back(newJokerPos);
 }
 
 void RSPPlayer_309962264::updateThreatsForPlayerInPosition(int player, const PointImpl& pos)
 {
+	logFile << "Inside updateThreatsForPlayerInPosition: " << endl;
+	logFile.flush();
+
 	if (!mPlayersStrategyBoards[player - 1].IsEmptyInPosition(pos))
 	{
 		StrategyPiece& strategyPiece = mPlayersStrategyBoards[player - 1].PeekPieceInPosition(pos);
@@ -469,6 +585,9 @@ void RSPPlayer_309962264::updateThreatsForPlayerInPosition(int player, const Poi
 // TODO: maybe not all board.
 void RSPPlayer_309962264::updateThreats() 
 {
+	logFile << "Inside updateThreats: " << endl;
+	logFile.flush();
+
 	for (int row = 1; row <= M; row++)
 	{
 		for (int col = 1; col <= N; col++)
@@ -480,7 +599,10 @@ void RSPPlayer_309962264::updateThreats()
 	}
 }
 
-bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const{
+bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType){
+	logFile << "Inside isRelevantDestination: " << endl;
+	logFile.flush();
+
 	// Important! don't go to an invalid place or a place with other piece of the same player
 	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(pos) &&
 		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
@@ -507,8 +629,11 @@ bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, cons
 	return isRelevantDest;
 }
 
-unique_ptr<PointImpl> RSPPlayer_309962264::getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const
+unique_ptr<PointImpl> RSPPlayer_309962264::getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType)
 {
+	logFile << "Inside getStrategyDestination: " << endl;
+	logFile.flush();
+
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(from, adjacentLegalPositions);
 
@@ -524,8 +649,11 @@ unique_ptr<PointImpl> RSPPlayer_309962264::getStrategyDestination(const Strategy
 	return nullptr;
 }
 
-bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType) const
+bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType)
 {
+	logFile << "Inside isPieceToMove: " << endl;
+	logFile.flush();
+
 	bool isRelevantPiece = strategyPiece.GetIsMovingPiece();
 	switch (moveType)
 	{
@@ -556,29 +684,50 @@ bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPP
 	return isRelevantPiece;
 }
 
-unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962264::MoveType moveType, int row, int col) const
+unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962264::MoveType moveType, int row, int col)
 {
+	logFile << "Inside getStrategyMoveInPosition: " << endl;
+	logFile.flush();
+
 	PointImpl posFrom(col, row);
+	logFile << "Inside getStrategyMoveInPosition 1 " << endl;
+	logFile.flush();
 	if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(posFrom))
 	{
+		logFile << "Inside getStrategyMoveInPosition 2 " << endl;
+		logFile.flush();
 		const StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
+
+		logFile << "Inside getStrategyMoveInPosition 3 " << endl;
+		logFile.flush();
 
 		if (isPieceToMove(strategyPiece, moveType))
 		{
+			logFile << "Inside getStrategyMoveInPosition 4 " << endl;
+			logFile.flush();
 			unique_ptr<PointImpl> posTo = getStrategyDestination(strategyPiece, posFrom, moveType);
 
+			logFile << "Inside getStrategyMoveInPosition 5 " << endl;
+			logFile.flush();
 			if (posTo != nullptr)
 			{
+				logFile << "Inside getStrategyMoveInPosition 6 " << endl;
+				logFile.flush();
 				//lastMovedPieceID = strategyPiece.GetStrategyPieceID();
 				return std::make_unique<MoveImpl>(posFrom, *posTo);
 			}
 		}
 	}
 
+	logFile << "end getStrategyMoveInPosition: " << endl;
+	logFile.flush();
 	return nullptr;
 }
 
-unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType) const{
+unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType){
+	logFile << "Inside getStrategyMove: " << endl;
+	logFile.flush();
+
 	std::vector<int> rows, cols;
 
 	for (int row = 1; row <= M; row++){
@@ -598,6 +747,8 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveT
 		{
 			unique_ptr<Move> posTo = getStrategyMoveInPosition(moveType, row, col);
 			if (posTo != nullptr) {
+				logFile << "posTo: " << posTo->getTo().getX() << ", " << posTo->getTo().getY() << endl;
+				logFile.flush();
 				return posTo;
 			}
 		}
@@ -606,8 +757,11 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveT
 	return nullptr;
 }
 
-bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const
+bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos)
 {
+	logFile << "Inside isThreatenedInPosition: " << endl;
+	logFile.flush();
+
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
@@ -632,8 +786,11 @@ bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, con
 }
 
 // TODO: merge functions
-bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const
+bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos)
 {
+	logFile << "Inside isThreateningInPosition: " << endl;
+	logFile.flush();
+
 	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
@@ -675,10 +832,16 @@ unique_ptr<JokerChange> RSPPlayer_309962264::getJokerChange()
 		}
 	}
 
+	logFile << "Return From getJokerChange: " << endl;
+	logFile << ((jokerChange == nullptr)? "it's null!!!!" : "not null") << endl;
+	logFile.flush();
 	return jokerChange;
 }
 
 unique_ptr<JokerChange> RSPPlayer_309962264::changeThreatenedJoker(const Point& threatenedJokerPos){
+	logFile << "Inside changeThreatenedJoker: " << endl;
+	logFile.flush();
+
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(threatenedJokerPos, adjacentLegalPositions);
 	StrategyPiece& threatenedPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(threatenedJokerPos);
