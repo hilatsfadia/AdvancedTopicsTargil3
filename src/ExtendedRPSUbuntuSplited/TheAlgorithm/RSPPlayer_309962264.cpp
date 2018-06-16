@@ -487,10 +487,10 @@ void RSPPlayer_309962264::updateThreatsForPlayerInPosition(int player, const Poi
 		StrategyPiece& strategyPiece = mPlayersStrategyBoards[player - 1].PeekPieceInPosition(pos);
 
 		if (player == mPlayer) {
-			strategyPiece.SetIsThreatenedBecauseDiscovered(isThreatenedInPosition(strategyPiece, pos, false));
+			strategyPiece.SetIsThreatenedBecauseDiscovered(isThreatenedInPosition(strategyPiece, pos, false, true));
 		}
 
-		strategyPiece.SetIsThreatenedByStronger(isThreatenedInPosition(strategyPiece, pos));
+		strategyPiece.SetIsThreatenedByStronger(isThreatenedInPosition(strategyPiece, pos, true, false));
 		strategyPiece.SetIsThreathening(isThreateningInPosition(strategyPiece, pos));
 	}
 }
@@ -516,16 +516,19 @@ bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, cons
 
 	switch (moveType) {
 		case RSPPlayer_309962264::MoveType::RunAwayThreatened:
-		case RSPPlayer_309962264::MoveType::RunAwayDiscovered:
 		case RSPPlayer_309962264::MoveType::TowardsFlag:
 		case RSPPlayer_309962264::MoveType::Random: {
-			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
+			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos, true, false)));
+			break;
+		}
+		case RSPPlayer_309962264::MoveType::RunAwayDiscovered: {
+			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos, true, true)));
 			break;
 		}
 		case RSPPlayer_309962264::MoveType::Attack:{
 			isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(pos))
 				&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(pos)))
-				&& !isThreatenedInPosition(piece, pos));
+				&& !isThreatenedInPosition(piece, pos, true, false));
 			break;
 		}
 		default:{
@@ -602,7 +605,7 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962
 	{
 		const StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
 
-		if (isPieceToMove(strategyPiece, moveType, posFrom))
+		if (isPieceToMove(strategyPiece, moveType))
 		{
 			unique_ptr<PointImpl> posTo = getStrategyDestination(strategyPiece, posFrom, moveType);
 
@@ -645,31 +648,30 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveT
 	return nullptr;
 }
 
-bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger) const
+bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger, bool isToCheckDicovered) const
 {
-	//Piece& piece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(xPos, yPos);
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
-
 	int threateningPlayer = (piece.GetOwnerNum() == mPlayer) ? mOpponent : mPlayer;
 
-	for (const unique_ptr<PointImpl>& neighbourPos : adjacentLegalPositions)
-	{
-		if (!mPlayersStrategyBoards[threateningPlayer - 1].IsEmptyInPosition(*neighbourPos)) 
-		{
+	for (const unique_ptr<PointImpl>& neighbourPos : adjacentLegalPositions){
+		if (!mPlayersStrategyBoards[threateningPlayer - 1].IsEmptyInPosition(*neighbourPos)) {
 			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[threateningPlayer - 1].PeekPieceInPosition(neighbourPos->getX(), neighbourPos->getY());
+			bool isPieceCouldBeThreatened = true;
 
-			bool isPieceCouldBeThreatened = false;
-
-			if (isToCheckStronger) {
-				isPieceCouldBeThreatened = neighbourPiece.IsStrongerThan(piece);
+			if (isToCheckStronger && isToCheckDicovered) {
+				isPieceCouldBeThreatened = (neighbourPiece.IsStrongerThan(piece) || piece.GetIsDiscovered());
 			}
 			else{
-				isPieceCouldBeThreatened = piece.GetIsDiscovered();
+				if (isToCheckStronger) {
+					isPieceCouldBeThreatened = neighbourPiece.IsStrongerThan(piece);
+				}
+				else if (isToCheckDicovered) {
+					isPieceCouldBeThreatened = piece.GetIsDiscovered();
+				}
 			}
 			
-			if (neighbourPiece.GetIsMovingPiece() && isPieceCouldBeThreatened)
-			{ //TODO: WILL WORK?
+			if (neighbourPiece.GetIsMovingPiece() && isPieceCouldBeThreatened){ //TODO: WILL WORK?
 				return true;
 			}
 		}

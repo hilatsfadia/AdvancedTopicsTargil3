@@ -59,7 +59,7 @@ private:
 	// Retruns true iff the given piece is/might be threatened in the given position
 	// if isToCheckStronger is false, retruns true iff the given current player's piece is discovered and
 	// adjacent to an opponents moving piece
-	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger = true) const;
+	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger, bool isToCheckDicovered) const;
 
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
