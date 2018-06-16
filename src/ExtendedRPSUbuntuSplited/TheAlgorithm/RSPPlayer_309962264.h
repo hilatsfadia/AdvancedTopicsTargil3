@@ -6,17 +6,16 @@
 //--------------------------
 
 // Creates an auto algorithm for the player. 
-// That is, generating the initial positions and
-// generating moves according to finding the best move possible.
+// That is, generating the moves according to finding the best move possible.
 
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 #include <vector>
+#include <memory>
 #include "PlayerAlgorithm.h"
 #include "BoardImpl.h"
 #include "PiecePositionImpl.h"
 #include "StrategyPiece.h"
-#include <random>
 
 #define NONE -1
 #define NUM_OF_PLAYERS 2
@@ -26,7 +25,6 @@
 #define TIE 0
 
 using namespace HilaAndJaelExtendedRPS;
-#define NUM_OF_CORNERS 4
 
 class RSPPlayer_309962264 : public PlayerAlgorithm
 {
@@ -41,9 +39,8 @@ private:
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mPlayerJokerLocations;
 	//int lastMovedPieceID = NONE;
-	std::mt19937 mRandGen;
 
-	enum class MoveType { RunAwayThreatened, RunAwayDiscovered, Attack, TowardsFlag, Random };
+	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
 
 	//-----------------------------------------------------------
 	// General helper functions
@@ -59,15 +56,10 @@ private:
 	void FillAdjacentLegalPositions(const Point& pos, std::vector<unique_ptr<PointImpl>>& vectorToFill) const;
 
 	// Retruns true iff the given piece is/might be threatened in the given position
-	// if isToCheckStronger is false, retruns true iff the given current player's piece is discovered and
-	// adjacent to an opponents moving piece
-	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos, bool isToCheckStronger, bool isToCheckDicovered) const;
+	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
 
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
-
-	// If a joker lost a fight, it should be removed from the vector
-	void updateJokerLocationsAccordingToFight(const FightInfo& fight, int winner);
 
 	// Updates the strategy inner represantations according to the given fight information.
 	void updateStrategyAccordingToFight(const FightInfo& fight);
@@ -91,18 +83,15 @@ private:
 	//-----------------------------------------------------------
 	// getInitialPositions helper functions
 	//-----------------------------------------------------------
-
-	// Updates the column number according to given isToMoveRight. 
+	
+	// Updates the line number according to given isToMoveForward. 
 	// If true, inc pos, else, dec pos
-	void UpdateColumnNumber(int & xPos, bool isToMoveRight) const;
+	void UpdateLineNumber(int& yPos, bool isToMoveForward) const;
 
 	// Init the initial positions for a specific piece type, starting from the given position.
 	// Updates the given position to the next position available 
 	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, 
 		int count, char typeChar, char jokerReper = NON_JOKER_REP) const;
-
-	// Init the initial positions in the corner of the board
-	void initPositionsVectorCorners(std::vector<unique_ptr<PiecePosition>>& vectorToFill, char typeChar, char jokerReper = NON_JOKER_REP) const;
 
 	// Does the filling of the given vector with the initial positions of the player.
 	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const;
@@ -134,8 +123,7 @@ private:
 	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl & flagPos) const;
 
 	// Return a move which is making a moving piece closer to a flag.
-	// not const because of the randomGenerator
-	unique_ptr<Move> conquerTheFlag();
+	unique_ptr<Move> conquerTheFlag() const;
 
 	// Return true iff can move the given piece to the given position, according to the given MoveType.
 	bool isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const;
@@ -151,8 +139,7 @@ private:
 	unique_ptr<Move> getStrategyMoveInPosition(MoveType moveType, int row, int col) const;
 
 	// Get a move according to the given MoveType in the player's board.
-	// not const because of the randomGenerator
-	unique_ptr<Move> getStrategyMove(MoveType moveType);
+	unique_ptr<Move> getStrategyMove(MoveType moveType) const;
 
 	//void movePieceOnInfoBoard(const Move& getMove);
 
