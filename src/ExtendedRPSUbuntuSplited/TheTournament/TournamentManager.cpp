@@ -4,7 +4,6 @@
 #include <iostream>
 #include <algorithm>
 #include <thread>
-//#include <unistd.h>
 #include "TournamentManager.h"
 #include "Game.h"
 
@@ -49,8 +48,7 @@ TournamentManager::~TournamentManager()
 	    //*itr = nullptr;
 	}
 
-	// TODO:
-	//mDlList.clear();
+	mDlList.clear();
 }
 
 void TournamentManager::handleUpdateOfScores(const GameRepr& gamePlayed, size_t player1AdditionScores, size_t player2AdditionScores){
