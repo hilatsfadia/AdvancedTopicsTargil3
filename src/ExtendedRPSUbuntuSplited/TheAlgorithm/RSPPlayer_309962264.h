@@ -11,7 +11,6 @@
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 #include <vector>
-#include <map>
 #include "PlayerAlgorithm.h"
 #include "BoardImpl.h"
 #include "PiecePositionImpl.h"
@@ -63,6 +62,9 @@ private:
 
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
+
+	// If a joker lost a fight, it should be removed from the vector
+	void updateJokerLocationsAccordingToFight(const FightInfo& fight, int winner);
 
 	// Updates the strategy inner represantations according to the given fight information.
 	void updateStrategyAccordingToFight(const FightInfo& fight);
