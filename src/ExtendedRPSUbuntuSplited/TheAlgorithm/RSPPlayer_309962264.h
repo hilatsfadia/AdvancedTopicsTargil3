@@ -16,6 +16,7 @@
 #include "BoardImpl.h"
 #include "PiecePositionImpl.h"
 #include "StrategyPiece.h"
+#include <random>
 
 #define NONE -1
 #define NUM_OF_PLAYERS 2
@@ -40,6 +41,7 @@ private:
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mPlayerJokerLocations;
 	//int lastMovedPieceID = NONE;
+	std::mt19937 mRandGen;
 
 	enum class MoveType { RunAwayThreatened, RunAwayDiscovered, Attack, TowardsFlag, Random };
 
@@ -132,7 +134,8 @@ private:
 	unique_ptr<PointImpl> getUnoccupiedPlaceTowardsFlag(const PointImpl& from, const PointImpl & flagPos) const;
 
 	// Return a move which is making a moving piece closer to a flag.
-	unique_ptr<Move> conquerTheFlag() const;
+	// not const because of the randomGenerator
+	unique_ptr<Move> conquerTheFlag();
 
 	// Return true iff can move the given piece to the given position, according to the given MoveType.
 	bool isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const;
@@ -148,7 +151,8 @@ private:
 	unique_ptr<Move> getStrategyMoveInPosition(MoveType moveType, int row, int col) const;
 
 	// Get a move according to the given MoveType in the player's board.
-	unique_ptr<Move> getStrategyMove(MoveType moveType) const;
+	// not const because of the randomGenerator
+	unique_ptr<Move> getStrategyMove(MoveType moveType);
 
 	//void movePieceOnInfoBoard(const Move& getMove);
 
