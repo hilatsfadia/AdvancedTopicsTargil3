@@ -66,7 +66,7 @@ namespace HilaAndJaelExtendedRPS
 		//Player 1: all chars as capital letters
 		//Player 2: all chars as lower letters
 
-		if (piece.GetOwner()->GetPlayerNum() == 2)
+		if (piece.GetOwnerNum() == 2)
 		{
 			return out << static_cast<char>(std::tolower(static_cast<unsigned char>(piece.GetPieceChar())));
 		}

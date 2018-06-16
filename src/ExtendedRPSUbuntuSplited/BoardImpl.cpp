@@ -163,7 +163,7 @@ bool BoardImpl<T>::ChecksIfMoveIsLegal(int playerNum, const Point& posFrom, cons
 
 	if (!boardSquareAttackee.IsEmpty()){
 		const Piece& pieceAttackee = boardSquareAttackee.PeekPiece();
-		if (pieceAttacker.GetOwner() == pieceAttackee.GetOwner()){
+		if (pieceAttacker.GetOwnerNum() == pieceAttackee.GetOwnerNum()){
 			//std::cout << "The moving is illegal because the destination has a piece of the same player" << std::endl;
 			return false;
 		}
@@ -184,12 +184,12 @@ int BoardImpl<T>::HandleFight(BoardImpl<T>::BoardSquare<T>& boardSquareAttacker,
 	switch (winningPiece)
 	{
 		case (WinningPiece::CallingObject):{
-			winner = pieceAttacker.GetOwner()->GetPlayerNum();
+			winner = pieceAttacker.GetOwnerNum();
 			boardSquareAttackee.StealPieceFromSquare(boardSquareAttacker);
 			break;
 		}
 		case (WinningPiece::OtherObject):{
-			winner = pieceAttackee.GetOwner()->GetPlayerNum();
+			winner = pieceAttackee.GetOwnerNum();
 			boardSquareAttacker.ClearSquare();
 			break;
 		}
@@ -229,7 +229,7 @@ bool BoardImpl<T>::MovePiece(const Player& player, const Point& posFrom, const P
 		char attackeeChar = pieceAttackee.GetActualPieceChar();
 		char player1Char, player2Char;
 
-		if (pieceAttacker.GetOwner()->GetPlayerNum() == 1){
+		if (pieceAttacker.GetOwnerNum() == 1){
 			player1Char = attackerChar;
 			player2Char = attackeeChar;
 		}
