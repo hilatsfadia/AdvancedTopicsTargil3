@@ -1,11 +1,7 @@
 #include "Game.h"
 #include <string>
-#include <fstream>
-#include <iostream>
 #include "PieceFactory.h"
 #include "Piece.h"
-//#include "ParserInitFile.h"
-//#include "ParserMoveFile.h"
 #include "FightInfoImpl.h"
 #include "PiecePositionImpl.h"
 #include "PlayerAlgorithm.h"

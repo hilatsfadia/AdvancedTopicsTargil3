@@ -6,7 +6,8 @@
 //--------------------------
 
 // Creates an auto algorithm for the player. 
-// That is, generating the moves according to finding the best move possible.
+// That is, generating the initial positions and
+// generating moves according to finding the best move possible.
 
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
