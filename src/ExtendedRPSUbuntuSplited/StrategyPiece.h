@@ -23,11 +23,9 @@ namespace HilaAndJaelExtendedRPS
 	{
 	private:
 		unique_ptr<Piece> mUncoveredPiece = nullptr;
-		bool mIsThreatenedByStronger = false;
+		bool mIsThreatened = false;
 		bool mIsThreathening = false;
 		bool mIsMovingPiece = false;
-		bool mIsDiscovered = false; // Is curr player piece discovered by the opponent
-		bool mIsThreatenedBecauseDiscovered = false;
 
 	public:
 		StrategyPiece(int ownerNum) : Piece(ownerNum) { }
@@ -54,22 +52,13 @@ namespace HilaAndJaelExtendedRPS
 		void UncoverPiece(char uncoveredPieceChar);
 
 		// Returns true iff this piece is threatened by an enemy piece (one or more)
-		bool GetIsThreatenedByStronger() const { return mIsThreatenedByStronger; }
-		void SetIsThreatenedByStronger(bool isThreatenedByStronger) { mIsThreatenedByStronger = isThreatenedByStronger; }
+		bool GetIsThreatened() const { return mIsThreatened; }
+		void SetIsThreatened(bool isThreatend) { mIsThreatened = isThreatend; }
 
 		// Returns true iff this piece is threatening an enemy piece (one or more)
 		bool GetIsThreathening() const { return mIsThreathening; }
 		void SetIsThreathening(bool isThreatening) { mIsThreathening = isThreatening; }
 
-		// Returns true iff this piece is the current player piece and discovered by the enemy
-		bool GetIsDiscovered() const { return mIsDiscovered; }
-		void SetIsDiscovered(bool isDiscovered) { mIsDiscovered = isDiscovered; }
-
-		// Returns true iff this piece is the current player piece and is adjacent to an enemy piece and discovered
-		bool GetIsThreatenedBecauseDiscovered() const { return mIsThreatenedBecauseDiscovered; }
-		void SetIsThreatenedBecauseDiscovered(bool isThreatenedBecauseDiscovered) { mIsThreatenedBecauseDiscovered = isThreatenedBecauseDiscovered; }
-
-		// Returns true iff this piece is stronger than the other piece given
 		virtual bool IsStrongerThan(const StrategyPiece& other) const;
 
 		// TODO: maybe derived class
