@@ -84,14 +84,17 @@ private:
 	// getInitialPositions helper functions
 	//-----------------------------------------------------------
 	
-	// Updates the line number according to given isToMoveForward. 
+	// Updates the column number according to given isToMoveRight. 
 	// If true, inc pos, else, dec pos
-	void UpdateLineNumber(int& yPos, bool isToMoveForward) const;
+	void UpdateColumnNumber(int & xPos, bool isToMoveRight) const;
 
 	// Init the initial positions for a specific piece type, starting from the given position.
 	// Updates the given position to the next position available 
-	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, 
+	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward,
 		int count, char typeChar, char jokerReper = NON_JOKER_REP) const;
+
+	// Init the initial positions in the corner of the board
+	void initPositionsVectorCorners(std::vector<unique_ptr<PiecePosition>>& vectorToFill, char typeChar, char jokerReper = NON_JOKER_REP) const;
 
 	// Does the filling of the given vector with the initial positions of the player.
 	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const;

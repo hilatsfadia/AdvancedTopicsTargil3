@@ -18,77 +18,90 @@
 #include <iterator>
 #include "AlgorithmRegistration.h"
 
+#define NUM_OF_CORNERS 4
+
 REGISTER_ALGORITHM(309962264)
 
 using std::make_unique;
 // Type Alias
 using PieceType = PieceFactory::PieceType;
 
-void RSPPlayer_309962264::UpdateLineNumber(int & yPos, bool isToMoveForward) const
+void RSPPlayer_309962264::UpdateColumnNumber(int & xPos, bool isToMoveRight) const
 {
-	if (isToMoveForward)
+	if (isToMoveRight)
 	{
-		yPos++;
+		xPos++;
 	}
 	else
 	{
-		yPos--;
+		xPos--;
 	}
 }
 
-void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, 
-	int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper) const
+
+void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill,
+	int& xPos, int& yPos, bool isToMoveRight, int count, char typeChar, char jokerReper) const
 {
 	for (int i = 0; i < count; i++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), typeChar, jokerReper));
-		if (xPos == 1) {
-			xPos = M;
-			UpdateLineNumber(yPos, isToMoveForward);
+		if (yPos == M) {
+			yPos = 1;
+			UpdateColumnNumber(xPos, isToMoveRight);
 		}
 		else
 		{
-			xPos--;
+			yPos += 2;
 		}
 	}
-	//if (yPos != M) {
-	//	yPos++;
-	//	xPos = 1;
-	//}
+
+}
+
+
+void RSPPlayer_309962264::initPositionsVectorCorners(std::vector<unique_ptr<PiecePosition>>& vectorToFill,
+	char typeChar, char jokerReper) const
+{
+	PointImpl options[NUM_OF_CORNERS] =
+	{ PointImpl(1, 1), PointImpl(1, M), PointImpl(N, 1) , PointImpl(N, M) };
+
+	for (int i = 0; i < NUM_OF_CORNERS; i++)
+	{
+		vectorToFill.push_back(make_unique<PiecePositionImpl>(options[i], typeChar, jokerReper));
+	}
+
 }
 
 void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const
 {
 	PointImpl point;
-	bool isToMoveForward = (player == FIRST_PLAYER_NUM) ? true : false;
-	int xPos = 1;
-	int yPos = (player == FIRST_PLAYER_NUM) ? 1 : N;
-	if (P > 0) {
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, 1, PAPER_CHAR);
-	}
-
-	xPos = M;
-	yPos = (player == FIRST_PLAYER_NUM) ? 1 : N;
-
+	int yPos = (M / 2) - 1;
+	int xPos = (player == FIRST_PLAYER_NUM) ? 1 : N;
+	bool isToMoveRight = (player == FIRST_PLAYER_NUM) ? true : false;
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, F, FLAG_CHAR);
 	if (B > 0)
 	{
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, 1, BOMB_CHAR);
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, F, FLAG_CHAR);
-		if (B > 1) {
-			initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, B - 1, BOMB_CHAR);
-			UpdateLineNumber(yPos, isToMoveForward);
+		yPos = (M / 2) - 2;
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, B / 2, BOMB_CHAR);
+		yPos = (M / 2);
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, (B - (B / 2)), BOMB_CHAR);
+		yPos = (M / 2) - 1;
+		UpdateColumnNumber(xPos, isToMoveRight);
+		if (J > 1) {
+			initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, 1, JOKER_CHAR, BOMB_CHAR);
 		}
 	}
-
-	xPos = M;
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, ROCK_CHAR);
-	//initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, BOMB_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, R, ROCK_CHAR);
-
-	if (P > 1) {
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, P-1, PAPER_CHAR);
+	UpdateColumnNumber(xPos, isToMoveRight);
+	yPos = 2;
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, S, SCISSORS_CHAR);
+	if (J > 1) {
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, J - 1, JOKER_CHAR, SCISSORS_CHAR);
 	}
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, R, ROCK_CHAR);
+	initPositionsVectorCorners(vectorToFill, PAPER_CHAR);
+	if (P > NUM_OF_CORNERS) {
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, P - NUM_OF_CORNERS, PAPER_CHAR);
+	}
 }
+
 
 void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
