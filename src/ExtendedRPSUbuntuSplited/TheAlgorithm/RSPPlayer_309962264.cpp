@@ -501,19 +501,21 @@ unique_ptr<Move> RSPPlayer_309962264::getMove()
 	logFile << "Inside getMove: 12" << endl;
 	logFile.flush();
 
-	if (mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(move->getFrom())) {
-		logFile << "mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(move->getFrom()): " << endl;
-		logFile.flush();
-	}
+	if (move != nullptr) {
+		if (mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(move->getFrom())) {
+			logFile << "mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(move->getFrom()): " << endl;
+			logFile.flush();
+		}
 
-	if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(move->getFrom()).GetPieceType() == PieceType::Joker) {
-		updateJokerLocation(move->getFrom(), move->getTo());
-	}
+		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(move->getFrom()).GetPieceType() == PieceType::Joker) {
+			updateJokerLocation(move->getFrom(), move->getTo());
+		}
 
-	//movePieceOnInfoBoard(*move);
-	mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
-	
-	updateThreats();
+		//movePieceOnInfoBoard(*move);
+		mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
+
+		updateThreats();
+	}
 
 	return move;
 }
