@@ -1,6 +1,10 @@
 COMP = g++-5.3.0
 LIBS = -ldl
 
+default:
+	make the_tournament
+	make the_lib
+
 rps_tournament:
 	make the_tournament
 rps_lib:
@@ -9,7 +13,6 @@ rps_lib:
 #put all your object files here
 COMMONOBJS = BoardImpl.o Bomb.o FightInfoImpl.o Flag.o Joker.o Paper.o Piece.o PieceFactory.o Player.o PointImpl.o Rock.o RPSPiece.o Scissors.o StrategyPiece.o
 LIBOBJS = $(COMMONOBJS) RSPPlayer_309962264.o
-#LIBOBJS111111111 = $(COMMONOBJS) RSPPlayer_111111111.o
 EXECOBJS = $(COMMONOBJS) Game.o AlgorithmRegistration.o TournamentManager.o Main.o
 #The executable filename DON'T CHANGE
 EXEC = ex3
@@ -32,16 +35,6 @@ RSPPlayer_309962264.o: RSPPlayer_309962264.cpp RSPPlayer_309962264.h \
 RSPPlayer_309962264.so: RSPPlayer_309962264.o
 	$(COMP) -shared -Wl,-soname,RSPPlayer_309962264.so -o RSPPlayer_309962264.so $(LIBOBJS)
 	
-# RSPPlayer_111111111.o: RSPPlayer_309962264.cpp RSPPlayer_309962264.h \
- # PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
- # JokerChange.h BoardImpl.h Piece.h PieceFactory.h Player.h PointImpl.h \
- # FightInfoImpl.h PiecePositionImpl.h StrategyPiece.h Flag.h Paper.h \
- # RPSPiece.h Rock.h Scissors.h Bomb.h Joker.h MoveImpl.h JokerChangeImpl.h \
- # AlgorithmRegistration.h
-	# $(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
-# RSPPlayer_111111111.so: RSPPlayer_111111111.o
-	# $(COMP) -shared -Wl,-soname,RSPPlayer_111111111.so -o RSPPlayer_111111111.so $(LIBOBJS111111111)
-
 BoardImpl.o: BoardImpl.cpp BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h PointImpl.h FightInfoImpl.h StrategyPiece.h
@@ -109,7 +102,6 @@ TournamentManager.o: TournamentManager.cpp TournamentManager.h \
  JokerChange.h Game.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp
 
-#all: $(EXEC) $(OBJS) RSPPlayer_309962264.so
 the_tournament: $(EXEC) $(EXECOBJS)
 the_lib: $(LIBOBJS) RSPPlayer_309962264.so
 
