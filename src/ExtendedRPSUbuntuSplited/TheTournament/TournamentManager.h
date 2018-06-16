@@ -17,6 +17,7 @@
 #include <vector>
 #include <atomic>
 #include <mutex>
+#include <random>
 #include "PlayerAlgorithm.h"
 
 class TournamentManager
@@ -38,10 +39,11 @@ class TournamentManager
 	std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> mId2factory;
 	std::map<std::string, int> mId2numberOfGames;
 	std::map<std::string, size_t> mId2scores;
-    std::mutex scoresLock;
+    std::mutex mScoresLock;
 	std::atomic_size_t mGameIndex{0}; // atomic_size_t is a language typedef for std::atomic<size_t>
 	std::list<void *> mDlList; // list to hold handles for dynamic libs
 	std::vector<GameRepr> mGames;
+	std::mt19937 mRandGen;
 
 	// private ctor (of singleton)
 	TournamentManager() {}
@@ -62,7 +64,12 @@ class TournamentManager
     int loadAlgoritm(char* inBuf);
 
 	// Fill in a vector of all enemies of the given player id (i.e all other players), in a shuffled manner
-	void FillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& allIds, std::vector<std::string>& enemiesToFill);
+	void fillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& allIds, std::vector<std::string>& enemiesToFill);
+
+	// If a player has to play more games and don't have whom to play with.
+	// As demanded, this player should play against other, when accumulating points only to
+	// the player who hasn't played 30 games yet.
+	void handleNeglectedPlayer(const std::vector<std::string>& ids);
 
 	// Tries to create 30 games for the given player against other players
 	// who haven't yet played all their 30 games.

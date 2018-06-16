@@ -55,20 +55,20 @@ void TournamentManager::handleUpdateOfScores(const GameRepr& gamePlayed, size_t 
 	switch (gamePlayed.accumulateMethod) {
 		case AccumulateGameScores::BothPlayers:
 		{
-			lock_guard<mutex> lock(scoresLock);
+			lock_guard<mutex> lock(mScoresLock);
 			mId2scores[gamePlayed.player1Id] += player1AdditionScores;
 			mId2scores[gamePlayed.player2Id] += player2AdditionScores;
 			break;
 		}
 		case AccumulateGameScores::Player1:
 		{
-			lock_guard<mutex> lock(scoresLock);
+			lock_guard<mutex> lock(mScoresLock);
 			mId2scores[gamePlayed.player1Id] += player1AdditionScores;
 			break;
 		}
 		case AccumulateGameScores::Player2:
 		{
-			lock_guard<mutex> lock(scoresLock);
+			lock_guard<mutex> lock(mScoresLock);
 			mId2scores[gamePlayed.player2Id] += player2AdditionScores;
 			break;
 		}
@@ -161,16 +161,36 @@ void TournamentManager::runMultiThreaded(size_t numThreads){
     printResults();
 }
 
-void TournamentManager::FillEnemiesInRandomOrder(const std::string & playerId, const vector<string>& allIds, std::vector<std::string>& enemiesToFill)
+void TournamentManager::fillEnemiesInRandomOrder(const std::string & playerId, const vector<string>& allIds, std::vector<std::string>& enemiesToFill)
 {
 	enemiesToFill = allIds;
 	eraseString(enemiesToFill, playerId);
-	std::random_shuffle(std::begin(enemiesToFill), std::end(enemiesToFill));
+
+	std::shuffle(enemiesToFill.begin(), enemiesToFill.end(), mRandGen);
+}
+
+void TournamentManager::handleNeglectedPlayer(const vector<string>& ids)
+{
+	// Checks if a player has to play more games and don't have whom to play with.
+	// As demanded, this player should play against other, when accumulating points only to
+	// the player who hasn't played 30 games yet.
+	for (string id : ids) {
+		if (mId2numberOfGames[id] > 0) {
+			vector<string> enemies;
+			fillEnemiesInRandomOrder(id, ids, enemies);
+			size_t i = 0;
+			while (mId2numberOfGames[id] > 0) {
+				mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1); // TODO: ask about the order
+				mId2numberOfGames[id]--;
+				(i == enemies.size() - 1) ? i = 0 : i++;
+			}
+		}
+	}
 }
 
 void TournamentManager::createGamesForPlayer(const std::string & playerId, const vector<string>& allIds){
 	vector<string> enemies;
-	FillEnemiesInRandomOrder(playerId, allIds, enemies);
+	fillEnemiesInRandomOrder(playerId, allIds, enemies);
 
 	for (auto itr = enemies.begin(); ((mId2numberOfGames[playerId] > 0) && (enemies.size() > 0));) {
 		std::string& enemy = *itr;
@@ -194,7 +214,15 @@ void TournamentManager::createGamesForPlayer(const std::string & playerId, const
 }
 
 void TournamentManager::createGames() {
-    mGames.clear();
+	try {
+		std::random_device rd;
+		mRandGen.seed(rd());
+	}
+	catch (...) {
+		// If there was a problem, don't seed the random gen.
+	}
+
+	mGames.clear();
     list<void *>::iterator itr;
     vector<string> ids;
     for(auto it = mId2factory.begin(); it != mId2factory.end(); it++) {
@@ -207,21 +235,7 @@ void TournamentManager::createGames() {
 		createGamesForPlayer(id, ids);
 	}
 
-	// Checks if a player has to play more games and don't have whom to play with.
-	// As demanded, this player should play against other, when accumulating points only to
-	// the player who hasn't played 30 games yet.
-	for (string id : ids) {
-		if (mId2numberOfGames[id] > 0) {
-			vector<string> enemies;
-			FillEnemiesInRandomOrder(id, ids, enemies);
-			size_t i = 0;
-			while (mId2numberOfGames[id] > 0) {
-				mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1); // TODO: ask about the order
-				mId2numberOfGames[id]--;
-				(i == enemies.size()-1)? i=0 : i++;
-			}
-		}
-	}
+	handleNeglectedPlayer(ids);
 }
 
 int TournamentManager::loadAlgoritm(char* inBuf){
