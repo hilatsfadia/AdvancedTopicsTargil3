@@ -6,6 +6,8 @@
 #include <thread>
 #include "TournamentManager.h"
 #include "Game.h"
+#include <cstdlib>
+#include <ctime>
 
 #define GAMES_TO_PLAY 30
 #define WINNER_SCORES 3
@@ -180,7 +182,14 @@ void TournamentManager::handleNeglectedPlayer(const vector<string>& ids)
 			fillEnemiesInRandomOrder(id, ids, enemies);
 			size_t i = 0;
 			while (mId2numberOfGames[id] > 0) {
-				mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1); // TODO: ask about the order
+				int rand01 = rand() % 2;
+				if (rand01 == 0) {
+					mGames.emplace_back(id, enemies[i], AccumulateGameScores::Player1);
+				}
+				else {
+					mGames.emplace_back(enemies[i], id, AccumulateGameScores::Player2);
+				}
+
 				mId2numberOfGames[id]--;
 				(i == enemies.size() - 1) ? i = 0 : i++;
 			}
@@ -195,7 +204,14 @@ void TournamentManager::createGamesForPlayer(const std::string & playerId, const
 	for (auto itr = enemies.begin(); ((mId2numberOfGames[playerId] > 0) && (enemies.size() > 0));) {
 		std::string& enemy = *itr;
 		if (mId2numberOfGames[enemy] > 0) {
-			mGames.emplace_back(playerId, enemy, AccumulateGameScores::BothPlayers); // TODO: ask about the order
+			int rand01 = rand() % 2;
+			if (rand01 == 0) {
+				mGames.emplace_back(playerId, enemy, AccumulateGameScores::BothPlayers);
+			}
+			else {
+				mGames.emplace_back(enemy, playerId, AccumulateGameScores::BothPlayers);
+			}
+
 			mId2numberOfGames[playerId]--;
 			mId2numberOfGames[enemy]--;
 		}
@@ -222,6 +238,7 @@ void TournamentManager::createGames() {
 		// If there was a problem, don't seed the random gen.
 	}
 
+	srand((unsigned int)time(0)); // use current time as seed for random generator
 	mGames.clear();
     list<void *>::iterator itr;
     vector<string> ids;
