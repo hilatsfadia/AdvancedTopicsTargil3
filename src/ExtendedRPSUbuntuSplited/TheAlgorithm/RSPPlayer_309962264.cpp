@@ -41,13 +41,13 @@ void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<Piec
 {
 	for (int i = 0; i < count; i++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), typeChar, jokerReper));
-		if (xPos == N) {
-			xPos = 1;
+		if (xPos == 1) {
+			xPos = M;
 			UpdateLineNumber(yPos, isToMoveForward);
 		}
 		else
 		{
-			xPos++;
+			xPos--;
 		}
 	}
 	//if (yPos != M) {
@@ -59,30 +59,35 @@ void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<Piec
 void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const
 {
 	PointImpl point;
-	int xPos = 1;
-	//int yPos = 1;
-	//int yPos = (player - 1) * (M / 2) + 1;
-	//bool isToMoveForward = true;
-	int yPos = (player == FIRST_PLAYER_NUM) ? 1 : M;
 	bool isToMoveForward = (player == FIRST_PLAYER_NUM) ? true : false;
+	int xPos = 1;
+	int yPos = (player == FIRST_PLAYER_NUM) ? 1 : N;
+	if (P > 0) {
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, 1, PAPER_CHAR);
+	}
 
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, F, FLAG_CHAR);
+	xPos = M;
+	yPos = (player == FIRST_PLAYER_NUM) ? 1 : N;
 
 	if (B > 0)
 	{
 		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, 1, BOMB_CHAR);
-		xPos = 1;
-		UpdateLineNumber(yPos, isToMoveForward);
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, B - 1, BOMB_CHAR);
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, F, FLAG_CHAR);
+		if (B > 1) {
+			initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, B - 1, BOMB_CHAR);
+			UpdateLineNumber(yPos, isToMoveForward);
+		}
 	}
 
+	xPos = M;
 	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, ROCK_CHAR);
 	//initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, BOMB_CHAR);
 	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, R, ROCK_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, P, PAPER_CHAR);
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
 
-	//mPlayerNumMovablePieces = R + P + S;
+	if (P > 1) {
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, P-1, PAPER_CHAR);
+	}
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
 }
 
 void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill)
