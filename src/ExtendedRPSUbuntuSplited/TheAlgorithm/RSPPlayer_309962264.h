@@ -11,7 +11,7 @@
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 #include <vector>
-#include <memory>
+#include <map>
 #include "PlayerAlgorithm.h"
 #include "BoardImpl.h"
 #include "PiecePositionImpl.h"
@@ -25,6 +25,7 @@
 #define TIE 0
 
 using namespace HilaAndJaelExtendedRPS;
+#define NUM_OF_CORNERS 4
 
 class RSPPlayer_309962264 : public PlayerAlgorithm
 {
@@ -58,6 +59,9 @@ private:
 	// Retruns true iff the given piece is/might be threatened in the given position
 	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
 
+	// Retruns true iff the given current player's piece is adjacent to an opponents moving piece
+	bool isPlayerAdjacentToOpponentInPosition(const StrategyPiece & piece, const PointImpl & pos) const;
+
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
 
@@ -83,15 +87,18 @@ private:
 	//-----------------------------------------------------------
 	// getInitialPositions helper functions
 	//-----------------------------------------------------------
-	
-	// Updates the line number according to given isToMoveForward. 
+
+	// Updates the column number according to given isToMoveRight. 
 	// If true, inc pos, else, dec pos
-	void UpdateLineNumber(int& yPos, bool isToMoveForward) const;
+	void UpdateColumnNumber(int & xPos, bool isToMoveRight) const;
 
 	// Init the initial positions for a specific piece type, starting from the given position.
 	// Updates the given position to the next position available 
 	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, 
 		int count, char typeChar, char jokerReper = NON_JOKER_REP) const;
+
+	// Init the initial positions in the corner of the board
+	void initPositionsVectorCorners(std::vector<unique_ptr<PiecePosition>>& vectorToFill, char typeChar, char jokerReper = NON_JOKER_REP) const;
 
 	// Does the filling of the given vector with the initial positions of the player.
 	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const;
@@ -133,7 +140,7 @@ private:
 	unique_ptr<PointImpl> getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const;
 
 	// Return true iff the given piece has to be moved according to the given MoveType
-	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType) const;
+	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType, const PointImpl& from) const;
 
 	// Get a move according to the given MoveType in the given row
 	unique_ptr<Move> getStrategyMoveInPosition(MoveType moveType, int row, int col) const;
