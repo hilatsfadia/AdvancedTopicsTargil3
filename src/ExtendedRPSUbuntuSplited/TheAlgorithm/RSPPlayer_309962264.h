@@ -11,12 +11,11 @@
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
 #include <vector>
-#include <map>
+#include <memory>
 #include "PlayerAlgorithm.h"
 #include "BoardImpl.h"
 #include "PiecePositionImpl.h"
 #include "StrategyPiece.h"
-
 
 #define NONE -1
 #define NUM_OF_PLAYERS 2
@@ -26,7 +25,6 @@
 #define TIE 0
 
 using namespace HilaAndJaelExtendedRPS;
-#define NUM_OF_CORNERS 4
 
 class RSPPlayer_309962264 : public PlayerAlgorithm
 {
@@ -41,8 +39,6 @@ private:
 	std::vector<PointImpl> mOpponentFlagLocations;
 	std::vector<PointImpl> mPlayerJokerLocations;
 	//int lastMovedPieceID = NONE;
-	/*std::map <char, int> mOpponentCoveredPiecesCounter;*/
-
 
 	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
 
@@ -61,9 +57,6 @@ private:
 
 	// Retruns true iff the given piece is/might be threatened in the given position
 	bool isThreatenedInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
-
-	// Retruns true iff the given current player's piece is adjacent to an opponents moving piece
-	bool isPlayerAdjacentToOpponentInPosition(const StrategyPiece & piece, const PointImpl & pos) const;
 
 	// Retruns true iff the given piece is/might be threatening in the given position
 	bool isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const;
@@ -90,18 +83,15 @@ private:
 	//-----------------------------------------------------------
 	// getInitialPositions helper functions
 	//-----------------------------------------------------------
-
-	// Updates the column number according to given isToMoveRight. 
+	
+	// Updates the line number according to given isToMoveForward. 
 	// If true, inc pos, else, dec pos
-	void UpdateColumnNumber(int & xPos, bool isToMoveRight) const;
+	void UpdateLineNumber(int& yPos, bool isToMoveForward) const;
 
 	// Init the initial positions for a specific piece type, starting from the given position.
 	// Updates the given position to the next position available 
-	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward,
+	void initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, int& xPos, int& yPos, bool isToMoveForward, 
 		int count, char typeChar, char jokerReper = NON_JOKER_REP) const;
-
-	// Init the initial positions in the corner of the board
-	void initPositionsVectorCorners(std::vector<unique_ptr<PiecePosition>>& vectorToFill, char typeChar, char jokerReper = NON_JOKER_REP) const;
 
 	// Does the filling of the given vector with the initial positions of the player.
 	void initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const;
@@ -113,26 +103,20 @@ private:
 	//-----------------------------------------------------------
 	// notifyOnInitialBoard helper functions
 	//-----------------------------------------------------------
-
-	// Initializes a counter that counts how many of each piece of the 
-	// opponent the current players has not discovered yet
-	// void initOpponentCoveredPiecesCounter();
-
+	
 	// Clears the two players' boards in the given location
 	void ClearPlayersBoardsInPosition(const Point& pos);
 
 	// Updates the strategy inner represantations according to the given board.
 	void updateStrategyAccordingToBoard(const Board& b);
 
-	//void updateStrategyAccordingToCount();
-
 
 	//-----------------------------------------------------------
 	// getMove helper functions
 	//-----------------------------------------------------------
-
+	
 	// Fill in the given vector all the pieces which are moving and in the given distance from the flag position
-	void getMovingPiecesInDistanceFromFlag(const PointImpl& flag_pos,
+	void getMovingPiecesInDistanceFromFlag(const PointImpl& flag_pos, 
 		int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill) const;
 
 	// Get a free place for the piece in the given location, which is closer to the flag position.
@@ -149,7 +133,7 @@ private:
 	unique_ptr<PointImpl> getStrategyDestination(const StrategyPiece& piece, const PointImpl& from, MoveType moveType) const;
 
 	// Return true iff the given piece has to be moved according to the given MoveType
-	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType, const PointImpl& from) const;
+	bool isPieceToMove(const StrategyPiece& strategyPiece, MoveType moveType) const;
 
 	// Get a move according to the given MoveType in the given row
 	unique_ptr<Move> getStrategyMoveInPosition(MoveType moveType, int row, int col) const;

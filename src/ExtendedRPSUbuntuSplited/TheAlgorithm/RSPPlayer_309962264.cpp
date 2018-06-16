@@ -24,80 +24,65 @@ using std::make_unique;
 // Type Alias
 using PieceType = PieceFactory::PieceType;
 
-void RSPPlayer_309962264::UpdateColumnNumber(int & xPos, bool isToMoveRight) const
+void RSPPlayer_309962264::UpdateLineNumber(int & yPos, bool isToMoveForward) const
 {
-	if (isToMoveRight)
+	if (isToMoveForward)
 	{
-		xPos++;
+		yPos++;
 	}
 	else
 	{
-		xPos--;
+		yPos--;
 	}
 }
 
-
-void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill,
-	int& xPos, int& yPos, bool isToMoveRight, int count, char typeChar, char jokerReper) const
+void RSPPlayer_309962264::initPositionsVectorOneType(std::vector<unique_ptr<PiecePosition>>& vectorToFill, 
+	int& xPos, int& yPos, bool isToMoveForward, int count, char typeChar, char jokerReper) const
 {
 	for (int i = 0; i < count; i++) {
 		vectorToFill.push_back(std::make_unique<PiecePositionImpl>(PointImpl(xPos, yPos), typeChar, jokerReper));
-		if (yPos == M) {
-			yPos = 1;
-			UpdateColumnNumber(xPos, isToMoveRight);
+		if (xPos == N) {
+			xPos = 1;
+			UpdateLineNumber(yPos, isToMoveForward);
 		}
 		else
 		{
-			yPos += 2;
+			xPos++;
 		}
 	}
-
-}
-
-
-void RSPPlayer_309962264::initPositionsVectorCorners(std::vector<unique_ptr<PiecePosition>>& vectorToFill,
-	char typeChar, char jokerReper) const
-{
-	PointImpl options[NUM_OF_CORNERS] =
-	{ PointImpl(1, 1), PointImpl(1, M), PointImpl(N, 1) , PointImpl(N, M) };
-
-	for (int i = 0; i < NUM_OF_CORNERS; i++)
-	{
-		vectorToFill.push_back(make_unique<PiecePositionImpl>(options[i], typeChar, jokerReper));
-	}
-
+	//if (yPos != M) {
+	//	yPos++;
+	//	xPos = 1;
+	//}
 }
 
 void RSPPlayer_309962264::initPositionsVector(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill) const
 {
 	PointImpl point;
-	int yPos = (M / 2) - 1;
-	int xPos = (player == FIRST_PLAYER_NUM) ? 1 : N;
-	bool isToMoveRight = (player == FIRST_PLAYER_NUM) ? true : false;
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, F, FLAG_CHAR);
+	int xPos = 1;
+	//int yPos = 1;
+	//int yPos = (player - 1) * (M / 2) + 1;
+	//bool isToMoveForward = true;
+	int yPos = (player == FIRST_PLAYER_NUM) ? 1 : M;
+	bool isToMoveForward = (player == FIRST_PLAYER_NUM) ? true : false;
+
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, F, FLAG_CHAR);
+
 	if (B > 0)
 	{
-		yPos = (M / 2) - 2;
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, B / 2, BOMB_CHAR);
-		yPos = (M / 2);
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, (B - (B / 2)), BOMB_CHAR);
-		yPos = (M / 2) - 1;
-		UpdateColumnNumber(xPos, isToMoveRight);
-		if (J > 1) {
-			initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, 1, JOKER_CHAR, BOMB_CHAR);
-		}
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, 1, BOMB_CHAR);
+		xPos = 1;
+		UpdateLineNumber(yPos, isToMoveForward);
+		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, B - 1, BOMB_CHAR);
 	}
-	UpdateColumnNumber(xPos, isToMoveRight);
-	yPos = 2;
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, S, SCISSORS_CHAR);
-	if (J > 1) {
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, J - 1, JOKER_CHAR, SCISSORS_CHAR);
-	}
-	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, R, ROCK_CHAR);
-	initPositionsVectorCorners(vectorToFill, PAPER_CHAR);
-	if (P > NUM_OF_CORNERS) {
-		initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveRight, P - NUM_OF_CORNERS, PAPER_CHAR);
-	}
+
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, ROCK_CHAR);
+	//initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, J, JOKER_CHAR, BOMB_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, R, ROCK_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, P, PAPER_CHAR);
+	initPositionsVectorOneType(vectorToFill, xPos, yPos, isToMoveForward, S, SCISSORS_CHAR);
+
+	//mPlayerNumMovablePieces = R + P + S;
 }
 
 void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vector<unique_ptr<PiecePosition>>& vectorToFill)
@@ -134,20 +119,10 @@ void RSPPlayer_309962264::getInitialPositions(int player, std::vector<unique_ptr
 	else {
 		mOpponent = FIRST_PLAYER_NUM;
 	}
-	//initOpponentCoveredPiecesCounter();
+
 	initPositionsVector(player, vectorToFill);
 	initTheAlgorithmPlayerBoard(player, vectorToFill);
 }
-
-
-//void RSPPlayer_309962264::initOpponentCoveredPiecesCounter() { 
-//	mOpponentCoveredPiecesCounter[PAPER_CHAR] = P;
-//	mOpponentCoveredPiecesCounter[ROCK_CHAR] = R;
-//	mOpponentCoveredPiecesCounter[SCISSORS_CHAR] = S;
-//	mOpponentCoveredPiecesCounter[JOKER_CHAR] = J;
-//	mOpponentCoveredPiecesCounter[FLAG_CHAR] = F;
-//	mOpponentCoveredPiecesCounter[BOMB_CHAR] = B;
-//}
 
 void RSPPlayer_309962264::ClearPlayersBoardsInPosition(const Point& pos)
 {
@@ -190,57 +165,28 @@ void RSPPlayer_309962264::updateStrategyAccordingToBoard(const Board & b)
 	}
 }
 
-//void RSPPlayer_309962264::updateStrategyAccordingToCount() { //TODO: where to call it?. 
-//	char pieceToUpdate;
-//
-//	for (std::map<char,int>::iterator iter = mOpponentCoveredPiecesCounter.begin(); iter != mOpponentCoveredPiecesCounter.end(); iter++) {
-//		if ((iter->second == mOpponentNumCoveredMovablePieces) && (iter->second == mOpponentNumCoveredPieces - F)
-//			&& iter->first != JOKER_CHAR && iter->first != BOMB_CHAR && iter->first != FLAG_CHAR) {
-//			pieceToUpdate = iter->first;
-//			for (int row = 1; row <= M; row++)
-//			{
-//				for (int col = 1; col <= N; col++)
-//				{
-//					if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(col, row)
-//						&& mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(col, row).GetIsMovingPiece()){
-//
-//						mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(col, row).UncoverPiece(pieceToUpdate); //what if joker?
-//						mOpponentCoveredPiecesCounter[pieceToUpdate]--;
-//						mOpponentNumCoveredPieces--;
-//						mOpponentNumCoveredMovablePieces--;
-//
-//
-//				}
-//			}
-//		}
-//		return;
-//	}
-//}
-//
-//}
-
 void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 {
 	//next exercise remember to add handling to more than one flag
 	int winner = fight.getWinner();
 
 	// It can be empty due to not initialized in notifyOnInitialBoard
-	if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(fight.getPosition())) {
-		if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered) {
+	if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(fight.getPosition())){
+		if (mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered){
 			mOpponentNumCoveredPieces--;
 		}
 	}
 
 	if ((winner == TIE) || (winner == mOpponent))
 	{
-		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
-			if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
-			{
-				eraseJokerLocation(fight.getPosition());
-			}
-
-			mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
+		//if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
+		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
+		{
+			eraseJokerLocation(fight.getPosition());
 		}
+
+		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
+		//}
 	}
 
 	if (winner == TIE) {
@@ -248,7 +194,7 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 	}
 	else if (winner == mOpponent) {
 		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition()); // already done by the supplied board?
-		if ((mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered) &&
+		if ((mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Covered) && 
 			(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(fight.getPosition()).GetIsMovingPiece()))
 		{
 			mOpponentNumCoveredMovablePieces--;
@@ -260,13 +206,10 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 	else // winner == mPlayer
 	{
 		mPlayersStrategyBoards[mOpponent - 1].ClearBoardInPosition(fight.getPosition());
-		StrategyPiece& PlayerStrategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition());
-		PlayerStrategyPiece.SetIsDiscovered(true);
 	}
-	/*mOpponentCoveredPiecesCounter[fight.getPiece(mOpponent)]--; */
 }
 
-void RSPPlayer_309962264::findOpponentFlags()
+void RSPPlayer_309962264::findOpponentFlags() 
 {
 	if (mOpponentNumCoveredPieces == F || (mOpponentNumCoveredPieces - mOpponentNumCoveredMovablePieces <= F))
 	{ //TODO: double check that everyone is by default false
@@ -274,7 +217,7 @@ void RSPPlayer_309962264::findOpponentFlags()
 		{
 			for (int col = 1; col <= N; col++)
 			{
-				if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(col, row))
+				if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(col, row)) 
 				{
 					StrategyPiece& piece = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(col, row);
 
@@ -282,7 +225,6 @@ void RSPPlayer_309962264::findOpponentFlags()
 						&& (!piece.GetIsMovingPiece())) // TODO: ask why is it needed
 					{
 						piece.UncoverPiece(FLAG_CHAR);
-						//mOpponentCoveredPiecesCounter[FLAG_CHAR]--; 
 						mOpponentNumCoveredPieces--;
 						mOpponentFlagLocations.push_back(PointImpl(col, row));
 					}
@@ -300,7 +242,6 @@ void RSPPlayer_309962264::notifyOnInitialBoard(const Board & b, const std::vecto
 	{
 		updateStrategyAccordingToFight(*fight);
 	}
-	//updateStrategyAccordingToCount();
 
 	findOpponentFlags();
 
@@ -336,7 +277,7 @@ void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vect
 	std::random_shuffle(std::begin(vectorToFill), std::end(vectorToFill));
 }
 
-//void RSPPlayer_309962264::movePieceOnInfoBoard(const Move& move) {
+//void AutoPlayerAlgorithm::movePieceOnInfoBoard(const Move& move) {
 //	// TODO: delete!
 //	//BoardImpl::BoardSquare& boardSquare = mGameBoardInfo.GetBoardInPosition(move.getFrom());
 //	Piece* pieceToMove = mGameBoardInfo.GetBoardInPosition(move.getFrom()).GetPiece();
@@ -356,7 +297,7 @@ void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vect
 //	mGameBoardInfo.GetBoardInPosition(move.getFrom()).ClearSquare();
 //}
 //
-void RSPPlayer_309962264::getMovingPiecesInDistanceFromFlag(const PointImpl &flag_pos,
+void RSPPlayer_309962264::getMovingPiecesInDistanceFromFlag(const PointImpl &flag_pos, 
 	int distance, std::vector<unique_ptr<PointImpl>>& posVectorToFill) const
 {
 	for (int row = 1; row <= M; row++)
@@ -365,7 +306,7 @@ void RSPPlayer_309962264::getMovingPiecesInDistanceFromFlag(const PointImpl &fla
 		{
 			if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(col, row))
 			{
-				if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(col, row).GetIsMovingPiece())
+				if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(col, row).GetIsMovingPiece()) 
 				{
 					PointImpl point(col, row);
 					if (point.DistanceInStepsFrom(flag_pos) == distance) {
@@ -386,7 +327,7 @@ unique_ptr<PointImpl> RSPPlayer_309962264::getUnoccupiedPlaceTowardsFlag(const P
 
 	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
 	{
-		if (isRelevantDestination(piece, *pos, RSPPlayer_309962264::MoveType::TowardsFlag)
+		if (isRelevantDestination(piece, *pos, RSPPlayer_309962264::MoveType::TowardsFlag) 
 			&& pos->DistanceInStepsFrom(flagPos) < from.DistanceInStepsFrom(flagPos))
 		{
 			return make_unique<PointImpl>(*pos);
@@ -418,13 +359,13 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
 		// Get a closest piece to the flag and move it closer if possible.
 		for (int d = 2; d < N - 1 + M - 1; d++) {
 			getMovingPiecesInDistanceFromFlag(flagPoint, d, posVector); //TODO:is it emptyed everytime?
-																		//if (posVector.size() != 0) {
-			for (unique_ptr<PointImpl>& pos : posVector) {
-				moveTo = getUnoccupiedPlaceTowardsFlag(*pos, flagPoint);
-				if (moveTo != nullptr) {
-					return std::make_unique<MoveImpl>(*pos, *moveTo);
+			//if (posVector.size() != 0) {
+				for (unique_ptr<PointImpl>& pos : posVector) {
+					moveTo = getUnoccupiedPlaceTowardsFlag(*pos, flagPoint);
+					if (moveTo != nullptr) {
+						return std::make_unique<MoveImpl>(*pos, *moveTo);
+					}
 				}
-			}
 			//}
 		}
 	}
@@ -486,7 +427,6 @@ void RSPPlayer_309962264::notifyOnOpponentMove(const Move& move)
 
 	mPlayersStrategyBoards[mOpponent - 1].MovePieceWithoutChecks(move.getFrom(), move.getTo());
 
-	//updateStrategyAccordingToCount();
 	findOpponentFlags();
 	updateThreats();
 }
@@ -494,7 +434,7 @@ void RSPPlayer_309962264::notifyOnOpponentMove(const Move& move)
 void RSPPlayer_309962264::notifyFightResult(const FightInfo & fightInfo)
 {
 	updateStrategyAccordingToFight(fightInfo);
-	//updateStrategyAccordingToCount();
+	
 	findOpponentFlags();
 	updateThreats();
 }
@@ -527,7 +467,7 @@ void RSPPlayer_309962264::updateThreatsForPlayerInPosition(int player, const Poi
 }
 
 // TODO: maybe not all board.
-void RSPPlayer_309962264::updateThreats()
+void RSPPlayer_309962264::updateThreats() 
 {
 	for (int row = 1; row <= M; row++)
 	{
@@ -540,28 +480,28 @@ void RSPPlayer_309962264::updateThreats()
 	}
 }
 
-bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const {
+bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const{
 	// Important! don't go to an invalid place or a place with other piece of the same player
 	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(pos) &&
 		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
 
-	switch (moveType) {
-	case RSPPlayer_309962264::MoveType::RunAway:
-	case RSPPlayer_309962264::MoveType::TowardsFlag:
-	case RSPPlayer_309962264::MoveType::Random: {
-		isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
-		break;
-	}
-	case RSPPlayer_309962264::MoveType::Attack: {
-		isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(pos))
-			&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(pos)))
-			&& !isThreatenedInPosition(piece, pos));
-		break;
-	}
-	default: {
-		isRelevantDest = false;
-		break;
-	}
+	switch (moveType){
+		case RSPPlayer_309962264::MoveType::RunAway:
+		case RSPPlayer_309962264::MoveType::TowardsFlag:
+		case RSPPlayer_309962264::MoveType::Random: {
+			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
+			break;
+		}
+		case RSPPlayer_309962264::MoveType::Attack:{
+			isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(pos))
+				&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(pos)))
+				&& !isThreatenedInPosition(piece, pos));
+			break;
+		}
+		default:{
+			isRelevantDest = false;
+			break;
+		}
 	}
 
 	return isRelevantDest;
@@ -584,36 +524,33 @@ unique_ptr<PointImpl> RSPPlayer_309962264::getStrategyDestination(const Strategy
 	return nullptr;
 }
 
-bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType, const PointImpl& from) const
+bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPPlayer_309962264::MoveType moveType) const
 {
 	bool isRelevantPiece = strategyPiece.GetIsMovingPiece();
 	switch (moveType)
 	{
-	case RSPPlayer_309962264::MoveType::RunAway:
-	{
-		// Joker doesn't run away, it can change it representation.
-		isRelevantPiece = isRelevantPiece &&
-			(strategyPiece.GetIsThreatened() || (isPlayerAdjacentToOpponentInPosition(strategyPiece, from) && strategyPiece.GetIsDiscovered()))
-			&& (strategyPiece.GetPieceType() != PieceType::Joker);
-		break;
-
-
-	}
-	case RSPPlayer_309962264::MoveType::Attack:
-	{
-		isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreathening();
-		break;
-	}
-	case RSPPlayer_309962264::MoveType::Random:
-	{
-		//isRelevantPiece = isRelevantPiece && ((strategyPiece.GetStrategyPieceID() != lastMovedPieceID) || mPlayerNumMovablePieces <= 1);
-		break;
-	}
-	default:
-	{
-		isRelevantPiece = false;
-		break;
-	}
+		case RSPPlayer_309962264::MoveType::RunAway:
+		{
+			// Joker doesn't run away, it can change it representation.
+			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreatened() 
+				&& (strategyPiece.GetPieceType() != PieceType::Joker);
+			break;
+		}
+		case RSPPlayer_309962264::MoveType::Attack:
+		{
+			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreathening();
+			break;
+		}
+		case RSPPlayer_309962264::MoveType::Random:
+		{
+			//isRelevantPiece = isRelevantPiece && ((strategyPiece.GetStrategyPieceID() != lastMovedPieceID) || mPlayerNumMovablePieces <= 1);
+			break;
+		}
+		default:
+		{
+			isRelevantPiece = false;
+			break;
+		}
 	}
 
 	return isRelevantPiece;
@@ -626,7 +563,7 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962
 	{
 		const StrategyPiece& strategyPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(posFrom);
 
-		if (isPieceToMove(strategyPiece, moveType, posFrom))
+		if (isPieceToMove(strategyPiece, moveType))
 		{
 			unique_ptr<PointImpl> posTo = getStrategyDestination(strategyPiece, posFrom, moveType);
 
@@ -641,13 +578,13 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962
 	return nullptr;
 }
 
-unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType) const {
+unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType) const{
 	std::vector<int> rows, cols;
 
-	for (int row = 1; row <= M; row++) {
+	for (int row = 1; row <= M; row++){
 		rows.push_back(row);
 	}
-	for (int col = 1; col <= M; col++) {
+	for (int col = 1; col <= M; col++){
 		cols.push_back(col);
 	}
 
@@ -679,12 +616,12 @@ bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, con
 
 	for (const unique_ptr<PointImpl>& pos : adjacentLegalPositions)
 	{
-		if (!mPlayersStrategyBoards[threateningPlayer - 1].IsEmptyInPosition(*pos))
+		if (!mPlayersStrategyBoards[threateningPlayer - 1].IsEmptyInPosition(*pos)) 
 		{
 			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[threateningPlayer - 1].PeekPieceInPosition(pos->getX(), pos->getY());
 
 			// if (piece == false // ask why
-			if (neighbourPiece.GetIsMovingPiece() && neighbourPiece.IsStrongerThan(piece))
+			if (neighbourPiece.GetIsMovingPiece() && neighbourPiece.IsStrongerThan(piece)) 
 			{ //TODO: WILL WORK?
 				return true;
 			}
@@ -693,33 +630,6 @@ bool RSPPlayer_309962264::isThreatenedInPosition(const StrategyPiece& piece, con
 
 	return false;
 }
-
-bool RSPPlayer_309962264::isPlayerAdjacentToOpponentInPosition(const StrategyPiece& piece, const PointImpl& pos) const
-{
-	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
-	FillAdjacentLegalPositions(pos, adjacentLegalPositions);
-
-	//int threateningPlayer = (piece.GetOwnerNum() == mPlayer) ? mOpponent : mPlayer;
-
-	for (const unique_ptr<PointImpl>& neighbourPos : adjacentLegalPositions)
-	{
-		if (!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(*neighbourPos))
-		{
-			//return true; //enough that there is a piece near us
-			const StrategyPiece& neighbourPiece = mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(neighbourPos->getX(), neighbourPos->getY());
-
-			// //assures its the other player?
-			if (neighbourPiece.GetIsMovingPiece())
-			{ //TODO: WILL WORK?
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-
 
 // TODO: merge functions
 bool RSPPlayer_309962264::isThreateningInPosition(const StrategyPiece& piece, const PointImpl& pos) const
@@ -768,7 +678,7 @@ unique_ptr<JokerChange> RSPPlayer_309962264::getJokerChange()
 	return jokerChange;
 }
 
-unique_ptr<JokerChange> RSPPlayer_309962264::changeThreatenedJoker(const Point& threatenedJokerPos) {
+unique_ptr<JokerChange> RSPPlayer_309962264::changeThreatenedJoker(const Point& threatenedJokerPos){
 	std::vector<unique_ptr<PointImpl>> adjacentLegalPositions;
 	FillAdjacentLegalPositions(threatenedJokerPos, adjacentLegalPositions);
 	StrategyPiece& threatenedPiece = mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(threatenedJokerPos);
