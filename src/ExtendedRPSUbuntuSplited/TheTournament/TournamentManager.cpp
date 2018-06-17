@@ -20,7 +20,7 @@ using Winner = Game::Winner;
 using namespace std;
 
 // size of buffer for reading in directory entries
-static const unsigned int BUF_SIZE = 1024;
+static const unsigned int BUF_SIZE = 4096;
 
 // define the static variable
 TournamentManager TournamentManager::theTournamentManager;
@@ -39,15 +39,9 @@ TournamentManager::~TournamentManager()
 {
 	mId2factory.clear();
 
-	// TODO: why coredump? look!
-	//    for (auto fitr=mId2factory.begin(); fitr!=mId2factory.end();
-	//        fitr++){
-	//        fitr->second = nullptr;
-	//    }
 	// close all the dynamic libs we opened
 	for(auto itr=mDlList.begin(); itr!=mDlList.end(); itr++){
 	    dlclose(*itr);
-	    //*itr = nullptr;
 	}
 
 	mDlList.clear();

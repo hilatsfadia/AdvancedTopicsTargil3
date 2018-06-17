@@ -1,11 +1,13 @@
-#ifndef __TOURNAMENT_MANAGER_H_
-#define __TOURNAMENT_MANAGER_H_
+#ifndef ADTO_TARGIL3_TOURNAMENT_MANAGER_H
+#define ADTO_TARGIL3_TOURNAMENT_MANAGER_H
 
 //--------------------------
 // TournamentManager
 //--------------------------
 
-// Creates and handles all instances of piece of type flag. 
+// Creates and handles a tournament of games among playerAlgorithms which can be
+// registered to the tournament, using so files.
+// Reports a summary of the games results to the console
 
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
@@ -116,4 +118,4 @@ public:
 	enum {ALGORITHM_REGISTERED_SUCCESSFULLY = 0, FOLDER_COULD_NOT_BE_OPENED = -1, ALMOST_NO_ALGORITHM_REGISTERED = -2};
 };
 
-#endif
+#endif //ADTO_TARGIL3_TOURNAMENT_MANAGER_H

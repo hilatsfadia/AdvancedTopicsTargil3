@@ -3,7 +3,6 @@
 #include "Rock.h"
 #include "Paper.h"
 #include "Scissors.h"
-#include "Joker.h"
 #include <memory>
 
 using namespace HilaAndJaelExtendedRPS;

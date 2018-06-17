@@ -5,8 +5,9 @@
 // Game Class
 //--------------------------
 
-// Functions as game manager.Manages the progress of the game, 
-// and creates the differents algorithms for the different players of the game.
+// Functions as game manager. Manages the progress of the game, 
+// Gets the differents algorithms for the different players of the game, and run
+// the game between them.
 
 // @author Hila Tsfadia, Jael Fafner TAU - Advanced Topics in Programming - 2018 Semester B
 
@@ -16,7 +17,7 @@
 #include <string>
 #include "BoardImpl.h"
 // TODO delete!!!
-#include <fstream>
+//#include <fstream>
 #include "Player.h"
 #include "Joker.h"
 
@@ -93,7 +94,7 @@ private:
 
 	// TODO: ask if needed
 	// When game is over, prints the relevant output file.
-	void ReportGameOverToFile(Winner winner, const std::string& gameOverMessage, bool ifToPrintBoard = true) const;
+	//void ReportGameOverToFile(Winner winner, const std::string& gameOverMessage, bool ifToPrintBoard = true) const;
 
 	// Reports the winner.
 	void ReportGameOver(Winner winner){

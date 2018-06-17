@@ -71,21 +71,21 @@ bool Game::ReportGameOverAfterInitBoard()
 
 	return isGameOver;
 }
-
-void Game::ReportGameOverToFile(Winner winner, const std::string& gameOverMessage, bool ifToPrintBoard) const
-{
-    ofstream outFile(OUTPUT_FILE_NAME);
-    outFile << "Winner: " << to_string((int)winner) << endl;
-    outFile << "Reason: " << gameOverMessage << endl;
-
-	if (ifToPrintBoard)
-	{
-		outFile << endl;
-		mGameBoard.Print(outFile);
-	}
-
-    outFile.close();
-}
+//
+//void Game::ReportGameOverToFile(Winner winner, const std::string& gameOverMessage, bool ifToPrintBoard) const
+//{
+//    ofstream outFile(OUTPUT_FILE_NAME);
+//    outFile << "Winner: " << to_string((int)winner) << endl;
+//    outFile << "Reason: " << gameOverMessage << endl;
+//
+//	if (ifToPrintBoard)
+//	{
+//		outFile << endl;
+//		mGameBoard.Print(outFile);
+//	}
+//
+//    outFile.close();
+//}
 
 void Game::InitGame(unique_ptr<PlayerAlgorithm> player1Algorithm, unique_ptr<PlayerAlgorithm> player2Algorithm)
 {
