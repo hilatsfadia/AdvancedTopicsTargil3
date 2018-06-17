@@ -127,8 +127,13 @@ void RSPPlayer_309962264::initTheAlgorithmPlayerBoard(int player, const std::vec
 
 void RSPPlayer_309962264::getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill)
 {
-	srand((unsigned int)time(0));
-	//srand(static_cast<unsigned int>(time(0)));
+	try {
+		std::random_device rd;
+		mRandGen.seed(rd());
+	}
+	catch (...) {
+		// If there was a problem, don't seed the random gen.
+	}
 
 	mPlayer = player; //setting the players fields
 	if (mPlayer == FIRST_PLAYER_NUM) {
@@ -292,7 +297,7 @@ void RSPPlayer_309962264::FillAdjacentLegalPositions(const Point& pos, std::vect
 		}
 	}
 
-	std::random_shuffle(std::begin(vectorToFill), std::end(vectorToFill));
+	//std::random_shuffle(std::begin(vectorToFill), std::end(vectorToFill));
 }
 
 //void AutoPlayerAlgorithm::movePieceOnInfoBoard(const Move& move) {
@@ -355,7 +360,7 @@ unique_ptr<PointImpl> RSPPlayer_309962264::getUnoccupiedPlaceTowardsFlag(const P
 	return nullptr;
 }
 
-unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag() const
+unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag()
 {
 	std::vector<unique_ptr<PointImpl>> posVector;
 	unique_ptr<PointImpl> moveTo;
@@ -601,7 +606,7 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMoveInPosition(RSPPlayer_309962
 	return nullptr;
 }
 
-unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType) const{
+unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveType moveType) {
 	std::vector<int> rows, cols;
 
 	for (int row = 1; row <= M; row++){
@@ -611,11 +616,11 @@ unique_ptr<Move> RSPPlayer_309962264::getStrategyMove(RSPPlayer_309962264::MoveT
 		cols.push_back(col);
 	}
 
-	std::random_shuffle(std::begin(rows), std::end(rows));
+	std::shuffle(rows.begin(), rows.end(), mRandGen);
 
 	for (int row : rows)
 	{
-		std::random_shuffle(std::begin(cols), std::end(cols));
+		std::shuffle(cols.begin(), cols.end(), mRandGen);
 
 		for (int col : cols)
 		{
