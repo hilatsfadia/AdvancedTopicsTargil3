@@ -48,7 +48,7 @@ FightInfoImpl.o: FightInfoImpl.cpp FightInfoImpl.h FightInfo.h \
 	
 Flag.o: Flag.cpp Flag.h Piece.h PieceFactory.h Player.h PlayerAlgorithm.h \
  Point.h PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Game.o: Game.cpp Game.h BoardImpl.h Piece.h PieceFactory.h Player.h \
  PlayerAlgorithm.h Point.h PiecePosition.h Board.h FightInfo.h Move.h \
  JokerChange.h PointImpl.h FightInfoImpl.h Joker.h PiecePositionImpl.h
@@ -74,7 +74,7 @@ PieceFactory.o:  PieceFactory.cpp PieceFactory.h Rock.h RPSPiece.h Piece.h \
 	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Player.o: Player.cpp Player.h PieceFactory.h PlayerAlgorithm.h Point.h \
  PiecePosition.h Board.h FightInfo.h Move.h JokerChange.h
-	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -mcmodel=large
+	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 PointImpl.o: PointImpl.cpp PointImpl.h Point.h
 	$(COMP) -fPIC $(CPP_COMP_FLAG) -c $*.cpp
 Rock.o: Rock.cpp Rock.h RPSPiece.h Piece.h PieceFactory.h Player.h \
