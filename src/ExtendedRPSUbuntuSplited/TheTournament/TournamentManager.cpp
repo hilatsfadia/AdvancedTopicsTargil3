@@ -25,7 +25,7 @@ static const unsigned int BUF_SIZE = 4096;
 // define the static variable
 TournamentManager TournamentManager::theTournamentManager;
 
-void TournamentManager::eraseString(vector<string>& stringsVec, string toErase){
+void TournamentManager::eraseString(vector<string>& stringsVec, string toErase) const{
     for (auto it = stringsVec.begin(); it != stringsVec.end();) {
         if (*it == toErase) {
             it = stringsVec.erase(it);

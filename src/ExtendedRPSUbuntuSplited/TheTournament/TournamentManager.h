@@ -68,6 +68,7 @@ class TournamentManager
     bool loadAlgoritm(char* inBuf);
 
 	// Fill in a vector of all enemies of the given player id (i.e all other players), in a shuffled manner
+	// This method is not const because it changes the random generator of the object
 	void fillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& allIds, std::vector<std::string>& enemiesToFill);
 
 	// If a player has to play more games and don't have whom to play with.
@@ -91,7 +92,7 @@ class TournamentManager
     void runSingleSubSimulationThread();
 
 	// Erase the given string from the given vector
-	void eraseString(std::vector<std::string>& stringsVec, std::string toErase);
+	void eraseString(std::vector<std::string>& stringsVec, std::string toErase) const;
 
 public:
 	~TournamentManager();
