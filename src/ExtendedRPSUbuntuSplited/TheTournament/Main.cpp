@@ -30,6 +30,7 @@ bool UpdateOptionalParameter(int& numOfThreadsToUpdate, string& soFilesDirectory
 		{
 			numOfThreadsToUpdate = stoi(value);
 			if (numOfThreadsToUpdate < 1) {
+				cout << "Number of threads has to be at least 1" << endl;
 				return false;
 			}
 		}
