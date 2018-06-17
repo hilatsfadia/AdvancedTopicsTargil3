@@ -188,6 +188,21 @@ void RSPPlayer_309962264::updateStrategyAccordingToBoard(const Board & b)
 	}
 }
 
+void RSPPlayer_309962264::updateJokerLocationsAccordingToFight(const FightInfo& fight, int winner)
+{
+	if ((winner == TIE) || (winner == mOpponent))
+	{
+		if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
+			if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
+			{
+				eraseJokerLocation(fight.getPosition());
+			}
+
+			mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
+		}
+	}
+}
+
 void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 {
 	//next exercise remember to add handling to more than one flag
@@ -200,17 +215,7 @@ void RSPPlayer_309962264::updateStrategyAccordingToFight(const FightInfo& fight)
 		}
 	}
 
-	if ((winner == TIE) || (winner == mOpponent))
-	{
-		//if (!mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(fight.getPosition())) { // Shouldn't be empty
-		if (mPlayersStrategyBoards[mPlayer - 1].PeekPieceInPosition(fight.getPosition()).GetPieceType() == PieceType::Joker)
-		{
-			eraseJokerLocation(fight.getPosition());
-		}
-
-		mPlayersStrategyBoards[mPlayer - 1].ClearBoardInPosition(fight.getPosition());
-		//}
-	}
+	updateJokerLocationsAccordingToFight(fight, winner);
 
 	if (winner == TIE) {
 		ClearPlayersBoardsInPosition(fight.getPosition());
@@ -367,8 +372,7 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag()
 	for (const PointImpl& flagPoint : mOpponentFlagLocations) {
 		// If a moving piece is adjacent to the opponent flag, conquer it.
 		getMovingPiecesInDistanceFromFlag(flagPoint, 1, posVector);
-		if (posVector.size() != 0)
-		{
+		if (posVector.size() != 0){
 			return std::make_unique<MoveImpl>(*posVector[0], flagPoint);
 		}
 	}
@@ -391,21 +395,7 @@ unique_ptr<Move> RSPPlayer_309962264::conquerTheFlag()
 				}
 			//}
 		}
-	}
-	
-	// TODO: why is it needed
-	//PointImpl* moveClosest;
-	//for (PointImpl& flagPoint : mOpponentFlagLocations) {
-	//	for (int d = 0; d < N - 1 + M - 1; d++) {
-	//		getPiecesOfSpecificDistanceFromFlag(flagPoint, d, posVector);
-	//		if (posVector.size() != 0) {
-	//			moveClosest = getPlaceTowardsFlag(*posVector[0], flagPoint, false);
-	//			if (moveClosest != nullptr) {
-	//				return std::make_unique<MoveImpl>(*posVector[0], *moveClosest);
-	//			}
-	//		}
-	//	}
-	//}		
+	}	
 
 	return nullptr;
 }
