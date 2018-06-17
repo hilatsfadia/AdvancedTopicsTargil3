@@ -26,10 +26,10 @@ bool Joker::SetActualPiece(unique_ptr<Piece> newPiece)
 		// newPiece is ok
 		if (mActualPiece != nullptr)
 		{
-			mActualPiece->GetOwner()->RemoveFromCountMovingPieces(mActualPiece->GetPieceType());
+			mActualPiece->GetOwner()->DecPieceCount(mActualPiece->GetPieceType());
 		}
 		
-		newPiece->GetOwner()->AddToCountMovingPieces(newPieceType);
+		newPiece->GetOwner()->IncPieceCount(newPieceType);
 	}
 
 	mActualPiece = std::move(newPiece);
@@ -56,11 +56,7 @@ Piece::WinningPiece Joker::FightWithOtherPieceType(Piece& enemy)
 {
 	Piece::WinningPiece winningPiece = mActualPiece->Fight(enemy);
 
-	if (winningPiece == Piece::WinningPiece::CallingObject)
-	{
-		enemy.LoseToPiece();
-	}
-	else if (winningPiece == Piece::WinningPiece::OtherObject)
+	if (winningPiece == Piece::WinningPiece::OtherObject)
 	{
 		this->LoseToPiece();
 	}

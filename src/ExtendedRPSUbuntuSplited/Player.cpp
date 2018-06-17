@@ -70,6 +70,13 @@ bool Player::DecPieceCount(PieceType pieceType)
 	return true;
 }
 
+void Player::IncPieceCount(PieceType pieceType)
+{
+	mCountPieces[pieceType] = mCountPieces[pieceType] + 1;
+
+	AddToCountMovingPieces(pieceType);
+}
+
 bool Player::IncPieceCountInInitialization(PieceType pieceType)
 {
 	if (mCountPieces[pieceType] == mMaxCountPieces[pieceType])
@@ -77,9 +84,7 @@ bool Player::IncPieceCountInInitialization(PieceType pieceType)
 		return false;
 	}
 
-	mCountPieces[pieceType] = mCountPieces[pieceType] + 1;
-
-	AddToCountMovingPieces(pieceType);
+	IncPieceCount(pieceType);
 
 	if (pieceType == PieceType::Flag)
 	{

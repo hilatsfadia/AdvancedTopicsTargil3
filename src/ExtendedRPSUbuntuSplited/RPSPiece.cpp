@@ -18,11 +18,12 @@ Piece::WinningPiece RPSPiece::FightWithOtherPieceType(Piece & enemy)
 		}
 		case (PieceType::Joker):
 		{
-			if (enemy.Fight(*this) == WinningPiece::OtherObject)
+			Piece::WinningPiece winningPiece = enemy.Fight(*this);
+			if (winningPiece == WinningPiece::OtherObject)
 			{
 				return WinningPiece::CallingObject;
 			}
-			else if (enemy.Fight(*this) == WinningPiece::CallingObject)
+			else if (winningPiece == WinningPiece::CallingObject)
 			{
 				return WinningPiece::OtherObject;
 			}

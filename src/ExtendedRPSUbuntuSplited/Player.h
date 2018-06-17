@@ -38,6 +38,7 @@ namespace HilaAndJaelExtendedRPS
 	class Player
 	{
 		// Number of pieces of each type that the player holds.
+		// Count also the joker representation
 		std::map<PieceType, int> mCountPieces;
 
 		// Max number of pieces of each type that the player can hold.
@@ -64,6 +65,9 @@ namespace HilaAndJaelExtendedRPS
 		// Returns true if this player had at least one piece 
 		// of the given type before removing.
 		bool DecPieceCount(PieceType pieceType);
+
+		// Adds one piece of the given type from this player.
+		void IncPieceCount(PieceType pieceType);
 
 		// Adds one piece of the given type from this player.
 		// Returns true if this player can hold one more piece
