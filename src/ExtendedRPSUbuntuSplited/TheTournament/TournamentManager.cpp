@@ -255,7 +255,9 @@ void TournamentManager::createGames() {
 	handleNeglectedPlayer(ids);
 }
 
-int TournamentManager::loadAlgoritm(char* inBuf){
+// We decided to continue the tournament (and print error to console) if we encounter an so
+// file that has a problem. No other instruction about this case
+bool TournamentManager::loadAlgoritm(char* inBuf){
     void *dlib;
     char name[BUF_SIZE];
 	size_t oldMapSize = mId2factory.size();
@@ -269,21 +271,20 @@ int TournamentManager::loadAlgoritm(char* inBuf){
     if(dlib == NULL){
         cerr << dlerror() << endl;
 		cout << "so file of algorithm: " << name << " cannot be loaded" << endl;
-        return SO_FILE_CANNOT_BE_LOADED;
+		return false;
     }
 
 	if (mId2factory.size() == oldMapSize)
 	{
-		cout << "Algorithm: " << name << " didn't register" << endl;
-		return NO_ALGORITHM_REGISTERED;
+		cout << "Algorithm: " << name << " hasn't registered" << endl;
+		return false;
 	}
 
 	// add the handle to our list
 	mDlList.insert(mDlList.end(), dlib);
 
-    return ALGORITHM_REGISTERED_SUCCESSFULLY;
+	return true;
 }
-
 
 int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) {
     FILE *dl;   // handle to read directory
@@ -299,21 +300,15 @@ int TournamentManager::loadAlgorithms(int, const std::string& soFilesDirectory) 
 
     // get the names of all the dynamic libs (.so  files) in the current dir
     dl = popen(lsCommandStr.c_str(), "r");
-    if(!dl){
+    if (!dl){
         perror("popen");
         return FOLDER_COULD_NOT_BE_OPENED;
     }
 
-    while(fgets(inBuf, BUF_SIZE, dl)){
+	// If an error occurs in an so file, we continue loading other so files
+	// (and loadAlgoritm is responsible to print the error to console)
+    while (fgets(inBuf, BUF_SIZE, dl)){
 		loadAlgoritm(inBuf);
-		//int loadResult = loadAlgoritm(inBuf);
-		// 
-		// ALGORITHM_REGISTERED_SUCCESSFULLY
-        //if (loadResult == SO_FILE_CANNOT_BE_LOADED){
-        //}
-        //else if (loadResult == SO_FILE_CANNOT_BE_LOADED) {
-        //    // TODO:
-        //}
     }
 
     if (mId2factory.size() <= 1){

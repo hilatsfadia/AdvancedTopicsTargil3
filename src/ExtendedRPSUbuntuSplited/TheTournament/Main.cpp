@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
 	int res = TournamentManager::getTournamentManager().loadAlgorithms(numOfThreads, soFilesDirectory);
 	if (res == TournamentManager::FOLDER_COULD_NOT_BE_OPENED){
-		cout << "The given folder could not be opened" << endl;
+		cout << "The given folder (or the working directory if no other path specified) could not be opened" << endl;
 		PrintCommandLineUsage();
 		return 1;
 	}

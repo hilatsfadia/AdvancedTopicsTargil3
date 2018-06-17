@@ -61,7 +61,9 @@ class TournamentManager
 	void runSingleThreaded();
 
 	// Loads a specific algorithm from the given so file name
-    int loadAlgoritm(char* inBuf);
+	// If an error occurs, prints it to console
+	// Return true iff the so file was loaded and the algorithm has registerd.
+    bool loadAlgoritm(char* inBuf);
 
 	// Fill in a vector of all enemies of the given player id (i.e all other players), in a shuffled manner
 	void fillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& allIds, std::vector<std::string>& enemiesToFill);
@@ -111,7 +113,7 @@ public:
 	// Loads all the so files in the given directory
 	int loadAlgorithms(int, const std::string& soFilesDirectory);
 
-	enum {ALGORITHM_REGISTERED_SUCCESSFULLY = 0, FOLDER_COULD_NOT_BE_OPENED = -1, SO_FILE_CANNOT_BE_LOADED = -2, NO_ALGORITHM_REGISTERED = -3, ALMOST_NO_ALGORITHM_REGISTERED = -4};
+	enum {ALGORITHM_REGISTERED_SUCCESSFULLY = 0, FOLDER_COULD_NOT_BE_OPENED = -1, ALMOST_NO_ALGORITHM_REGISTERED = -2};
 };
 
 #endif
