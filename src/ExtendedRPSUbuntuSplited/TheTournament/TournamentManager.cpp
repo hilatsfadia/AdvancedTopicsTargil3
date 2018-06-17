@@ -148,7 +148,7 @@ void TournamentManager::runMultiThreaded(size_t numThreads){
         runSingleThreaded();
     }
     else {
-        vector <unique_ptr<thread>> threads(numThreads-1);
+        vector<unique_ptr<thread>> threads(numThreads-1);
         for (auto &thread_ptr : threads) {
             thread_ptr = make_unique<thread>(&TournamentManager::runSingleSubSimulationThread,
                                              this); // create and run the thread

@@ -87,18 +87,12 @@ int main(int argc, char *argv[])
 		PrintCommandLineUsage();
 		return 1;
 	}
-	//else if (res == TournamentManager::SO_FILE_CANNOT_BE_LOADED) {
-	//}
 	else if (res == TournamentManager::ALMOST_NO_ALGORITHM_REGISTERED) {
 		cout << "Usage: you should provide at least 2 registered algorithms in order to make the tournament" << endl;
 		return 1;
 	}
 
-	// res == TournamentManager::ALGORITHM_REGISTERED_SUCCESSFULLY
-	cout << "run Tournament" << endl;
-
 	TournamentManager::getTournamentManager().runMultiThreaded(numOfThreads);
 
-	cout << "Exiting main" << endl;
     return 0;
 }
