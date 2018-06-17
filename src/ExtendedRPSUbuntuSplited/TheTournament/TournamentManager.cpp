@@ -282,7 +282,7 @@ bool TournamentManager::loadAlgoritm(char* inBuf){
     char *ws = strpbrk(inBuf, " \t\n");
     if(ws) *ws = '\0';
     // append ./ to the front of the lib name
-    sprintf(name, "./%s", inBuf);
+    sprintf(name, "%s", inBuf);
     dlib = dlopen(name, RTLD_LAZY);
     if(dlib == NULL){
         cerr << dlerror() << endl;
