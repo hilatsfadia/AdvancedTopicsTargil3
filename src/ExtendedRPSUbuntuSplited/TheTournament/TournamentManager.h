@@ -21,11 +21,15 @@
 #include <mutex>
 #include <random>
 #include "PlayerAlgorithm.h"
+//#include <fstream>
 
 class TournamentManager
 {
 	// This enum is needed to the case in which a player has to play against
 	// other player which has already played all his games.
+	// Player1 means accumulate scores only for player 1.
+	// BothPlayers means accumulate scores only for both players.
+	// Player2 means accumulate scores only for both player 2.
 	enum class AccumulateGameScores { BothPlayers = 0, Player1 = 1, Player2 = 2 };
 
 	// Represants a Game by the players ids and for which of them to accumulate scores.
@@ -46,6 +50,8 @@ class TournamentManager
 	std::list<void *> mDlList; // list to hold handles for dynamic libs
 	std::vector<GameRepr> mGames;
 	std::mt19937 mRandGen;
+	// TODO: delete!!!
+	//std::ofstream logFile;
 
 	// private ctor (of singleton)
 	TournamentManager() {}
@@ -69,16 +75,24 @@ class TournamentManager
 
 	// Fill in a vector of all enemies of the given player id (i.e all other players), in a shuffled manner
 	// This method is not const because it changes the random generator of the object
-	void fillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& allIds, std::vector<std::string>& enemiesToFill);
+	void fillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& ids, std::vector<std::string>& enemiesToFill);
 
-	// If a player has to play more games and don't have whom to play with.
+	// Removes all the ids that played 30 games from the given vector
+	void removeFinishedFromVector(std::vector<std::string>& idsVec) const;
+
+	// Create and save a specific game of the given players with the given accumulate methods
+	void createSpecificGame(const std::string& player1ID, const std::string& player2ID,
+		AccumulateGameScores accumulateIfPlayer1First, AccumulateGameScores accumulateIfPlayer2First);
+
+	// If player has to play more games and don't have whom to play with.
 	// As demanded, this player should play against other, when accumulating points only to
 	// the player who hasn't played 30 games yet.
-	void handleNeglectedPlayer(const std::vector<std::string>& ids);
+	void handleNeglectedPlayer(const std::string& id, const std::vector<std::string>& allIds);
 
-	// Tries to create 30 games for the given player against other players
+	// Tries to create 30 games for each player against other players
 	// who haven't yet played all their 30 games.
-	void createGamesForPlayer(const std::string& playerId, const std::vector<std::string>& allIds);
+	// Updates hasToPlayIds
+	void createGamesForPlayers(std::vector<std::string>& hasToPlayIds);
 
 	// Creates a vector of all the games in the tournament 
 	// (vector of GameRepr, who's against whom)
