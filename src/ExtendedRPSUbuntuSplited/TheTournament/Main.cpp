@@ -29,6 +29,9 @@ bool UpdateOptionalParameter(int& numOfThreadsToUpdate, string& soFilesDirectory
 		try
 		{
 			numOfThreadsToUpdate = stoi(value);
+			if (numOfThreadsToUpdate < 1) {
+				return false;
+			}
 		}
 		catch (std::exception& e)
 		{

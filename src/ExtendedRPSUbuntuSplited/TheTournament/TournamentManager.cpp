@@ -263,7 +263,9 @@ void TournamentManager::createGames() {
 
 	//cout << "hasToPlayIds.size() " << hasToPlayIds.size() << endl;
 	// hasToPlayIds size is now 1
-	handleNeglectedPlayer(hasToPlayIds.front(), ids);
+	if (!hasToPlayIds.empty()) {
+		handleNeglectedPlayer(hasToPlayIds.front(), ids);
+	}
 
 	//logFile.open("log.txt");
 	//for (auto game : mGames) {
