@@ -413,12 +413,13 @@ unique_ptr<Move> RSPPlayer_309962264::getMove()
 		if (mOpponentFlagLocations.size() != 0) {
 			move = conquerTheFlag();	//why would it give nullptr?
 		}
-
 		if (move == nullptr) {
 			move = getStrategyMove(RSPPlayer_309962264::MoveType::Attack);
-
 			if (move == nullptr) {
-				move = getStrategyMove(RSPPlayer_309962264::MoveType::Random);
+				move = getStrategyMove(RSPPlayer_309962264::MoveType::NotThreatened);
+				if (move == nullptr) {
+					move = getStrategyMove(RSPPlayer_309962264::MoveType::Random);
+				}
 			}
 		}
 	}
@@ -428,7 +429,6 @@ unique_ptr<Move> RSPPlayer_309962264::getMove()
 			updateJokerLocation(move->getFrom(), move->getTo());
 		}
 
-		//movePieceOnInfoBoard(*move);
 		mPlayersStrategyBoards[mPlayer - 1].MovePieceWithoutChecks(move->getFrom(), move->getTo());
 
 		updateThreats();
@@ -500,22 +500,25 @@ void RSPPlayer_309962264::updateThreats()
 	}
 }
 
-bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const{
+bool RSPPlayer_309962264::isRelevantDestination(const StrategyPiece& piece, const PointImpl& dest, MoveType moveType) const{
 	// Important! don't go to an invalid place or a place with other piece of the same player
-	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(pos) &&
-		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(pos);
+	bool isRelevantDest = BoardImpl<StrategyPiece>::CheckIfValidPosition(dest) &&
+		mPlayersStrategyBoards[mPlayer - 1].IsEmptyInPosition(dest);
 
 	switch (moveType){
 		case RSPPlayer_309962264::MoveType::RunAway:
 		case RSPPlayer_309962264::MoveType::TowardsFlag:
-		case RSPPlayer_309962264::MoveType::Random: {
-			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(pos) && (!isThreatenedInPosition(piece, pos)));
+		case RSPPlayer_309962264::MoveType::NotThreatened: {
+			isRelevantDest = isRelevantDest && (AreBothBoardsEmptyInPosition(dest) && (!isThreatenedInPosition(piece, dest)));
 			break;
 		}
 		case RSPPlayer_309962264::MoveType::Attack:{
-			isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(pos))
-				&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(pos)))
-				&& !isThreatenedInPosition(piece, pos));
+			isRelevantDest = isRelevantDest && ((!mPlayersStrategyBoards[mOpponent - 1].IsEmptyInPosition(dest))
+				&& (piece.IsStrongerThan(mPlayersStrategyBoards[mOpponent - 1].PeekPieceInPosition(dest)))
+				&& !isThreatenedInPosition(piece, dest));
+			break;
+		}
+		case RSPPlayer_309962264::MoveType::Random: {
 			break;
 		}
 		default:{
@@ -561,9 +564,9 @@ bool RSPPlayer_309962264::isPieceToMove(const StrategyPiece& strategyPiece, RSPP
 			isRelevantPiece = isRelevantPiece && strategyPiece.GetIsThreathening();
 			break;
 		}
+		case RSPPlayer_309962264::MoveType::NotThreatened:
 		case RSPPlayer_309962264::MoveType::Random:
 		{
-			//isRelevantPiece = isRelevantPiece && ((strategyPiece.GetStrategyPieceID() != lastMovedPieceID) || mPlayerNumMovablePieces <= 1);
 			break;
 		}
 		default:

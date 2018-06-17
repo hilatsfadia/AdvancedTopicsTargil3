@@ -40,7 +40,7 @@ private:
 	std::vector<PointImpl> mPlayerJokerLocations;
 	//int lastMovedPieceID = NONE;
 
-	enum class MoveType { RunAway, Attack, TowardsFlag, Random };
+	enum class MoveType { RunAway, Attack, TowardsFlag, NotThreatened, Random };
 
 	//-----------------------------------------------------------
 	// General helper functions
@@ -129,7 +129,7 @@ private:
 	unique_ptr<Move> conquerTheFlag() const;
 
 	// Return true iff can move the given piece to the given position, according to the given MoveType.
-	bool isRelevantDestination(const StrategyPiece& piece, const PointImpl& pos, MoveType moveType) const;
+	bool isRelevantDestination(const StrategyPiece& piece, const PointImpl& dest, MoveType moveType) const;
 
 	// Search in the adjacent places to the given postion for a relevant destination for 
 	// the given piece, according to the given MoveType.
