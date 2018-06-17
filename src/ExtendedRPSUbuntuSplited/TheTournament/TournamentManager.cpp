@@ -261,7 +261,7 @@ void TournamentManager::createGames() {
 	vector<string> hasToPlayIds = ids;
 	createGamesForPlayers(hasToPlayIds);
 
-	cout << "hasToPlayIds.size() " << hasToPlayIds.size() << endl;
+	//cout << "hasToPlayIds.size() " << hasToPlayIds.size() << endl;
 	// hasToPlayIds size is now 1
 	handleNeglectedPlayer(hasToPlayIds.front(), ids);
 
