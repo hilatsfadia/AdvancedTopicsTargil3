@@ -185,7 +185,7 @@ void TournamentManager::handleNeglectedPlayer(size_t playerIndex, const std::vec
 	}
 }
 
-void TournamentManager::fillMatixWithUniformPartOfGamesCount(vector<vector<size_t>>& gamesMat, size_t numOfPlayers) {
+void TournamentManager::fillMatixWithUniformPartOfGamesCount(vector<vector<size_t>>& gamesMat, size_t numOfPlayers) const{
 	if (numOfPlayers > 0) {
 		size_t uniformDistGames = GAMES_TO_PLAY / (numOfPlayers - 1);
 		gamesMat.reserve(numOfPlayers);
@@ -265,7 +265,7 @@ void TournamentManager::handleOddReminderPartOfGamesCount(std::vector<std::vecto
 	}
 }
 
-int TournamentManager::calcCyclicDistance(int vecLength, int index1, int index2)
+int TournamentManager::calcCyclicDistance(int vecLength, int index1, int index2) const
 {
 	int dist1 = ((index1 - index2) + vecLength) % vecLength;
 	int dist2 = ((index2 - index1) + vecLength) % vecLength;
@@ -273,7 +273,7 @@ int TournamentManager::calcCyclicDistance(int vecLength, int index1, int index2)
 }
 
 void TournamentManager::handleEvenReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, 
-	size_t numOfPlayers, size_t reminderOfGames)
+	size_t numOfPlayers, size_t reminderOfGames) const
 {
 	if (((reminderOfGames % 2) == 0) && (reminderOfGames > 0)) {
 		for (size_t i = 0; i < numOfPlayers; i++) {

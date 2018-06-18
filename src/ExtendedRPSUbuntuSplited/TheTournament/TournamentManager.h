@@ -83,7 +83,7 @@ class TournamentManager
 
 	// This method is responsible of making all the players to play the same number of games with 
 	// each other GAMES_TO_PLAY / (numOfPlayers - 1) (which is up to the reminder of division)
-	void fillMatixWithUniformPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers);
+	void fillMatixWithUniformPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers) const;
 
 	// Connect each node to the direcly opposite one. Otherwise, dispatch the games between players until only
 	// one remains with one more game to play
@@ -98,12 +98,12 @@ class TournamentManager
 		size_t reminderOfGames, const std::vector<std::string>& ids);
 
 	// Calc a distance between two indices in a vector in a cyclic manner
-	int calcCyclicDistance(int vecLength, int index1, int index2);
+	int calcCyclicDistance(int vecLength, int index1, int index2) const;
 
 	// When the reminder GAMES_TO_PLAY % (numOfPlayers - 1) is an even number
 	// Connect each node to its (reminderOfGames / 2) nearest neighbors on either side.
 	void handleEvenReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, 
-		size_t numOfPlayers, size_t reminderOfGames);
+		size_t numOfPlayers, size_t reminderOfGames) const;
 
 	// This method is responsible of making all the players to play the reminder of 
 	// games with some of the other players (i.e GAMES_TO_PLAY % (numOfPlayers - 1)) games 
