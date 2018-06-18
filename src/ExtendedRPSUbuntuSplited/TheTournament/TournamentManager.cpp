@@ -157,26 +157,6 @@ void TournamentManager::runMultiThreaded(size_t numThreads){
     printResults();
 }
 
-void TournamentManager::fillEnemiesInRandomOrder(const std::string & playerId, const vector<string>& ids, std::vector<std::string>& enemiesToFill)
-{
-	enemiesToFill = ids;
-	eraseString(enemiesToFill, playerId);
-
-	std::shuffle(enemiesToFill.begin(), enemiesToFill.end(), mRandGen);
-}
-
-void TournamentManager::removeFinishedFromVector(std::vector<std::string>& idsVec) const {
-	for (auto idsItr = idsVec.begin(); idsItr < idsVec.end();) {
-		if (mId2numberOfGames.at(*idsItr) == 0) {
-			idsItr = idsVec.erase(idsItr);
-			continue;
-		}
-		else {
-			++idsItr;
-		}
-	}
-}
-
 void TournamentManager::createSpecificGame(const std::string& player1ID, const std::string& player2ID, 
 	AccumulateGameScores accumulateIfPlayer1First, AccumulateGameScores accumulateIfPlayer2First) {
 	int rand01 = rand() % 2;
@@ -188,89 +168,186 @@ void TournamentManager::createSpecificGame(const std::string& player1ID, const s
 	}
 }
 
-void TournamentManager::handleNeglectedPlayer(const std::string& id, const std::vector<std::string>& allIds)
+void TournamentManager::handleNeglectedPlayer(size_t playerIndex, const std::vector<std::string>& allIds)
 {
-	// Checks if a player has to play more games and don't have whom to play with.
 	// As demanded, this player should play against other, when accumulating points only to
 	// the player who hasn't played 30 games yet.
-	if (mId2numberOfGames[id] > 0) {
-		vector<string> enemies;
-		fillEnemiesInRandomOrder(id, allIds, enemies);
-		size_t i = 0;
-		while (mId2numberOfGames[id] > 0) {
-			createSpecificGame(id, enemies[i], AccumulateGameScores::Player1, AccumulateGameScores::Player2);
-			mId2numberOfGames[id]--;
-			(i == enemies.size() - 1) ? i = 0 : i++;
+	if ((playerIndex < allIds.size()) && (allIds.size() > 2)) {
+		size_t enemyIndex = 0;
+
+		if (playerIndex == 0) {
+			enemyIndex = 1;
+		}
+
+		const string& playerId = allIds.at(playerIndex);
+		const string& enemyId = allIds.at(enemyIndex);
+		createSpecificGame(playerId, enemyId, AccumulateGameScores::Player1, AccumulateGameScores::Player2);
+	}
+}
+
+void TournamentManager::fillMatixWithUniformPartOfGamesCount(vector<vector<size_t>>& gamesMat, size_t numOfPlayers) {
+	if (numOfPlayers > 0) {
+		size_t uniformDistGames = GAMES_TO_PLAY / (numOfPlayers - 1);
+		gamesMat.reserve(numOfPlayers);
+
+		// Init a matrix of size numOfPlayers X numOfPlayers with zeros
+		for (size_t i = 0; i < numOfPlayers; i++) {
+			vector<size_t> onePlayerVec;
+			onePlayerVec.reserve(numOfPlayers);
+			for (size_t j = 0; j < numOfPlayers; j++) {
+				if (i == j) {
+					onePlayerVec.push_back(0);
+				}
+				else {
+					onePlayerVec.push_back(uniformDistGames);
+				}
+			}
+
+			gamesMat.push_back(onePlayerVec);
 		}
 	}
 }
 
-void TournamentManager::createGamesForPlayers(vector<string>& hasToPlayIds){
-	size_t playerIdsSize = hasToPlayIds.size();
-	while (playerIdsSize >= 2) {
-		for (auto idsItr = hasToPlayIds.begin(); idsItr < hasToPlayIds.end();){
-			if (mId2numberOfGames[*idsItr] > 0) { // it can be 0 because it could be an enemy previously
-				vector<string> enemies;
-				fillEnemiesInRandomOrder(*idsItr, hasToPlayIds, enemies);
-				for (auto enemy : enemies) { // Try to create games for current *idsItr and it's enemies
-					if (mId2numberOfGames[*idsItr] == 0) {
-						break;
-					}
-					if ((mId2numberOfGames[enemy] > 0) && (mId2numberOfGames[*idsItr] > 0)) {
-						createSpecificGame(*idsItr, enemy, AccumulateGameScores::BothPlayers, AccumulateGameScores::BothPlayers);
-						mId2numberOfGames[*idsItr]--;
-						mId2numberOfGames[enemy]--;
-					}
-				}
-			}
+void TournamentManager::handleLastGameForPlayersWithNeglected(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers, 
+	const std::vector<string>& ids, vector<bool>& isAddedOneGame)
+{
+	// In this case a k (reminderOfGames) regular graph doesn't exist. So one player will have to play 
+	// with other who already played all his games.
+	size_t hasToPlayIndex = 0;
 
-			if (mId2numberOfGames.at(*idsItr) == 0) {
-				idsItr = hasToPlayIds.erase(idsItr);
-				continue;
-			}
-			else {
-				++idsItr;
+	// Let's first add one game for each of the players except one
+	for (size_t i = 0; i < numOfPlayers; i++) {
+		for (size_t j = 0; (j < numOfPlayers) && (!isAddedOneGame[i]); j++) {
+			if ((i != j) && (!isAddedOneGame[j])) {
+				gamesMat[i][j]++;
+				gamesMat[j][i]++;
+				isAddedOneGame[i] = true;
+				isAddedOneGame[j] = true;
 			}
 		}
 
-		removeFinishedFromVector(hasToPlayIds);
-		playerIdsSize = hasToPlayIds.size();
-		std::shuffle(hasToPlayIds.begin(), hasToPlayIds.end(), mRandGen);
+		if (!isAddedOneGame[i]) {
+			hasToPlayIndex = i;
+		}
+	}
+
+	handleNeglectedPlayer(hasToPlayIndex, ids);
+}
+
+void TournamentManager::handleOddReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers, 
+	size_t reminderOfGames, const std::vector<string>& ids)
+{
+	if (((reminderOfGames % 2) != 0) && (reminderOfGames > 0)) {
+		// Lets first handle it for even k (reminderOfGames)
+		handleEvenReminderPartOfGamesCount(gamesMat, numOfPlayers, reminderOfGames - 1);
+
+		vector<bool> isAddedOneGame;
+		isAddedOneGame.reserve(numOfPlayers);
+		for (size_t i = 0; i < numOfPlayers; i++) {
+			isAddedOneGame.push_back(false);
+		}
+
+		if ((numOfPlayers % 2) == 0) {
+			// Connect each node to the direcly opposite one
+			for (size_t i = 0; i < numOfPlayers; i++) {
+				if (!isAddedOneGame[i]) {
+					size_t opppositeNodeIndex = (i + (numOfPlayers / 2)) % numOfPlayers;
+					gamesMat[i][opppositeNodeIndex]++;
+					gamesMat[opppositeNodeIndex][i]++;
+					isAddedOneGame[i] = true;
+					isAddedOneGame[opppositeNodeIndex] = true;
+				}
+			}
+		}
+		else {
+			handleLastGameForPlayersWithNeglected(gamesMat, numOfPlayers, ids, isAddedOneGame);
+		}
+	}
+}
+
+int TournamentManager::calcCyclicDistance(int vecLength, int index1, int index2)
+{
+	int dist1 = ((index1 - index2) + vecLength) % vecLength;
+	int dist2 = ((index2 - index1) + vecLength) % vecLength;
+	return min(dist1, dist2);
+}
+
+void TournamentManager::handleEvenReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, 
+	size_t numOfPlayers, size_t reminderOfGames)
+{
+	if (((reminderOfGames % 2) == 0) && (reminderOfGames > 0)) {
+		for (size_t i = 0; i < numOfPlayers; i++) {
+			for (size_t j = 0; j < numOfPlayers; j++) {
+				size_t closeMeasure = calcCyclicDistance(static_cast<int>(numOfPlayers), static_cast<int>(i), static_cast<int>(j));
+				// Connect each node to its (reminderOfGames / 2) nearest neighbors on either side,
+				// to a total of reminderOfGames neighbors.
+				if ((closeMeasure > 0) && (closeMeasure <= reminderOfGames / 2)) {
+					gamesMat[i][j]++;
+				}
+			}
+		}
+	}
+}
+
+void TournamentManager::fillMatixWithReminderPartOfGamesCount(vector<vector<size_t>>& gamesMat, 
+	size_t numOfPlayers, const vector<string>& ids)
+{
+	if (numOfPlayers > 0) {
+		size_t reminderOfGames = GAMES_TO_PLAY % (numOfPlayers - 1);
+
+		// We now want to build a k regular graph on n nodes 
+		// (where k = reminderOfGames, and n = numOfPlayers)
+		// It is impossible for the case when k and n are both odd numbers
+
+		// If k (reminderOfGames) is even
+		if ((reminderOfGames % 2) == 0) {
+			handleEvenReminderPartOfGamesCount(gamesMat, numOfPlayers, reminderOfGames);
+		}
+		else {
+			handleOddReminderPartOfGamesCount(gamesMat, numOfPlayers, reminderOfGames, ids);
+		}
+	}
+}
+
+void TournamentManager::createGamesFromMat(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers, const vector<string>& ids)
+{
+	// Create games out of the matrix
+	for (size_t i = 0; i < numOfPlayers; i++) {
+		for (size_t j = i; j < numOfPlayers; j++) {
+			size_t currCombinationNumOfGames = gamesMat[i][j];
+			for (size_t k = 0; k < currCombinationNumOfGames; k++) {
+				createSpecificGame(ids[i], ids[j], AccumulateGameScores::BothPlayers, AccumulateGameScores::BothPlayers);
+				gamesMat[i][j]--;
+				gamesMat[j][i]--;
+			}
+		}
 	}
 }
 
 void TournamentManager::createGames() {
-	try {
-		std::random_device rd;
-		mRandGen.seed(rd());
-	}
-	catch (...) {
-		// If there was a problem, don't seed the random gen.
-	}
-
 	srand((unsigned int)time(0)); // use current time as seed for random generator
 	mGames.clear();
     list<void *>::iterator itr;
     vector<string> ids;
-    for(auto it = mId2factory.begin(); it != mId2factory.end(); it++) {
-		ids.push_back(it->first);
-        mId2numberOfGames[it->first] = GAMES_TO_PLAY;
-        mId2scores[it->first] = 0;
-    }
+	if (mId2factory.size() > 0) { // Should be > 1
+		size_t numOfPlayers = mId2factory.size();
 
-	vector<string> hasToPlayIds = ids;
-	createGamesForPlayers(hasToPlayIds);
+		for(auto it = mId2factory.begin(); it != mId2factory.end(); it++) {
+			ids.push_back(it->first);
+			mId2scores[it->first] = 0;
+		}
 
-	//cout << "hasToPlayIds.size() " << hasToPlayIds.size() << endl;
-	// hasToPlayIds size is now 1
-	if (!hasToPlayIds.empty()) {
-		handleNeglectedPlayer(hasToPlayIds.front(), ids);
+		// This matrix is symetric and has in location(i,j) the number of games between players i and j
+		vector<vector<size_t>> gamesMat;
+		fillMatixWithUniformPartOfGamesCount(gamesMat, numOfPlayers);
+		fillMatixWithReminderPartOfGamesCount(gamesMat, numOfPlayers, ids);
+		createGamesFromMat(gamesMat, numOfPlayers, ids);
+
+		//logFile.open("log.txt");
+		//for (auto game : mGames) {
+		//	logFile << game.player1Id << " " << game.player2Id << endl;
+		//}
 	}
-
-	//logFile.open("log.txt");
-	//for (auto game : mGames) {
-	//	logFile << game.player1Id << " " << game.player2Id << endl;
-	//}
 }
 
 // We decided to continue the tournament (and print error to console) if we encounter an so

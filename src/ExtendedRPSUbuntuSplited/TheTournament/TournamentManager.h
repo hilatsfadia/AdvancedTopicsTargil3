@@ -43,13 +43,12 @@ class TournamentManager
 
 	static TournamentManager theTournamentManager;
 	std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> mId2factory;
-	std::map<std::string, int> mId2numberOfGames;
+	//std::map<std::string, int> mId2numberOfGames;
 	std::map<std::string, size_t> mId2scores;
     std::mutex mScoresLock;
 	std::atomic_size_t mGameIndex{0}; // atomic_size_t is a language typedef for std::atomic<size_t>
 	std::list<void *> mDlList; // list to hold handles for dynamic libs
 	std::vector<GameRepr> mGames;
-	std::mt19937 mRandGen;
 	// TODO: delete!!!
 	//std::ofstream logFile;
 
@@ -73,13 +72,6 @@ class TournamentManager
 	// Return true iff the so file was loaded and the algorithm has registerd.
     bool loadAlgoritm(char* inBuf);
 
-	// Fill in a vector of all enemies of the given player id (i.e all other players), in a shuffled manner
-	// This method is not const because it changes the random generator of the object
-	void fillEnemiesInRandomOrder(const std::string& playerId, const std::vector<std::string>& ids, std::vector<std::string>& enemiesToFill);
-
-	// Removes all the ids that played 30 games from the given vector
-	void removeFinishedFromVector(std::vector<std::string>& idsVec) const;
-
 	// Create and save a specific game of the given players with the given accumulate methods
 	void createSpecificGame(const std::string& player1ID, const std::string& player2ID,
 		AccumulateGameScores accumulateIfPlayer1First, AccumulateGameScores accumulateIfPlayer2First);
@@ -87,15 +79,43 @@ class TournamentManager
 	// If player has to play more games and don't have whom to play with.
 	// As demanded, this player should play against other, when accumulating points only to
 	// the player who hasn't played 30 games yet.
-	void handleNeglectedPlayer(const std::string& id, const std::vector<std::string>& allIds);
+	void handleNeglectedPlayer(size_t playerIndex, const std::vector<std::string>& allIds);
 
-	// Tries to create 30 games for each player against other players
-	// who haven't yet played all their 30 games.
-	// Updates hasToPlayIds
-	void createGamesForPlayers(std::vector<std::string>& hasToPlayIds);
+	// This method is responsible of making all the players to play the same number of games with 
+	// each other GAMES_TO_PLAY / (numOfPlayers - 1) (which is up to the reminder of division)
+	void fillMatixWithUniformPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers);
+
+	// Connect each node to the direcly opposite one. Otherwise, dispatch the games between players until only
+	// one remains with one more game to play
+	void handleLastGameForPlayersWithNeglected(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers, 
+		const std::vector<std::string>& ids, std::vector<bool>& isAddedOneGame);
+
+	// When the reminder GAMES_TO_PLAY % (numOfPlayers - 1) is an odd number
+	// Initially, do the same as handleEvenReminderPartOfGamesCount method does until the reminder is 1.
+	// Now, the rest depends on the number of vertices, i.e the number of players. If this number is even,
+	// do handleLastGameForPlayersWithNeglected
+	void handleOddReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers,
+		size_t reminderOfGames, const std::vector<std::string>& ids);
+
+	// Calc a distance between two indices in a vector in a cyclic manner
+	int calcCyclicDistance(int vecLength, int index1, int index2);
+
+	// When the reminder GAMES_TO_PLAY % (numOfPlayers - 1) is an even number
+	// Connect each node to its (reminderOfGames / 2) nearest neighbors on either side.
+	void handleEvenReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, 
+		size_t numOfPlayers, size_t reminderOfGames);
+
+	// This method is responsible of making all the players to play the reminder of 
+	// games with some of the other players (i.e GAMES_TO_PLAY % (numOfPlayers - 1)) games 
+	void fillMatixWithReminderPartOfGamesCount(std::vector<std::vector<size_t>>& gamesMat, 
+		size_t numOfPlayers, const std::vector<std::string>& ids);
+	
+	// Create games out of the matrix which represants the number of games each player plays against other
+	void createGamesFromMat(std::vector<std::vector<size_t>>& gamesMat, size_t numOfPlayers, const std::vector<std::string>& ids);
 
 	// Creates a vector of all the games in the tournament 
 	// (vector of GameRepr, who's against whom)
+	// Using matrix and a k ary graphs concepts to the distribution of the games
     void createGames();
 
 	// Play a game and update the players' scores according to it's result
